@@ -1,35 +1,49 @@
-import { useState } from 'react';
-import { Stack, TextField, Button, ToggleButton, ToggleButtonGroup, FormControlLabel, Switch, Autocomplete } from '@mui/material';
+import { Stack, TextField, Button, ToggleButton, ToggleButtonGroup, FormControlLabel, Switch, Autocomplete, CircularProgress } from '@mui/material';
+import { useSearch } from '../contexts/SearchContext';
+import { useFlights } from '../contexts/FlightsContext';
 
-const airports = [
-  { code: 'EZE', label: 'Buenos Aires (EZE)' },
-  { code: 'AEP', label: 'Aeroparque (AEP)' },
-  { code: 'SCL', label: 'Santiago (SCL)' },
-  { code: 'GRU', label: 'São Paulo (GRU)' },
-  { code: 'MVD', label: 'Montevideo (MVD)' },
-];
+export default function SearchForm() {
+  const {
+    tripType,
+    from,
+    to,
+    departDate,
+    returnDate,
+    adults,
+    onlyDirect,
+    aeropuertos,
+    loading: aeropuertosLoading,
+    setTripType,
+    setFrom,
+    setTo,
+    setDepartDate,
+    setReturnDate,
+    setAdults,
+    setOnlyDirect,
+    getSearchCriteria,
+    isSearchValid
+  } = useSearch();
 
-export default function SearchForm({ onSearch }) {
-  const [tripType, setTripType] = useState('oneway');
-  const [from, setFrom] = useState(airports[0]);
-  const [to, setTo] = useState(airports[2]);
-  const [departDate, setDepartDate] = useState('');
-  const [returnDate, setReturnDate] = useState('');
-  const [adults, setAdults] = useState(1);
-  const [onlyDirect, setOnlyDirect] = useState(false);
+  const { searchFlights, loading: searchLoading } = useFlights();
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    onSearch?.({
-      tripType,
-      from: from?.code,
-      to: to?.code,
-      departDate,
-      returnDate: tripType === 'roundtrip' ? returnDate : undefined,
-      adults,
-      onlyDirect,
-    });
+    
+    if (!isSearchValid()) {
+      alert('Por favor completa todos los campos requeridos');
+      return;
+    }
+    
+    try {
+      const criteria = getSearchCriteria();
+      await searchFlights(criteria);
+    } catch (error) {
+      console.error('Error en búsqueda:', error);
+      alert(error.message);
+    }
   };
+
+  const loading = aeropuertosLoading || searchLoading;
 
   return (
     <Stack component="form" onSubmit={handleSubmit} spacing={2} direction={{ xs: 'column', sm: 'row' }} alignItems="center">
@@ -41,31 +55,63 @@ export default function SearchForm({ onSearch }) {
         <Autocomplete
           value={from}
           onChange={(_, v) => setFrom(v)}
-          options={airports}
+          options={aeropuertos}
           getOptionLabel={(o) => o.label}
           sx={{ minWidth: 220 }}
           renderInput={(params) => <TextField {...params} label="Desde" required />}
+          loading={aeropuertosLoading}
         />
 
         <Autocomplete
           value={to}
           onChange={(_, v) => setTo(v)}
-          options={airports}
+          options={aeropuertos}
           getOptionLabel={(o) => o.label}
           sx={{ minWidth: 220 }}
           renderInput={(params) => <TextField {...params} label="Hacia" required />}
+          loading={aeropuertosLoading}
         />
 
-        <TextField label="Salida" type="date" value={departDate} onChange={(e) => setDepartDate(e.target.value)} InputLabelProps={{ shrink: true }} />
+        <TextField 
+          label="Salida" 
+          type="date" 
+          value={departDate} 
+          onChange={(e) => setDepartDate(e.target.value)} 
+          InputLabelProps={{ shrink: true }} 
+        />
+        
         {tripType === 'roundtrip' && (
-          <TextField label="Regreso" type="date" value={returnDate} onChange={(e) => setReturnDate(e.target.value)} InputLabelProps={{ shrink: true }} />
+          <TextField 
+            label="Regreso" 
+            type="date" 
+            value={returnDate} 
+            onChange={(e) => setReturnDate(e.target.value)} 
+            InputLabelProps={{ shrink: true }} 
+          />
         )}
 
-        <TextField type="number" label="Adultos" value={adults} onChange={(e) => setAdults(parseInt(e.target.value || '1', 10))} inputProps={{ min: 1 }} sx={{ width: 110 }} />
+        <TextField 
+          type="number" 
+          label="Adultos" 
+          value={adults} 
+          onChange={(e) => setAdults(parseInt(e.target.value || '1', 10))} 
+          inputProps={{ min: 1 }} 
+          sx={{ width: 110 }} 
+        />
 
-        <FormControlLabel control={<Switch checked={onlyDirect} onChange={(e) => setOnlyDirect(e.target.checked)} />} label="Solo directos" />
+        <FormControlLabel 
+          control={<Switch checked={onlyDirect} onChange={(e) => setOnlyDirect(e.target.checked)} />} 
+          label="Solo directos" 
+        />
 
-        <Button type="submit" variant="contained">Buscar</Button>
+        <Button 
+          type="submit" 
+          variant="contained" 
+          disabled={loading || !from || !to}
+          startIcon={loading ? <CircularProgress size={16} /> : null}
+        >
+          {loading ? 'Buscando...' : 'Buscar'}
+        </Button>
       </Stack>
   );
 }
