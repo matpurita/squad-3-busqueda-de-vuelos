@@ -66,10 +66,15 @@ export default function SearchForm() {
   return (
     <Stack 
       component="form"
+      justifyContent="center" 
+      alignItems="center"
       onSubmit={handleSubmit}
       spacing={2}
       direction={{ xs: "column", lg: "row" }}
-      alignItems="center"
+      
+     
+      useFlexGap
+  sx={{ flexWrap: 'wrap' }}
     >
       <ToggleButtonGroup
         size="small"
@@ -105,9 +110,10 @@ export default function SearchForm() {
         loading={aeropuertosLoading}
       />
 
-      <TextField fullWidth
+      <TextField 
         label="Salida"
         type="date"
+        sx={{ minWidth: 220 }}
         value={departDate}
         onChange={(e) => setDepartDate(e.target.value)}
         InputLabelProps={{ shrink: true }}
@@ -117,24 +123,28 @@ export default function SearchForm() {
         <TextField 
           label="Regreso"
           type="date"
+          sx={{ minWidth: 220 }}
           value={returnDate}
           onChange={(e) => setReturnDate(e.target.value)}
           InputLabelProps={{ shrink: true }}
         />
       )}
 
-      <TextField fullWidth
+      <TextField
         type="number"
         label="Adultos"
         value={adults}
         onChange={(e) => setAdults(parseInt(e.target.value || "1", 10))}
         inputProps={{ min: 1 }}
+         sx={{ minWidth: 80 }}
+         
         
        
       />
-      <FormControl fullWidth>
+      <FormControl >
         <InputLabel id="label-class">Class</InputLabel>
-        <Select labelId="label-class" id="demo-simple-select" label="Clase">
+        <Select labelId="label-class" id="demo-simple-select" label="Clase"sx={{ minWidth: 220 }}>
+          
           <MenuItem value={economy}>Economy</MenuItem>
           <MenuItem value={premium}>Premium Economy</MenuItem>
           <MenuItem value={business}>Business</MenuItem>

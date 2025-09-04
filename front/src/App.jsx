@@ -9,7 +9,7 @@ import { FlightsProvider } from './contexts/FlightsContext'
 function AppContent() {
   return (
     <Container maxWidth="lg" sx={{ py: 4 }}>
-      <Paper elevation={3} sx={{ p: 3 }}>
+      <Paper elevation={3} sx={{ p: 4 }}>
         <Stack spacing={2}>
           <Typography variant="h5">Buscador de vuelos</Typography>
           <SearchForm />
