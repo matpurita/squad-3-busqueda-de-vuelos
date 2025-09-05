@@ -5,13 +5,14 @@ import SearchForm from './components/SearchForm'
 import ResultsList from './components/ResultsList'
 import { SearchProvider } from './contexts/SearchContext'
 import { FlightsProvider } from './contexts/FlightsContext'
+import '@fontsource/roboto/400.css';
 
 function AppContent() {
   return (
     <Container maxWidth="lg" sx={{ py: 4 }}>
       <Paper elevation={3} sx={{ p: 4 }}>
         <Stack spacing={2}>
-          <Typography variant="h5">Buscador de vuelos</Typography>
+          <Typography variant="h5" >Buscá tu vuelo</Typography>
           <SearchForm />
         </Stack>
       </Paper>
