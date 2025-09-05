@@ -47,3 +47,6 @@ squad-3-busqueda-de-vuelos/
 
 ## Trello + sprints tareas
 <a>https://trello.com/b/XPvm4Yif/squad3reservavuelos</a>
+
+## Documentacion del TPO +endpoints + requerimientos desde otros equipos:
+<a>https://docs.google.com/document/d/1V8aasdXoWq9PEpiYb9Inc2g9NWTr5xsz5o1uAQWQ-iI/edit?tab=t.0</a>
