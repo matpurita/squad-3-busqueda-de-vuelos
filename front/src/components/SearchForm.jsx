@@ -36,10 +36,8 @@ export default function SearchForm() {
     setOnlyDirect,
     getSearchCriteria,
     isSearchValid,
-    economy,
-    premium,
-    business,
-
+    selectedClass,
+    setSelectedClass,
   } = useSearch();
 
   const { searchFlights, loading: searchLoading } = useFlights();
@@ -77,6 +75,7 @@ export default function SearchForm() {
   sx={{ flexWrap: 'wrap' }}
     >
       <ToggleButtonGroup
+      
         size="small"
         exclusive
         value={tripType}
@@ -137,17 +136,18 @@ export default function SearchForm() {
         onChange={(e) => setAdults(parseInt(e.target.value || "1", 10))}
         inputProps={{ min: 1 }}
          sx={{ minWidth: 80 }}
-         
-        
-       
       />
       <FormControl >
         <InputLabel id="label-class">Class</InputLabel>
-        <Select labelId="label-class" id="demo-simple-select" label="Clase"sx={{ minWidth: 220 }}>
-          
-          <MenuItem value={economy}>Economy</MenuItem>
-          <MenuItem value={premium}>Premium Economy</MenuItem>
-          <MenuItem value={business}>Business</MenuItem>
+        <Select labelId="label-class" 
+          id="select-class" 
+          label="Clase"
+          sx={{ minWidth: 220 }}
+          value={selectedClass}
+          onChange={(e) => setSelectedClass(e.target.value)}>          
+          <MenuItem value='economy'>Economy</MenuItem>
+          <MenuItem value='premium'>Premium Economy</MenuItem>
+          <MenuItem value='business'>Business</MenuItem>
         </Select>
       </FormControl>
 
