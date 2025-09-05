@@ -167,7 +167,7 @@ export default function SearchForm() {
         disabled={loading || !from || !to}
         startIcon={loading ? <CircularProgress size={16} /> : null}
       >
-        {loading ? "Buscando..." : "Buscar"}
+        {loading ? "Buscando..." : "Buscar vuelo"}
       </Button>
     </Stack>
   );
