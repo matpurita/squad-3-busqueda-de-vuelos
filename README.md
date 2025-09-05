@@ -40,3 +40,7 @@ squad-3-busqueda-de-vuelos/
 - **Frontend**: React + Vite + Material-UI
 - **Backend**: Node.js + Express (futuro)
 - **Gestión de paquetes**: npm workspaces
+
+## Diagrama de flujo del proceso de búsqueda y selección de vuelo
+
+![Flujo de búsqueda de vuelos](front/public/diagrama_flujo.jpeg)
