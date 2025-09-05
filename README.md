@@ -44,3 +44,6 @@ squad-3-busqueda-de-vuelos/
 ## Diagrama de flujo del proceso de búsqueda y selección de vuelo
 
 ![Flujo de búsqueda de vuelos](front/public/diagrama_flujo.jpeg)
+
+## Trello + sprints tareas
+<a>https://trello.com/b/XPvm4Yif/squad3reservavuelos</a>
