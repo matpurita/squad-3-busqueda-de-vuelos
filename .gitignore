@@ -125,7 +125,6 @@ Desktop.ini
 # pnpm-lock.yaml
 
 # Database files
-*.db
 *.sqlite
 *.sqlite3
 

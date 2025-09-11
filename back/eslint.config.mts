@@ -16,7 +16,18 @@ export default defineConfig([
       semi: ['warn', 'never'],
       quotes: ['warn', 'single'],
       'comma-dangle': ['warn', 'never'],
-      'no-unused-vars': 'warn'
+      '@typescript-eslint/no-unused-vars': [
+        'warn',
+        {
+          args: 'all',
+          argsIgnorePattern: '^_',
+          caughtErrors: 'all',
+          caughtErrorsIgnorePattern: '^_',
+          destructuredArrayIgnorePattern: '^_',
+          varsIgnorePattern: '^_',
+          ignoreRestSiblings: true
+        }
+      ]
     }
   }
 ])

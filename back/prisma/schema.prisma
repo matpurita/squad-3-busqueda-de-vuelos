@@ -1,0 +1,61 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider  = "postgresql"
+  url       = env("DATABASE_URL")
+  directUrl = env("DIRECT_URL")
+}
+
+model Airport {
+  id          String   @id @default(cuid())
+  code        String   @unique // IATA e.g. "EZE"
+  name        String
+  city        String
+  country     String
+  flightsFrom Flight[] @relation("FlightsFrom")
+  flightsTo   Flight[] @relation("FlightsTo")
+}
+
+model Airline {
+  id      String   @id @default(cuid())
+  code    String   @unique // e.g. "AA"
+  name    String
+  flights Flight[]
+}
+
+model Flight {
+  id           String   @id @default(cuid())
+  flightNumber String
+  departure    DateTime
+  arrival      DateTime
+  durationMins Int
+
+  airlineId String
+  airline   Airline @relation(fields: [airlineId], references: [id])
+
+  originId String
+  origin   Airport @relation("FlightsFrom", fields: [originId], references: [id])
+
+  destinationId String
+  destination   Airport @relation("FlightsTo", fields: [destinationId], references: [id])
+
+  seats Seats[]
+}
+
+model Seats {
+  id          String  @id @default(cuid())
+  flightId    String
+  flight      Flight  @relation(fields: [flightId], references: [id])
+  seatNumber  String
+  class       String // e.g. "Economy", "Business"
+  price       Float
+  isAvailable Boolean @default(true)
+}
