@@ -174,18 +174,22 @@ function seatToFlight(
           origin: true
           destination: true
           airline: true
-          seats: true
+          seats: {
+            where: {
+              isAvailable: true
+            }
+          }
         }
       }
     }
   }>
 ) {
-  const flight = seat.flight
+  const { seats, ...flight } = seat.flight
   const body: Flight = {
     ...flight,
     minPrice: seat.price,
     currency: 'USD',
-    availableSeats: flight.seats.length
+    availableSeats: seats.length
   }
 
   return body
