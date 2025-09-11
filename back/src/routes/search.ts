@@ -1,10 +1,9 @@
 import { Router } from 'express'
+import searchController from '../controllers/search'
 
 const router = Router()
 
-router.get('/', (req, res) => {
-  res.send('Flights route')
-})
+router.get('/', searchController.searchFlights)
 
 router.get('/suggestions', (req, res) => {
   res.send('Flight suggestions')
