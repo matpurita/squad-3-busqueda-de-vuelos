@@ -8,18 +8,9 @@
     "back"
   ],
   "scripts": {
-    "dev": "npm run dev --workspace=front",
-    "dev:front": "npm run dev --workspace=front",
-    "dev:back": "npm run dev --workspace=back",
-    "build": "npm run build --workspace=front",
-    "build:front": "npm run build --workspace=front",
-    "build:back": "npm run build --workspace=back",
-    "lint": "npm run lint --workspace=front",
-    "lint:front": "npm run lint --workspace=front",
-    "lint:back": "npm run lint --workspace=back",
-    "install:all": "npm install && npm install --workspace=front",
-    "clean": "npm run clean --workspace=front && npm run clean --workspace=back",
-    "start": "npm run dev"
+    "install:all": "npm install --workspaces",
+    "dev": "concurrently \"npm run dev -w front\" \"npm run dev -w back\"",
+    "start": "concurrently \"npm run start -w front\" \"npm run start -w back\""
   },
   "keywords": [
     "vuelos",
