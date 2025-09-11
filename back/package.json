@@ -10,7 +10,8 @@
     "lint": "eslint 'src/**/*.ts'",
     "prisma:push": "prisma db push",
     "prisma:generate": "prisma generate",
-    "prisma:format": "prisma format"
+    "prisma:format": "prisma format",
+    "prisma:mock": "ts-node prisma/mock.ts"
   },
   "keywords": [
     "backend",
