@@ -36,7 +36,7 @@ model Flight {
   flightNumber String
   departure    DateTime
   arrival      DateTime
-  durationMins Int
+  duration     Int
 
   airlineId String
   airline   Airline @relation(fields: [airlineId], references: [id])

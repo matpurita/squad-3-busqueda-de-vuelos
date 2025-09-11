@@ -115,7 +115,7 @@ async function main() {
         flightNumber,
         departure,
         arrival,
-        durationMins,
+        duration: durationMins,
         airline: { connect: { id: airline.id } },
         origin: { connect: { id: origin.id } },
         destination: { connect: { id: destination.id } }
@@ -145,7 +145,7 @@ async function main() {
         const clazz = row <= 2 ? 'Business' : 'Economy'
 
         // base price: depends on duration
-        const base = Math.max(50, Math.round(f.durationMins * 0.5))
+        const base = Math.max(50, Math.round(f.duration * 0.5))
         // Business premium multiplier
         const multiplier = clazz === 'Business' ? 2.5 : 1.0
         // small random adjustment

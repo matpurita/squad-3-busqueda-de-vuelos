@@ -5,6 +5,9 @@ import { AppError } from '../middlewares/error'
 import { prisma } from '../prisma/db'
 import { add, startOfDay, endOfDay, sub } from 'date-fns'
 import { Prisma } from '@prisma/client'
+import { SearchResults } from '../schemas/searchResult'
+import { Pagination } from '../schemas/pagination'
+import { Flight } from '../schemas/flight'
 
 async function searchFlights(req: Request, res: Response, next: NextFunction) {
   try {
@@ -37,7 +40,7 @@ async function searchFlights(req: Request, res: Response, next: NextFunction) {
     console.log('Searching flights from', departureDateStart, 'to', departureDateEnd)
 
     // Query seats first
-    const availableSeats = await prisma.seats.findMany({
+    const departureSeats = await prisma.seats.findMany({
       where: {
         isAvailable: true,
         class: searchParams.cabinClass,
@@ -59,83 +62,101 @@ async function searchFlights(req: Request, res: Response, next: NextFunction) {
           include: {
             origin: true,
             destination: true,
-            airline: true
+            airline: true,
+            seats: {
+              where: { isAvailable: true }
+            }
           }
         }
       },
-      orderBy: getSortOptions(searchParams.sort),
-      take: searchParams.limit,
-      skip: searchParams.offset
+      orderBy: getSortOptions(searchParams.sort)
     })
 
-    // Get total count
-    const totalSeats = await prisma.seats.count({
-      where: {
-        isAvailable: true,
-        class: searchParams.cabinClass,
-        flight: {
-          origin: {
-            code: searchParams.origin.toUpperCase()
-          },
-          destination: {
-            code: searchParams.destination.toUpperCase()
-          },
-          departure: {
-            gte: departureDateStart,
-            lte: departureDateEnd
-          }
-        }
-      }
-    })
+    console.log(departureSeats)
 
-    // Group seats by flight and format response
-    const flightMap = new Map()
-    availableSeats.forEach((seat) => {
-      const flight = seat.flight
-      if (!flightMap.has(flight.id)) {
-        flightMap.set(flight.id, {
-          id: flight.id,
-          flightNumber: flight.flightNumber,
-          departure: flight.departure,
-          arrival: flight.arrival,
-          duration: flight.durationMins,
-          origin: {
-            code: flight.origin.code,
-            city: flight.origin.city,
-            country: flight.origin.country
+    const returnDateStart = searchParams.returnDate
+      ? startOfDay(
+          sub(new Date(searchParams.returnDate), {
+            days: searchParams.returnRange
+          })
+        )
+      : null
+    const returnDateEnd = searchParams.returnDate
+      ? endOfDay(
+          add(new Date(searchParams.returnDate), {
+            days: searchParams.returnRange
+          })
+        )
+      : null
+
+    const returnSeats = searchParams.returnDate
+      ? await prisma.seats.findMany({
+          where: {
+            isAvailable: true,
+            class: searchParams.cabinClass,
+            flight: {
+              origin: {
+                code: searchParams.destination.toUpperCase()
+              },
+              destination: {
+                code: searchParams.origin.toUpperCase()
+              },
+              departure: {
+                gte: returnDateStart!,
+                lte: returnDateEnd!
+              }
+            }
           },
-          destination: {
-            code: flight.destination.code,
-            city: flight.destination.city,
-            country: flight.destination.country
+          include: {
+            flight: {
+              include: {
+                origin: true,
+                destination: true,
+                airline: true,
+                seats: {
+                  where: { isAvailable: true }
+                }
+              }
+            }
           },
-          airline: {
-            code: flight.airline.code,
-            name: flight.airline.name
-          },
-          minPrice: seat.price, // Initialize with first seat price
-          availableSeats: 1,
-          currency: searchParams.currency,
-          seats: [{ price: seat.price, seatNumber: seat.seatNumber }]
+          orderBy: getSortOptions(searchParams.sort)
         })
+      : null
+
+    const searchResults: SearchResults[] = []
+
+    // Pair departure and return seats
+    for (const depSeat of departureSeats) {
+      if (searchParams.returnDate) {
+        for (const retSeat of returnSeats ?? []) {
+          searchResults.push({
+            departure: seatToFlight(depSeat),
+            return: seatToFlight(retSeat),
+            totalPrice: depSeat.price + retSeat.price
+          })
+        }
       } else {
-        const existingFlight = flightMap.get(flight.id)
-        existingFlight.availableSeats++
-        existingFlight.seats.push({ price: seat.price, seatNumber: seat.seatNumber })
-        existingFlight.minPrice = Math.min(existingFlight.minPrice, seat.price)
+        searchResults.push({
+          departure: seatToFlight(depSeat),
+          totalPrice: depSeat.price
+        })
       }
-    })
+    }
 
-    const formattedFlights = Array.from(flightMap.values())
+    searchResults.sort((a, b) => a.totalPrice - b.totalPrice)
 
-    res.json({
-      flights: formattedFlights,
-      pagination: {
-        total: Math.ceil(totalSeats / searchParams.passengers), // Convert seat count to flight count
-        limit: searchParams.limit,
-        offset: searchParams.offset
-      }
-    })
+    const pagination: Pagination = {
+      total: 0,
+      limit: searchParams.limit,
+      offset: searchParams.offset
+    }
+
+    const response = {
+      results: searchResults.slice(searchParams.offset, searchParams.offset + searchParams.limit),
+      pagination
+    }
+
+    res.json(response)
   } catch (error) {
     if (error instanceof ZodError) {
       next(new AppError(error.message, 400))
@@ -145,6 +166,31 @@ async function searchFlights(req: Request, res: Response, next: NextFunction) {
   }
 }
 
+function seatToFlight(
+  seat: Prisma.SeatsGetPayload<{
+    include: {
+      flight: {
+        include: {
+          origin: true
+          destination: true
+          airline: true
+          seats: true
+        }
+      }
+    }
+  }>
+) {
+  const flight = seat.flight
+  const body: Flight = {
+    ...flight,
+    minPrice: seat.price,
+    currency: 'USD',
+    availableSeats: flight.seats.length
+  }
+
+  return body
+}
+
 function getSortOptions(sort?: string): Prisma.SeatsOrderByWithRelationInput {
   switch (sort) {
     case 'price_asc':
@@ -152,11 +198,11 @@ function getSortOptions(sort?: string): Prisma.SeatsOrderByWithRelationInput {
     case 'price_desc':
       return { price: 'desc' }
     case 'duration_asc':
-      return { flight: { durationMins: 'asc' } }
+      return { flight: { duration: 'asc' } }
     case 'duration_desc':
-      return { flight: { durationMins: 'desc' } }
+      return { flight: { duration: 'desc' } }
     default:
-      return { flight: { departure: 'asc' } }
+      return { price: 'asc' }
   }
 }
 
