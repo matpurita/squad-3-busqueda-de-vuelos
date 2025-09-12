@@ -13,7 +13,6 @@ function addMinutes(date: Date, minutes: number) {
 
 async function main() {
   console.log('Cleaning database...')
-  // Orden: borrar dependencias primero
   await prisma.seats.deleteMany({})
   await prisma.flight.deleteMany({})
   await prisma.airline.deleteMany({})
@@ -48,11 +47,9 @@ async function main() {
     { code: 'AKL', name: 'Auckland Intl', city: 'Auckland', country: 'New Zealand' }
   ]
 
-  const airports: Airport[] = []
-  for (const a of airportInput) {
-    const created = await prisma.airport.create({ data: a })
-    airports.push(created)
-  }
+  const airports: Airport[] = await Promise.all(
+    airportInput.map(async (a) => await prisma.airport.create({ data: a }))
+  )
 
   console.log('Creating airlines...')
   const airlineInput = [
@@ -68,107 +65,70 @@ async function main() {
     { code: 'AC', name: 'Air Canada' }
   ]
 
-  const airlines: Airline[] = []
-  for (const al of airlineInput) {
-    const created = await prisma.airline.create({ data: al })
-    airlines.push(created)
-  }
+  const airlines: Airline[] = await Promise.all(
+    airlineInput.map(async (al) => await prisma.airline.create({ data: al }))
+  )
 
-  console.log('Creating flights...')
-  const flights: Prisma.FlightGetPayload<{
-    include: {
-      origin: true,
-      destination: true,
-      airline: true
-    }
-  }>[] = []
+  console.log('Creating flights for each airport pair, daily...')
+  const baseDate = new Date()
+  const flightsPerDay: number = 4 // one flight per day per pair
+  const daysAhead: number = 60 // generate flights for 30 days
 
-  // Helper to pick random airport that is not equal to origin
-  function pickDestination(excludeCode: string) {
-    const pool = airports.filter((p) => p.code !== excludeCode)
-    return pool[randomInt(0, pool.length - 1)]
-  }
+  for (let d = 0; d < daysAhead; d++) {
+    for (const origin of airports) {
+      for (const destination of airports) {
+        if (origin.id === destination.id) continue
+        const dailyBatch: Promise<unknown>[] = []
 
-  const baseDate = new Date() // now
-  // We'll create 60 flights distributed among airports/airlines
-  for (let i = 0; i < 60; i++) {
-    const airline = airlines[randomInt(0, airlines.length - 1)]
-    const origin = airports[randomInt(0, airports.length - 1)]
-    const destination = pickDestination(origin.code)
+        for (let fpd = 0; fpd < flightsPerDay; fpd++) {
+          const airline = airlines[randomInt(0, airlines.length - 1)]
+          const departure = new Date(baseDate)
+          departure.setDate(baseDate.getDate() + d)
+          departure.setHours(randomInt(5, 22), [0, 15, 30, 45][randomInt(0, 3)], 0, 0)
 
-    const departOffsetDays = randomInt(1, 45) // within next 45 days
-    const departHour = randomInt(0, 23)
-    const departMinute = [0, 15, 30, 45][randomInt(0, 3)]
+          const duration = randomInt(60, 720)
+          const arrival = addMinutes(departure, duration)
+          const flightNumber = `${airline.code}${randomInt(100, 9999)}`
 
-    const departure = new Date(baseDate)
-    departure.setDate(baseDate.getDate() + departOffsetDays)
-    departure.setHours(departHour, departMinute, 0, 0)
+          const seatsData: Prisma.SeatsCreateManyFlightInput[] = []
+          const letters = ['A', 'B', 'C', 'D']
+          for (let row = 1; row <= 10; row++) {
+            for (const letter of letters) {
+              const seatNumber = `${row}${letter}`
+              const clazz = row <= 2 ? 'Business' : 'Economy'
+              const base = Math.max(50, Math.round(duration * 0.5))
+              const multiplier = clazz === 'Business' ? 2.5 : 1.0
+              const jitter = randomInt(-10, 30)
+              const price = Number((base * multiplier + jitter).toFixed(2))
+              const isAvailable = Math.random() > 0.05
 
-    // duration between 1h and 12h -> 60 to 720 minutes
-    const durationMins = randomInt(60, 720)
-    const arrival = addMinutes(departure, durationMins)
+              seatsData.push({ seatNumber, class: clazz, price, isAvailable })
+            }
+          }
 
-    const flightNumber = `${airline.code}${randomInt(100, 9999)}`
+          dailyBatch.push(
+            prisma.flight.create({
+              data: {
+                flightNumber,
+                departure,
+                arrival,
+                duration,
+                airline: { connect: { id: airline.id } },
+                origin: { connect: { id: origin.id } },
+                destination: { connect: { id: destination.id } },
+                seats: {
+                  createMany: {
+                    data: seatsData
+                  }
+                }
+              }
+            })
+          )
+        }
 
-    const flight = await prisma.flight.create({
-      data: {
-        flightNumber,
-        departure,
-        arrival,
-        duration: durationMins,
-        airline: { connect: { id: airline.id } },
-        origin: { connect: { id: origin.id } },
-        destination: { connect: { id: destination.id } }
-      }
-    })
-
-    flights.push({ ...flight, origin, destination, airline })
-  }
-
-  console.log('Creating seats for each flight (40 seats per flight)...')
-  // Generate seats per flight using createMany for performance
-  for (const f of flights) {
-    const seatsData: {
-      flightId: string
-      seatNumber: string
-      class: string
-      price: number
-      isAvailable?: boolean
-    }[] = []
-
-    // Seat layout: rows 1..10, seats A..D -> 10 * 4 = 40
-    const letters = ['A', 'B', 'C', 'D']
-    for (let row = 1; row <= 10; row++) {
-      for (const letter of letters) {
-        const seatNumber = `${row}${letter}`
-        // define class: rows 1-2 -> Business, rest Economy
-        const clazz = row <= 2 ? 'Business' : 'Economy'
-
-        // base price: depends on duration
-        const base = Math.max(50, Math.round(f.duration * 0.5))
-        // Business premium multiplier
-        const multiplier = clazz === 'Business' ? 2.5 : 1.0
-        // small random adjustment
-        const jitter = randomInt(-10, 30)
-        const price = Number((base * multiplier + jitter).toFixed(2))
-
-        // mark some seats as unavailable randomly (5% chance)
-        const isAvailable = Math.random() > 0.05
-
-        seatsData.push({
-          flightId: f.id,
-          seatNumber,
-          class: clazz,
-          price,
-          isAvailable
-        })
+        await Promise.all(dailyBatch)
       }
     }
-
-    // createMany in batches (all 40 at once)
-    await prisma.seats.createMany({
-      data: seatsData
-    })
   }
 
   console.log('Seed finished!')
