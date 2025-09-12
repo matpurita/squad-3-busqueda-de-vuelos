@@ -12,7 +12,6 @@ export const searchSchema = z.object({
   returnRange: z.coerce.number().min(0).max(7).default(0),
   passengers: z.coerce.number().min(1).max(9).default(1),
   cabinClass: z.enum(['Economy', 'Premium Economy', 'Business', 'First']).optional(),
-  nonStop: z.coerce.boolean().default(false),
   currency: z.string().length(3).default('USD'),
   sort: z.enum(['price_asc', 'price_desc', 'duration_asc', 'duration_desc']).optional(),
   limit: z.coerce.number().min(1).max(50).default(10),

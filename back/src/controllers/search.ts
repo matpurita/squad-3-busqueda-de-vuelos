@@ -18,7 +18,6 @@ async function searchFlights(req: Request, res: Response, next: NextFunction) {
       returnRange: req.query.returnRange,
       passengers: req.query.passengers,
       cabinClass: req.query.cabinClass,
-      nonStop: req.query.nonStop,
       currency: req.query.currency,
       sort: req.query.sort,
       limit: req.query.limit,
@@ -37,10 +36,10 @@ async function searchFlights(req: Request, res: Response, next: NextFunction) {
     )
 
     // Query seats first
-    const departureSeats = await prisma.seats.findMany({
+    const departurePromise = prisma.seats.findMany({
       where: {
         isAvailable: true,
-        class: { name: searchParams.cabinClass },
+        class: searchParams.cabinClass ? { name: searchParams.cabinClass } : undefined,
         flight: {
           origin: {
             code: searchParams.origin.toUpperCase()
@@ -85,11 +84,11 @@ async function searchFlights(req: Request, res: Response, next: NextFunction) {
         )
       : null
 
-    const returnSeats = searchParams.returnDate
-      ? await prisma.seats.findMany({
+    const returnPromise = searchParams.returnDate
+      ? prisma.seats.findMany({
           where: {
             isAvailable: true,
-            class: { name: searchParams.cabinClass },
+            class: searchParams.cabinClass ? { name: searchParams.cabinClass } : undefined,
             flight: {
               origin: {
                 code: searchParams.destination.toUpperCase()
@@ -119,6 +118,8 @@ async function searchFlights(req: Request, res: Response, next: NextFunction) {
           orderBy: getSortOptions(searchParams.sort)
         })
       : null
+
+    const [departureSeats, returnSeats] = await Promise.all([departurePromise, returnPromise])
 
     const searchResults = pairSearchResults(departureSeats, returnSeats)
 
