@@ -2,9 +2,11 @@ import { Prisma } from '@prisma/client'
 import { SearchParams } from '../schemas/searchParams'
 import { Flight } from '../schemas/flight'
 import { SearchResults } from '../schemas/searchResult'
+import { Class } from '../schemas/class'
 
 type SeatPayload = Prisma.SeatsGetPayload<{
   include: {
+    class: true
     flight: {
       include: {
         origin: true
@@ -36,14 +38,17 @@ function getSortOptions(sort?: SearchParams['sort']): Prisma.SeatsOrderByWithRel
 }
 
 function seatToFlight(seat: SeatPayload) {
-  const { flight: flightData, ...selectedSeat } = seat
+  const { flight: flightData, class: clazz, ...selectedSeat } = seat
   const { seats, ...flight } = flightData
   const body: Flight = {
     ...flight,
     minPrice: seats.sort((a, b) => a.price - b.price)[0]?.price,
     currency: 'USD',
     availableSeats: seats.length,
-    selectedSeat
+    selectedSeat: {
+      class: clazz as Class,
+      ...selectedSeat
+    }
   }
 
   return body

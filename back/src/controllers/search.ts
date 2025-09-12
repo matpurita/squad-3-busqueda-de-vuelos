@@ -40,7 +40,7 @@ async function searchFlights(req: Request, res: Response, next: NextFunction) {
     const departureSeats = await prisma.seats.findMany({
       where: {
         isAvailable: true,
-        class: searchParams.cabinClass,
+        class: { name: searchParams.cabinClass },
         flight: {
           origin: {
             code: searchParams.origin.toUpperCase()
@@ -55,6 +55,7 @@ async function searchFlights(req: Request, res: Response, next: NextFunction) {
         }
       },
       include: {
+        class: true,
         flight: {
           include: {
             origin: true,
@@ -88,7 +89,7 @@ async function searchFlights(req: Request, res: Response, next: NextFunction) {
       ? await prisma.seats.findMany({
           where: {
             isAvailable: true,
-            class: searchParams.cabinClass,
+            class: { name: searchParams.cabinClass },
             flight: {
               origin: {
                 code: searchParams.destination.toUpperCase()
@@ -103,6 +104,7 @@ async function searchFlights(req: Request, res: Response, next: NextFunction) {
             }
           },
           include: {
+            class: true,
             flight: {
               include: {
                 origin: true,

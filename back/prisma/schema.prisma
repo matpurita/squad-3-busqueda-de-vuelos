@@ -47,12 +47,12 @@ model SeatClass {
 }
 
 model Seats {
-  id          String     @id @default(cuid())
+  id          String    @id @default(cuid())
   flightId    String
   seatNumber  String
   price       Float
-  isAvailable Boolean    @default(true)
-  classId     Int?       @db.SmallInt
-  class       SeatClass? @relation(fields: [classId], references: [id], onDelete: NoAction, onUpdate: NoAction)
-  flight      Flight     @relation(fields: [flightId], references: [id])
+  isAvailable Boolean   @default(true)
+  classId     Int       @db.SmallInt
+  class       SeatClass @relation(fields: [classId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  flight      Flight    @relation(fields: [flightId], references: [id])
 }
