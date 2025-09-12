@@ -15,7 +15,8 @@ export const flightSchema = z.object({
   minPrice: z.number(),
   availableSeats: z.number(),
   currency: z.string().length(3),
-  seats: z.array(seatSchema).optional()
+  seats: z.array(seatSchema).optional(),
+  selectedSeat: seatSchema.optional()
 })
 
 export type Flight = z.infer<typeof flightSchema>

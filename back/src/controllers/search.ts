@@ -37,7 +37,6 @@ async function searchFlights(req: Request, res: Response, next: NextFunction) {
         days: searchParams.departureRange
       })
     )
-    console.log('Searching flights from', departureDateStart, 'to', departureDateEnd)
 
     // Query seats first
     const departureSeats = await prisma.seats.findMany({
@@ -71,8 +70,6 @@ async function searchFlights(req: Request, res: Response, next: NextFunction) {
       },
       orderBy: getSortOptions(searchParams.sort)
     })
-
-    console.log(departureSeats)
 
     const returnDateStart = searchParams.returnDate
       ? startOfDay(
@@ -146,7 +143,7 @@ async function searchFlights(req: Request, res: Response, next: NextFunction) {
     searchResults.sort((a, b) => a.totalPrice - b.totalPrice)
 
     const pagination: Pagination = {
-      total: 0,
+      total: searchResults.length,
       limit: searchParams.limit,
       offset: searchParams.offset
     }
@@ -184,12 +181,15 @@ function seatToFlight(
     }
   }>
 ) {
-  const { seats, ...flight } = seat.flight
+
+  const { flight: flightData, ...selectedSeat } = seat
+  const { seats, ...flight } = flightData
   const body: Flight = {
     ...flight,
-    minPrice: seat.price,
+    minPrice: seats.sort((a, b) => a.price - b.price)[0]?.price,
     currency: 'USD',
-    availableSeats: seats.length
+    availableSeats: seats.length,
+    selectedSeat
   }
 
   return body
