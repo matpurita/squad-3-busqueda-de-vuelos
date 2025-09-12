@@ -4,10 +4,8 @@ import { ZodError } from 'zod'
 import { AppError } from '../middlewares/error'
 import { prisma } from '../prisma/db'
 import { add, startOfDay, endOfDay, sub } from 'date-fns'
-import { Prisma } from '@prisma/client'
-import { SearchResults } from '../schemas/searchResult'
 import { Pagination } from '../schemas/pagination'
-import { Flight } from '../schemas/flight'
+import { getSortOptions, pairSearchResults } from '../utils/search'
 
 async function searchFlights(req: Request, res: Response, next: NextFunction) {
   try {
@@ -120,27 +118,7 @@ async function searchFlights(req: Request, res: Response, next: NextFunction) {
         })
       : null
 
-    const searchResults: SearchResults[] = []
-
-    // Pair departure and return seats
-    for (const depSeat of departureSeats) {
-      if (searchParams.returnDate) {
-        for (const retSeat of returnSeats ?? []) {
-          searchResults.push({
-            departure: seatToFlight(depSeat),
-            return: seatToFlight(retSeat),
-            totalPrice: depSeat.price + retSeat.price
-          })
-        }
-      } else {
-        searchResults.push({
-          departure: seatToFlight(depSeat),
-          totalPrice: depSeat.price
-        })
-      }
-    }
-
-    searchResults.sort((a, b) => a.totalPrice - b.totalPrice)
+    const searchResults = pairSearchResults(departureSeats, returnSeats)
 
     const pagination: Pagination = {
       total: searchResults.length,
@@ -160,53 +138,6 @@ async function searchFlights(req: Request, res: Response, next: NextFunction) {
       return
     }
     next(error)
-  }
-}
-
-function seatToFlight(
-  seat: Prisma.SeatsGetPayload<{
-    include: {
-      flight: {
-        include: {
-          origin: true
-          destination: true
-          airline: true
-          seats: {
-            where: {
-              isAvailable: true
-            }
-          }
-        }
-      }
-    }
-  }>
-) {
-
-  const { flight: flightData, ...selectedSeat } = seat
-  const { seats, ...flight } = flightData
-  const body: Flight = {
-    ...flight,
-    minPrice: seats.sort((a, b) => a.price - b.price)[0]?.price,
-    currency: 'USD',
-    availableSeats: seats.length,
-    selectedSeat
-  }
-
-  return body
-}
-
-function getSortOptions(sort?: string): Prisma.SeatsOrderByWithRelationInput {
-  switch (sort) {
-    case 'price_asc':
-      return { price: 'asc' }
-    case 'price_desc':
-      return { price: 'desc' }
-    case 'duration_asc':
-      return { flight: { duration: 'asc' } }
-    case 'duration_desc':
-      return { flight: { duration: 'desc' } }
-    default:
-      return { price: 'asc' }
   }
 }
 
