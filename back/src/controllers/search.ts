@@ -119,7 +119,15 @@ async function searchFlights(req: Request, res: Response, next: NextFunction) {
         })
       : null
 
-    const [departureSeats, returnSeats] = await Promise.all([departurePromise, returnPromise])
+    let [departureSeats, returnSeats] = await Promise.all([departurePromise, returnPromise])
+
+    if (searchParams.passengers) {
+      departureSeats = departureSeats.filter(
+        (seat) => seat.flight.seats.length >= searchParams.passengers
+      )
+      returnSeats =
+        returnSeats?.filter((seat) => seat.flight.seats.length >= searchParams.passengers) ?? null
+    }
 
     const searchResults = pairSearchResults(departureSeats, returnSeats)
 
