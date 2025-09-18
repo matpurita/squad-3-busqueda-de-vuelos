@@ -28,6 +28,7 @@
     "npm": ">=8.0.0"
   },
   "dependencies": {
-    "@fontsource/roboto": "^5.2.6"
+    "@fontsource/roboto": "^5.2.6",
+    "axios": "^1.12.2"
   }
 }
