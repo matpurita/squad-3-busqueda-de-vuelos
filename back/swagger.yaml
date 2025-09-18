@@ -150,6 +150,41 @@ paths:
         '500':
           description: Internal server error
 
+  /airport:
+    get:
+      summary: Get all airports
+      description: Retrieve a list of all airports
+      responses:
+        '200':
+          description: List of airports successfully retrieved
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Airport'
+        '500':
+          description: Internal server error
+
+  /airport/AITA:
+    get:
+      summary: Get all IATA codes
+      description: Retrieve a list of all airport IATA codes
+      responses:
+        '200':
+          description: List of IATA codes successfully retrieved
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: string
+                  minLength: 3
+                  maxLength: 3
+                example: ["JFK", "LAX", "LHR"]
+        '500':
+          description: Internal server error
+
 components:
   schemas:
     SearchResult:
