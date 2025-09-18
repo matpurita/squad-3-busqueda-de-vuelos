@@ -38,6 +38,8 @@ model Flight {
   destination   Airport  @relation("FlightsTo", fields: [destinationId], references: [id])
   origin        Airport  @relation("FlightsFrom", fields: [originId], references: [id])
   seats         Seats[]
+
+  @@index([originId])
 }
 
 model SeatClass {
@@ -55,4 +57,7 @@ model Seats {
   classId     Int       @db.SmallInt
   class       SeatClass @relation(fields: [classId], references: [id], onDelete: NoAction, onUpdate: NoAction)
   flight      Flight    @relation(fields: [flightId], references: [id])
+
+  @@index([flightId])
+  @@index([flightId], map: "Seats_flightId_idx1")
 }

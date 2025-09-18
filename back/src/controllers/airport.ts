@@ -1,17 +1,22 @@
+import { Request, Response } from 'express'
 import { prisma } from '../prisma/db'
 
-async function getAllAirports() {
-  return await prisma.airport.findMany()
+async function getAllAirports(_: Request, res: Response) {
+  const airports = await prisma.airport.findMany()
+  
+  res.json(airports)
 }
 
-async function getAllAITA() {
-  const query = await prisma.airport.findMany({
+async function getAllAITA(_: Request, res: Response) {
+  const airports = await prisma.airport.findMany({
     select: {
       code: true
     }
   })
 
-  return query.map((airport) => airport.code)
+  const aitaList = airports.map((airport) => airport.code)
+
+  res.json(aitaList)
 }
 
 export default { getAllAirports, getAllAITA }

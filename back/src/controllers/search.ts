@@ -5,7 +5,7 @@ import { AppError } from '../middlewares/error'
 import { prisma } from '../prisma/db'
 import { add, startOfDay, endOfDay, sub } from 'date-fns'
 import { Pagination } from '../schemas/pagination'
-import { getSortOptions, pairSearchResults } from '../utils/search'
+import { getSortOptions, pairSearchResults, sortSearchResults } from '../utils/search'
 
 async function searchFlights(req: Request, res: Response, next: NextFunction) {
   try {
@@ -131,14 +131,16 @@ async function searchFlights(req: Request, res: Response, next: NextFunction) {
 
     const searchResults = pairSearchResults(departureSeats, returnSeats)
 
+    const sortedResults = sortSearchResults(searchResults, searchParams.sort)
+
     const pagination: Pagination = {
-      total: searchResults.length,
+      total: sortedResults.length,
       limit: searchParams.limit,
       offset: searchParams.offset
     }
 
     const response = {
-      results: searchResults.slice(searchParams.offset, searchParams.offset + searchParams.limit),
+      results: sortedResults.slice(searchParams.offset, searchParams.offset + searchParams.limit),
       pagination
     }
 

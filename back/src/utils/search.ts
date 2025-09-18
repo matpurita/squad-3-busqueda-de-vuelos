@@ -77,9 +77,36 @@ function pairSearchResults(
     }
   }
 
-  results.sort((a, b) => a.totalPrice - b.totalPrice)
-
   return results
 }
 
-export { getSortOptions, seatToFlight, pairSearchResults }
+function sortSearchResults(searchResults: SearchResults[], sort: SearchParams['sort']) {
+  return searchResults.sort((a, b) => {
+    switch (sort) {
+      case 'price_asc':
+        return a.totalPrice - b.totalPrice
+      case 'price_desc':
+        return b.totalPrice - a.totalPrice
+      case 'duration_asc':
+        if (a.return && b.return) {
+          return (
+            a.departure.duration + a.return.duration - (b.departure.duration + b.return.duration)
+          )
+        } else {
+          return a.departure.duration - b.departure.duration
+        }
+      case 'duration_desc':
+        if (a.return && b.return) {
+          return (
+            b.departure.duration + b.return.duration - (a.departure.duration + a.return.duration)
+          )
+        } else {
+          return b.departure.duration - a.departure.duration
+        }
+      default:
+        return a.totalPrice - b.totalPrice
+    }
+  })
+}
+
+export { getSortOptions, seatToFlight, pairSearchResults, sortSearchResults }
