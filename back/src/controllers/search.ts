@@ -152,4 +152,93 @@ async function searchFlights(req: Request, res: Response, next: NextFunction) {
   }
 }
 
-export default { searchFlights }
+async function getFlightSuggestions(req: Request, res: Response, next: NextFunction) {
+  try {
+    const query = req.query.q as string
+
+    if (!query || query.length < 2) {
+      return res.json({ suggestions: [] })
+    }
+
+    const suggestions = await prisma.flight.findMany({
+      where: {
+        OR: [
+          {
+            origin: {
+              OR: [
+                { code: { contains: query.toUpperCase(), mode: 'insensitive' } },
+                { city: { contains: query, mode: 'insensitive' } },
+                { country: { contains: query, mode: 'insensitive' } }
+              ]
+            }
+          },
+          {
+            destination: {
+              OR: [
+                { code: { contains: query.toUpperCase(), mode: 'insensitive' } },
+                { city: { contains: query, mode: 'insensitive' } },
+                { country: { contains: query, mode: 'insensitive' } }
+              ]
+            }
+          },
+          {
+            airline: {
+              OR: [
+                { code: { contains: query.toUpperCase(), mode: 'insensitive' } },
+                { name: { contains: query, mode: 'insensitive' } }
+              ]
+            }
+          }
+        ]
+      },
+      select: {
+        id: true,
+        flightNumber: true,
+        departure: true,
+        arrival: true,
+        airline: {
+          select: {
+            code: true,
+            name: true
+          }
+        },
+        origin: {
+          select: {
+            code: true,
+            city: true,
+            country: true
+          }
+        },
+        destination: {
+          select: {
+            code: true,
+            city: true,
+            country: true
+          }
+        }
+      },
+      distinct: ['flightNumber'],
+      take: 10
+    })
+
+    res.json({
+      suggestions: suggestions.map((flight) => ({
+        id: flight.id,
+        flightNumber: flight.flightNumber,
+        label: `${flight.airline.code}${flight.flightNumber} - ${flight.origin.city} (${flight.origin.code}) to ${flight.destination.city} (${flight.destination.code})`,
+        departure: flight.departure,
+        arrival: flight.arrival,
+        airline: flight.airline,
+        origin: flight.origin,
+        destination: flight.destination
+      }))
+    })
+  } catch (error) {
+    next(error)
+  }
+}
+
+export default {
+  searchFlights,
+  getFlightSuggestions
+}
