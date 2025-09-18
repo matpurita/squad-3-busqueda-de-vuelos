@@ -1,10 +1,10 @@
 // Configuración de la aplicación
 export const config = {
   // API
-  API_URL: import.meta.env.VITE_API_URL || 'http://localhost:3001/api',
+  API_URL: import.meta.env.VITE_API_URL || 'http://localhost:3000/',
   
   // Modo de desarrollo (mock vs API)
-  USE_MOCK: import.meta.env.VITE_USE_MOCK === 'true' || true,
+  USE_MOCK: import.meta.env.VITE_USE_MOCK === 'true', //borro el or porque si la condicion de la izquierda da false va a entrar por el true de la derecha
   
   // Timeout de las peticiones
   REQUEST_TIMEOUT: parseInt(import.meta.env.VITE_REQUEST_TIMEOUT) || 10000,
@@ -30,7 +30,7 @@ export const endpoints = {
     ALL: '/flights'
   },
   AIRPORTS: {
-    ALL: '/airports',
+    ALL: '/airport',
     SEARCH: '/airports/search'
   },
   BOOKINGS: {

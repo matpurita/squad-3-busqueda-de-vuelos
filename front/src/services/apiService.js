@@ -59,7 +59,16 @@ export const apiService = {
   obtenerAeropuertos: async () => {
     try {
       const response = await apiClient.get(endpoints.AIRPORTS.ALL);
-      return response.data;
+      
+      const airports = response.data?.map((airport) => {
+        return {
+          codigo: airport.code,
+          nombre: airport.name,
+          ciudad: airport.city
+        }
+      })
+
+      return airports;
     } catch (error) {
       throw new Error(`Error obteniendo aeropuertos: ${error.message}`);
     }
