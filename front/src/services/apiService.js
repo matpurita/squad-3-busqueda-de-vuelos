@@ -1,5 +1,6 @@
 import axios from "axios";
 import { config, endpoints } from "../config";
+import { utilidades } from '../services';
 
 // Crear instancia de axios con configuración base
 const apiClient = axios.create({
@@ -19,12 +20,23 @@ apiClient.interceptors.response.use(
   }
 );
 
-/*
-        id: vuelo.id,
-        airline: vuelo.aerolinea,
-        from: vuelo.origen,
-        
-        */
+const mapearVuelo = (vuelo) => {
+  return {
+    uuid: crypto.randomUUID(),
+    id: vuelo.id,
+    airline: vuelo.airline.name,
+    from: vuelo.origin.name,
+    to: vuelo.destination.name,
+    departTime: utilidades.formatearHora(vuelo.departure),
+    arriveTime: utilidades.formatearHora(vuelo.arrival),
+    price: utilidades.formatearPrecio(vuelo.selectedSeat.price),
+    direct: true,
+    numeroVuelo: vuelo.flightNumber,
+    duracion: vuelo.duration,
+    fechaSalida: vuelo.departure,
+    fechaLlegada: vuelo.arrival,
+  };
+};
 
 // Servicio de API para vuelos
 export const apiService = {
@@ -35,25 +47,20 @@ export const apiService = {
         params: filtros,
       });
 
-      const vuelos = response.data.results.map((vuelo) => {
-        return {
-          uuid: crypto.randomUUID(),
-          id: vuelo.departure.id,
-          airline: vuelo.departure.airline.name,
-          from: vuelo.departure.origin.name,
-          to: vuelo.departure.destination.name,
-          departTime: vuelo.departure.departure,
-          arriveTime: vuelo.departure.arrival,
-          price: vuelo.totalPrice,
-          direct: true,
-          numeroVuelo: vuelo.departure.flightNumber,
-          duracion: vuelo.departure.duration,
-          fechaSalida: vuelo.departure.departure,
-          fechaLlegada: vuelo.departure.arrival,
-        };
+      const vuelosIda = [];
+      const vuelosRegreso = [];
+
+      response.data.results.forEach((vuelo) => {
+        vuelosIda.push(mapearVuelo(vuelo.departure));
+        if (vuelo.return != undefined) {
+          vuelosRegreso.push(mapearVuelo(vuelo.return));
+        }
       });
 
-      return vuelos;
+      return {
+        vuelosIda,
+        vuelosRegreso
+      };
     } catch (error) {
       throw new Error(`Error buscando vuelos: ${error.message}`);
     }

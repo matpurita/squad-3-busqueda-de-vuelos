@@ -21,14 +21,7 @@ export const FlightsProvider = ({ children }) => {
 
       // Buscar vuelos usando el servicio con filtros completos
       const vuelosData = await vuelosService.buscarConFiltros(criteria);
-      // Formatear los resultados para que coincidan con el formato esperado
-      const resultadosFormateados = vuelosData.map(vuelo => ({
-        ...vuelo,
-        departTime: utilidades.formatearHora(vuelo.departTime),
-        arriveTime: utilidades.formatearHora(vuelo.arriveTime),
-      }));
-      
-      setVuelos(resultadosFormateados);
+      setVuelos(vuelosData);
       setSearchPerformed(true);
     } catch (error) {
       console.error('Error buscando vuelos:', error);
