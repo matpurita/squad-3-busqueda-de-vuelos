@@ -21,7 +21,6 @@ export const FlightsProvider = ({ children }) => {
 
       // Buscar vuelos usando el servicio con filtros completos
       const vuelosData = await vuelosService.buscarConFiltros(criteria);
-      console.log("VUELOS", vuelosData)
       // Formatear los resultados para que coincidan con el formato esperado
       const resultadosFormateados = vuelosData.map(vuelo => ({
         ...vuelo,
