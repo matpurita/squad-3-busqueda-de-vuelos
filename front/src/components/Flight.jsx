@@ -25,6 +25,13 @@ export default function Flight({ flight, flightType }) {
     }
   };
 
+  // Función para formatear duración en minutos a "Xh Ym"
+  const formatDuration = (minutes) => {
+    const h = Math.floor(minutes / 60);
+    const m = minutes % 60;
+    return `${h}h ${m}m`;
+  };
+
   return (
     <Card 
       variant="outlined"
@@ -64,7 +71,7 @@ export default function Flight({ flight, flightType }) {
                 {flight.departTime} - {flight.arriveTime}
               </Typography>
               <Typography variant="caption" color="text.secondary">
-                Duración: {flight.duracion}
+                Duración: {formatDuration(flight.duracion)}
               </Typography>
             </Box>
           </Stack>
