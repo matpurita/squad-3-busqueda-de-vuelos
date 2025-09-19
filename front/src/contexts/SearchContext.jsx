@@ -15,6 +15,7 @@ export const SearchProvider = ({ children }) => {
   const [adults, setAdults] = useState(1);
   const [onlyDirect, setOnlyDirect] = useState(false);
   const [selectedClass, setSelectedClass] = useState('')
+  const [sort, setSort] = useState('price_asc')
   
   // Estado de aeropuertos y carga
   const [aeropuertos, setAeropuertos] = useState([]);
@@ -47,6 +48,7 @@ export const SearchProvider = ({ children }) => {
 
   // Obtener criterios de búsqueda formateados
   const getSearchCriteria = () => {
+    console.log('SORT:', sort)
     return {
       tripType,
       origin: from?.code,
@@ -56,6 +58,7 @@ export const SearchProvider = ({ children }) => {
       adults,
       onlyDirect,
       selectedClass,
+      sort: sort ?? undefined
     };
   };
 
@@ -79,11 +82,11 @@ export const SearchProvider = ({ children }) => {
   const value = {
     // Estado
     tripType, from, to, departDate, returnDate, adults, onlyDirect,
-    aeropuertos, loading, error, selectedClass,
+    aeropuertos, loading, error, selectedClass, sort,
     
     // Setters
     setTripType, setFrom, setTo, setDepartDate, setReturnDate,
-    setAdults, setOnlyDirect, setAeropuertos, setLoading, setError, setSelectedClass,
+    setAdults, setOnlyDirect, setAeropuertos, setLoading, setError, setSelectedClass, setSort,
     
     // Utilidades
     getSearchCriteria, isSearchValid, resetFilters
