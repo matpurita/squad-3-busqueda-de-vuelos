@@ -1,7 +1,6 @@
 import { Drawer } from "@mui/material";
 import { useState } from "react";
 import { useFlights } from "../contexts/FlightsContext";
-import Flight from "./Flight";
 import FlightDetail from "./FlightDetail";
 
 export default function Sidebar() {

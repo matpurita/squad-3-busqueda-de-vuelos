@@ -35,6 +35,8 @@ const mapearVuelo = (vuelo) => {
     duracion: vuelo.duration,
     fechaSalida: vuelo.departure,
     fechaLlegada: vuelo.arrival,
+    clase: vuelo.selectedSeat.class.name,
+    asiento: vuelo.selectedSeat.seatNumber
   };
 };
 
