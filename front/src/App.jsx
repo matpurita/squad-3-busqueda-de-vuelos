@@ -6,6 +6,7 @@ import ResultsList from './components/ResultsList'
 import { SearchProvider } from './contexts/SearchContext'
 import { FlightsProvider } from './contexts/FlightsContext'
 import '@fontsource/roboto/400.css';
+import Sidebar from './components/Sidebar'
 
 function AppContent() {
   return (
@@ -20,6 +21,7 @@ function AppContent() {
       <Divider sx={{ my: 3 }} />
 
       <ResultsList />
+      <Sidebar/>
     </Container>
   )
 }

@@ -7,25 +7,15 @@ import {
   Button,
   Box,
 } from "@mui/material";
-import { useFlights } from "../contexts/FlightsContext";
 
-export default function Flight({ flight }) {
-  const { selectFlight } = useFlights();
-
-  const onSelectFlight = (flight) => {
-    selectFlight(flight);
-  };
-
+export default function FlightDetail({ flight }) {
   return (
     <Card variant="outlined">
       <CardContent>
         <Stack
-          direction={{ xs: "column", sm: "row" }}
           spacing={2}
-          alignItems={{ sm: "center" }}
-          justifyContent="space-between"
         >
-          <Stack direction="row" spacing={2} alignItems="center">
+          <Stack spacing={2} alignItems="center">
             <Box>
               <Typography variant="h6">{flight.airline}</Typography>
               <Typography variant="caption" color="text.secondary">
@@ -65,10 +55,10 @@ export default function Flight({ flight }) {
             </Box>
             <Button
               variant="contained"
-              onClick={() => onSelectFlight(flight)}
               sx={{ minWidth: 120 }}
+              onClick={() => alert('Reserva realizada con exito')}
             >
-              Seleccionar
+              Reservar
             </Button>
           </Stack>
         </Stack>
