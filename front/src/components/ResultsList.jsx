@@ -4,13 +4,26 @@ import {
   Chip,
   Alert,
   CircularProgress,
+  Select,
+  FormControl,
+  InputLabel,
+  MenuItem 
 } from "@mui/material";
 import { useFlights } from "../contexts/FlightsContext";
+import { useSearch } from "../contexts/SearchContext";
 import Flight from "./Flight";
+import { useEffect } from 'react';
 
 export default function ResultsList() {
-  const { vuelos, loading, error, searchPerformed, } =
-    useFlights();
+  const { setSort, sort, isSearchValid, getSearchCriteria } = useSearch()
+  const { vuelos, loading, error, searchPerformed, searchFlights } = useFlights();
+
+  const onSort = async (event) => {
+    const sortOrder = event.target.value;
+    console.log(sortOrder)
+    setSort(sortOrder)    
+  };
+
   // Mostrar mensaje de carga
   if (loading) {
     return (
@@ -52,6 +65,22 @@ export default function ResultsList() {
 
   return (
     <Stack spacing={2}>
+      <FormControl fullWidth>
+        <InputLabel id="demo-simple-select-label">ordenar</InputLabel>
+        <Select
+          labelId="demo-simple-select-label"
+          id="demo-simple-select"
+          value={sort}
+          label="Order"
+          onChange={onSort}
+        >
+          <MenuItem value={'price_asc'}>Ordenar por precio más bajo</MenuItem>
+          <MenuItem value={'price_desc'}>Ordenar por precio más alto</MenuItem>
+          <MenuItem value={'duration_asc'}>Menor duración</MenuItem>
+          <MenuItem value={'duration_desc'}>Mayor duración</MenuItem>
+        </Select>
+      </FormControl>
+
       <Chip label="Vuelos Ida" />
       {vuelos.vuelosIda.map((r) => (
         <Flight key={r.uuid} flight={r} />
