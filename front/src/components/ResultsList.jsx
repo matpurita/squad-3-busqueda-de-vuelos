@@ -108,13 +108,13 @@ export default function ResultsList() {
 
       <Chip label="Vuelos Ida" />
       {vuelos.vuelosIda.map((r) => (
-        <Flight key={r.uuid} flight={r} />
+        <Flight key={r.uuid} flight={r} flightType="ida" />
       ))}
       {vuelos.vuelosRegreso.length > 0 && (
         <>
           <Chip label="Vuelos Regreso" />
           {vuelos.vuelosRegreso.map((r) => (
-            <Flight key={r.uuid} flight={r} />
+            <Flight key={r.uuid} flight={r} flightType="vuelta" />
           ))}
         </>
       )}

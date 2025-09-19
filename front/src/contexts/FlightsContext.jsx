@@ -1,4 +1,4 @@
-import { createContext, useContext, useState } from 'react';
+import { createContext, useContext, useEffect, useState } from 'react';
 import { vuelosService, utilidades } from '../services';
 
 // Crear el contexto
@@ -33,9 +33,14 @@ export const FlightsProvider = ({ children }) => {
   };
 
   // Función para seleccionar un vuelo
-  const selectFlight = (flight) => {
-    setSelectedFlight(flight);
-    console.log('Vuelo seleccionado:', flight);
+  const selectFlight = (idaFlight, vueltaFlight) => {
+    //hay que evaluar que alguno puede ser null dejar como estaba seleccionados
+    const selected = {
+      ida: idaFlight || selectedFlight?.ida || null,
+      vuelta: vueltaFlight || selectedFlight?.vuelta || null
+    };
+    setSelectedFlight(selected);
+    
     // Aquí puedes agregar lógica adicional como navegación o mostrar detalles
   };
 
