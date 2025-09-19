@@ -49,9 +49,9 @@ export const SearchProvider = ({ children }) => {
   const getSearchCriteria = () => {
     return {
       tripType,
-      from: from?.code,
-      to: to?.code,
-      departDate,
+      origin: from?.code,
+      destination: to?.code,
+      departureDate: departDate,
       returnDate: tripType === 'roundtrip' ? returnDate : undefined,
       adults,
       onlyDirect,

@@ -25,7 +25,7 @@ export const config = {
 // Endpoints de la API
 export const endpoints = {
   FLIGHTS: {
-    SEARCH: '/flights/search',
+    SEARCH: '/search',
     BY_ID: '/flights/:id',
     ALL: '/flights'
   },

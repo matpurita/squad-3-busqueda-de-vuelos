@@ -21,23 +21,12 @@ export const FlightsProvider = ({ children }) => {
 
       // Buscar vuelos usando el servicio con filtros completos
       const vuelosData = await vuelosService.buscarConFiltros(criteria);
-      
+      console.log("VUELOS", vuelosData)
       // Formatear los resultados para que coincidan con el formato esperado
       const resultadosFormateados = vuelosData.map(vuelo => ({
-        id: vuelo.id,
-        airline: vuelo.aerolinea,
-        from: vuelo.origen,
-        to: vuelo.destino,
-        departTime: utilidades.formatearHora(vuelo.fechaSalida),
-        arriveTime: utilidades.formatearHora(vuelo.fechaLlegada),
-        price: vuelo.precio,
-        direct: vuelo.escalas === 0,
-        // Datos adicionales del vuelo
-        numeroVuelo: vuelo.numeroVuelo,
-        duracion: vuelo.duracion,
-        fechaSalida: vuelo.fechaSalida,
-        fechaLlegada: vuelo.fechaLlegada,
-        escalas: vuelo.escalas
+        ...vuelo,
+        departTime: utilidades.formatearHora(vuelo.departTime),
+        arriveTime: utilidades.formatearHora(vuelo.arriveTime),
       }));
       
       setVuelos(resultadosFormateados);
