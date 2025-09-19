@@ -61,7 +61,8 @@ export const apiService = {
 
       return {
         vuelosIda,
-        vuelosRegreso
+        vuelosRegreso,
+        pagination: response.data.pagination
       };
     } catch (error) {
       throw new Error(`Error buscando vuelos: ${error.message}`);
