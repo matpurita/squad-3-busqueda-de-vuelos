@@ -9,7 +9,7 @@ import { useFlights } from "../contexts/FlightsContext";
 import Flight from "./Flight";
 
 export default function ResultsList() {
-  const { vuelos, loading, error, searchPerformed, } =
+  const { vuelos, loading, error, searchPerformed } =
     useFlights();
   // Mostrar mensaje de carga
   if (loading) {
@@ -54,13 +54,13 @@ export default function ResultsList() {
     <Stack spacing={2}>
       <Chip label="Vuelos Ida" />
       {vuelos.vuelosIda.map((r) => (
-        <Flight key={r.uuid} flight={r} />
+        <Flight key={r.uuid} flight={r} flightType="ida" />
       ))}
       {vuelos.vuelosRegreso.length > 0 && (
         <>
           <Chip label="Vuelos Regreso" />
           {vuelos.vuelosRegreso.map((r) => (
-            <Flight key={r.uuid} flight={r} />
+            <Flight key={r.uuid} flight={r} flightType="vuelta" />
           ))}
         </>
       )}

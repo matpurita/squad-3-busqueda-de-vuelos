@@ -9,15 +9,30 @@ import {
 } from "@mui/material";
 import { useFlights } from "../contexts/FlightsContext";
 
-export default function Flight({ flight }) {
-  const { selectFlight } = useFlights();
-
-  const onSelectFlight = (flight) => {
-    selectFlight(flight);
+export default function Flight({ flight, flightType }) {
+  const { selectFlight, selectedFlight } = useFlights();
+  
+  // Verificar si este vuelo está seleccionado
+  const isSelected = selectedFlight && 
+    ((flightType === "ida" && selectedFlight.ida?.uuid === flight.uuid) ||
+     (flightType === "vuelta" && selectedFlight.vuelta?.uuid === flight.uuid));
+  
+  const onSelectFlight = (flight, flightType) => {
+    if (flightType === "ida") {
+      selectFlight(flight);
+    } else if (flightType === "vuelta") {
+      selectFlight(null, flight);
+    }
   };
 
   return (
-    <Card variant="outlined">
+    <Card 
+      variant="outlined"
+      sx={{
+        backgroundColor: isSelected ? 'rgba(0, 0, 0, 0.04)' : 'transparent',
+        border: isSelected ? '1px solid rgba(0, 0, 0, 0.1)' : undefined
+      }}
+    >
       <CardContent>
         <Stack
           direction={{ xs: "column", sm: "row" }}
@@ -65,7 +80,7 @@ export default function Flight({ flight }) {
             </Box>
             <Button
               variant="contained"
-              onClick={() => onSelectFlight(flight)}
+              onClick={() => onSelectFlight(flight, flightType)}
               sx={{ minWidth: 120 }}
             >
               Seleccionar
