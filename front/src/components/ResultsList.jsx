@@ -1,10 +1,16 @@
-import { Card, CardContent, Stack, Typography, Chip, Button, Box, Alert, CircularProgress } from '@mui/material';
-import { utilidades } from '../services';
-import { useFlights } from '../contexts/FlightsContext';
+import {
+  Stack,
+  Typography,
+  Chip,
+  Alert,
+  CircularProgress,
+} from "@mui/material";
+import { useFlights } from "../contexts/FlightsContext";
+import Flight from "./Flight";
 
 export default function ResultsList() {
-  const { vuelos, loading, error, searchPerformed, selectFlight } = useFlights();
-
+  const { vuelos, loading, error, searchPerformed, selectFlight } =
+    useFlights();
   // Mostrar mensaje de carga
   if (loading) {
     return (
@@ -36,7 +42,7 @@ export default function ResultsList() {
   }
 
   // Mostrar mensaje si no hay resultados
-  if (!vuelos.length) {
+  if (vuelos.vuelosIda.length === 0) {
     return (
       <Typography variant="body2" color="text.secondary">
         No se encontraron vuelos. Prueba con otros criterios de búsqueda.
@@ -46,59 +52,18 @@ export default function ResultsList() {
 
   return (
     <Stack spacing={2}>
-      {vuelos.map((r) => (
-        <Card key={r.uuid} variant="outlined">
-          <CardContent>
-            <Stack direction={{ xs: 'column', sm: 'row' }} spacing={2} alignItems={{ sm: 'center' }} justifyContent="space-between">
-              <Stack direction="row" spacing={2} alignItems="center">
-                <Box>
-                  <Typography variant="h6">{r.airline}</Typography>
-                  <Typography variant="caption" color="text.secondary">
-                    {r.numeroVuelo}
-                  </Typography>
-                </Box>
-                {r.direct && <Chip size="small" color="success" label="Directo" />}
-                {!r.direct && <Chip size="small" color="warning" label="Con escalas" />}
-              </Stack>
-              
-              <Stack direction="row" spacing={2} alignItems="center">
-                <Box>
-                  <Typography variant="body1" fontWeight="medium">
-                    {r.from} → {r.to}
-                  </Typography>
-                  <Typography variant="body2" color="text.secondary">
-                    {r.departTime} - {r.arriveTime}
-                  </Typography>
-                  <Typography variant="caption" color="text.secondary">
-                    Duración: {r.duracion}
-                  </Typography>
-                </Box>
-              </Stack>
-              
-              <Stack direction="row" spacing={2} alignItems="center">
-                <Box textAlign="right">
-                  <Typography variant="h6" color="primary">
-                    {utilidades.formatearPrecio(r.price)}
-                  </Typography>
-                  <Typography variant="caption" color="text.secondary">
-                    por pasajero
-                  </Typography>
-                </Box>
-                <Button 
-                  variant="contained" 
-                  onClick={() => selectFlight(r)}
-                  sx={{ minWidth: 120 }}
-                >
-                  Seleccionar
-                </Button>
-              </Stack>
-            </Stack>
-          </CardContent>
-        </Card>
+      <Chip label="Vuelos Ida" />
+      {vuelos.vuelosIda.map((r) => (
+        <Flight key={r.uuid} flight={r} />
       ))}
+      {vuelos.vuelosRegreso.length > 0 && (
+        <>
+          <Chip label="Vuelos Regreso" />
+          {vuelos.vuelosRegreso.map((r) => (
+            <Flight key={r.uuid} flight={r} />
+          ))}
+        </>
+      )}
     </Stack>
   );
 }
-
-
-
