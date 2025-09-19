@@ -9,7 +9,7 @@ import { useFlights } from "../contexts/FlightsContext";
 import Flight from "./Flight";
 
 export default function ResultsList() {
-  const { vuelos, loading, error, searchPerformed, selectFlight } =
+  const { vuelos, loading, error, searchPerformed, } =
     useFlights();
   // Mostrar mensaje de carga
   if (loading) {
