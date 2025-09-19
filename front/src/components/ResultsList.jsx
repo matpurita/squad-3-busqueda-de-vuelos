@@ -12,15 +12,13 @@ import {
 import { useFlights } from "../contexts/FlightsContext";
 import { useSearch } from "../contexts/SearchContext";
 import Flight from "./Flight";
-import { useEffect } from 'react';
 
 export default function ResultsList() {
-  const { setSort, sort, isSearchValid, getSearchCriteria } = useSearch()
-  const { vuelos, loading, error, searchPerformed, searchFlights } = useFlights();
+  const { setSort, sort, } = useSearch()
+  const { vuelos, loading, error, searchPerformed, } = useFlights();
 
-  const onSort = async (event) => {
+  const onSort = (event) => {
     const sortOrder = event.target.value;
-    console.log(sortOrder)
     setSort(sortOrder)    
   };
 
