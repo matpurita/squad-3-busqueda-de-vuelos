@@ -60,9 +60,6 @@ export default function FlightDetail({ flight }) {
             {ida?.clase}
           </Typography>
 
-          <Typography variant="h6" color="primary">
-            Asiento: {ida?.asiento}
-          </Typography>
         </Box>
       </Stack>
     
@@ -112,9 +109,6 @@ export default function FlightDetail({ flight }) {
           <Box textAlign="center">
             <Typography variant="h6" color="primary">
               {vuelta?.clase}
-            </Typography>
-            <Typography variant="h6" color="primary">
-              Asiento: {vuelta?.asiento}
             </Typography>
           </Box>
         </Stack>
