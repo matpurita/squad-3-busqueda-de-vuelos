@@ -7,19 +7,46 @@ import {
   Select,
   FormControl,
   InputLabel,
-  MenuItem 
+  MenuItem,
+  TablePagination,
 } from "@mui/material";
 import { useFlights } from "../contexts/FlightsContext";
 import { useSearch } from "../contexts/SearchContext";
 import Flight from "./Flight";
+import * as React from "react";
 
 export default function ResultsList() {
-  const { setSort, sort, } = useSearch()
-  const { vuelos, loading, error, searchPerformed, } = useFlights();
+  const { setSort, sort, getSearchCriteria } = useSearch();
+  const { vuelos, loading, error, searchPerformed, searchFlights } =
+    useFlights();
+  const [rowsPerPage, setRowsPerPage] = React.useState(10);
 
   const onSort = (event) => {
     const sortOrder = event.target.value;
-    setSort(sortOrder)    
+    setSort(sortOrder);
+  };
+
+  const handleChangePage = async (event, newPage) => {
+    const criteria = {
+      ...getSearchCriteria(),
+      offset: newPage,
+    };
+
+    await searchFlights(criteria);
+  };
+
+  const handleChangeRowsPerPage = async (event) => {
+    const rows = parseInt(event.target.value, 10)
+    setRowsPerPage(rows);
+
+        const criteria = {
+      ...getSearchCriteria(),
+      offset: 0,
+      limit: rows
+    };
+
+    await searchFlights(criteria);
+    
   };
 
   // Mostrar mensaje de carga
@@ -72,10 +99,10 @@ export default function ResultsList() {
           label="Order"
           onChange={onSort}
         >
-          <MenuItem value={'price_asc'}>Ordenar por precio más bajo</MenuItem>
-          <MenuItem value={'price_desc'}>Ordenar por precio más alto</MenuItem>
-          <MenuItem value={'duration_asc'}>Menor duración</MenuItem>
-          <MenuItem value={'duration_desc'}>Mayor duración</MenuItem>
+          <MenuItem value={"price_asc"}>Ordenar por precio más bajo</MenuItem>
+          <MenuItem value={"price_desc"}>Ordenar por precio más alto</MenuItem>
+          <MenuItem value={"duration_asc"}>Menor duración</MenuItem>
+          <MenuItem value={"duration_desc"}>Mayor duración</MenuItem>
         </Select>
       </FormControl>
 
@@ -91,6 +118,14 @@ export default function ResultsList() {
           ))}
         </>
       )}
+      <TablePagination
+        component="div"
+        count={vuelos.pagination.total}
+        page={vuelos.pagination.offset}
+        rowsPerPage={rowsPerPage}
+        onPageChange={handleChangePage}
+        onRowsPerPageChange={handleChangeRowsPerPage}
+      />
     </Stack>
   );
 }
