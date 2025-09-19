@@ -11,7 +11,6 @@ squad-3-busqueda-de-vuelos/
 └── package.json    # Workspace principal
 ```
 
-
 ## Comandos Disponibles
 
 ### Desde el directorio raíz:
