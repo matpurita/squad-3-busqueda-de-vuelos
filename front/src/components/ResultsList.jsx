@@ -47,7 +47,7 @@ export default function ResultsList() {
   return (
     <Stack spacing={2}>
       {vuelos.map((r) => (
-        <Card key={r.id} variant="outlined">
+        <Card key={r.uuid} variant="outlined">
           <CardContent>
             <Stack direction={{ xs: 'column', sm: 'row' }} spacing={2} alignItems={{ sm: 'center' }} justifyContent="space-between">
               <Stack direction="row" spacing={2} alignItems="center">

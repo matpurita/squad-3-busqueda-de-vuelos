@@ -37,7 +37,8 @@ export const apiService = {
 
       const vuelos = response.data.results.map((vuelo) => {
         return {
-          id: crypto.randomUUID(),
+          uuid: crypto.randomUUID(),
+          id: vuelo.departure.id,
           airline: vuelo.departure.airline.name,
           from: vuelo.departure.origin.name,
           to: vuelo.departure.destination.name,
