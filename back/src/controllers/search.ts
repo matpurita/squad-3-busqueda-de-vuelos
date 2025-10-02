@@ -1,5 +1,5 @@
 import { NextFunction, Request, Response } from 'express'
-import { searchSchema } from '../schemas/searchParams'
+import { searchParamsSchema } from '../schemas/searchParams'
 import { ZodError } from 'zod'
 import { AppError } from '../middlewares/error'
 import { prisma } from '../prisma/db'
@@ -9,7 +9,7 @@ import { getSortOptions, pairSearchResults, sortSearchResults } from '../utils/s
 
 async function searchFlights(req: Request, res: Response, next: NextFunction) {
   try {
-    const searchParams = searchSchema.parse({
+    const searchParams = searchParamsSchema.parse({
       origin: req.query.origin,
       destination: req.query.destination,
       departureDate: req.query.departureDate,

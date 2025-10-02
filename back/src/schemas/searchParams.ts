@@ -1,6 +1,6 @@
 import z from 'zod'
 
-export const searchSchema = z.object({
+export const searchParamsSchema = z.object({
   origin: z.string().min(3).max(3),
   destination: z.string().min(3).max(3),
   departureDate: z.string().regex(/^\d{4}-\d{2}-\d{2}$/),
@@ -18,4 +18,4 @@ export const searchSchema = z.object({
   offset: z.coerce.number().min(0).default(0)
 })
 
-export type SearchParams = z.infer<typeof searchSchema>
+export type SearchParams = z.infer<typeof searchParamsSchema>
