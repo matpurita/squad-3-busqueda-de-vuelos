@@ -5,6 +5,7 @@ import SearchForm from './components/SearchForm'
 import ResultsList from './components/ResultsList'
 import { SearchProvider } from './contexts/SearchContext'
 import { FlightsProvider } from './contexts/FlightsContext'
+import { AuthProvider } from './contexts/AuthContext'
 import '@fontsource/roboto/400.css';
 import Sidebar from './components/Sidebar'
 
@@ -21,7 +22,7 @@ function AppContent() {
       <Divider sx={{ my: 3 }} />
 
       <ResultsList />
-      <Sidebar/>
+      <Sidebar />
     </Container>
   )
 }
@@ -30,11 +31,13 @@ function App() {
   return (
     <ThemeProvider theme={theme}>
       <CssBaseline />
-      <SearchProvider>
-        <FlightsProvider>
-          <AppContent />
-        </FlightsProvider>
-      </SearchProvider>
+      <AuthProvider>
+        <SearchProvider>
+          <FlightsProvider>
+            <AppContent />
+          </FlightsProvider>
+        </SearchProvider>
+      </AuthProvider>
     </ThemeProvider>
   )
 }
