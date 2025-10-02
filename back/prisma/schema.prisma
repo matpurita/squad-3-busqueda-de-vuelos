@@ -1,0 +1,63 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider  = "postgresql"
+  url       = env("DATABASE_URL")
+  directUrl = env("DIRECT_URL")
+}
+
+model Airport {
+  id          String   @id @default(cuid())
+  code        String   @unique
+  name        String
+  city        String
+  country     String
+  flightsTo   Flight[] @relation("FlightsTo")
+  flightsFrom Flight[] @relation("FlightsFrom")
+}
+
+model Airline {
+  id      String   @id @default(cuid())
+  code    String   @unique
+  name    String
+  flights Flight[]
+}
+
+model Flight {
+  id            String   @id @default(cuid())
+  flightNumber  String
+  departure     DateTime
+  arrival       DateTime
+  duration      Int
+  airlineId     String
+  originId      String
+  destinationId String
+  airline       Airline  @relation(fields: [airlineId], references: [id])
+  destination   Airport  @relation("FlightsTo", fields: [destinationId], references: [id])
+  origin        Airport  @relation("FlightsFrom", fields: [originId], references: [id])
+  seats         Seats[]
+
+  @@index([originId])
+}
+
+model SeatClass {
+  id    Int     @id @default(autoincrement()) @db.SmallInt
+  name  String  @unique
+  seats Seats[]
+}
+
+model Seats {
+  id          String    @id @default(cuid())
+  flightId    String
+  seatNumber  String
+  price       Float
+  isAvailable Boolean   @default(true)
+  classId     Int       @db.SmallInt
+  class       SeatClass @relation(fields: [classId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  flight      Flight    @relation(fields: [flightId], references: [id])
+
+  @@index([flightId])
+  @@index([flightId], map: "Seats_flightId_idx1")
+}

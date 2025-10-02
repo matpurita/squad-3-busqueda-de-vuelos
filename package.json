@@ -1,0 +1,34 @@
+{
+  "name": "squad-3-busqueda-de-vuelos",
+  "version": "1.0.0",
+  "description": "Sistema de búsqueda de vuelos - Squad 3",
+  "private": true,
+  "workspaces": [
+    "front",
+    "back"
+  ],
+  "scripts": {
+    "install:all": "npm install --workspaces",
+    "dev": "concurrently \"npm run dev -w front\" \"npm run dev -w back\"",
+    "start": "concurrently \"npm run start -w front\" \"npm run start -w back\""
+  },
+  "keywords": [
+    "vuelos",
+    "busqueda",
+    "react",
+    "nodejs"
+  ],
+  "author": "Squad 3",
+  "license": "MIT",
+  "devDependencies": {
+    "concurrently": "^8.2.2"
+  },
+  "engines": {
+    "node": ">=18.0.0",
+    "npm": ">=8.0.0"
+  },
+  "dependencies": {
+    "@fontsource/roboto": "^5.2.6",
+    "axios": "^1.12.2"
+  }
+}
