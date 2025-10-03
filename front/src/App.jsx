@@ -20,7 +20,7 @@ function Header() {
   // Mock state para simular autenticación
 
 
-  const { user } = useAuth()
+  const { user,logout } = useAuth()
 
   const handleMenuOpen = (event) => {
     setAnchorEl(event.currentTarget)
@@ -37,6 +37,7 @@ function Header() {
 
   const handleLogout = () => {
     // Mock logout
+    logout() // Usar la función de logout del contextos
     handleMenuClose()
     console.log('Mock: Usuario deslogueado')
   }

@@ -22,11 +22,12 @@ export const AuthProvider = ({ children }) => {
 
   // 🔹 Cerrar sesión (sin dependencias) - segundo
   const logout = useCallback(() => {
+    console.log("Cerrando sesión");
     setUser(null);
     setToken(null);
     sessionStorage.removeItem("token");
     sessionStorage.removeItem("user");
-  }, []);
+  }, [setUser, setToken]);
 
   // 🔹 Validar token (depende de mockValidateToken y logout) - tercero
   const validateToken = useCallback(async (tokenToValidate) => {
