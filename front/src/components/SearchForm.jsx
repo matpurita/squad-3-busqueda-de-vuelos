@@ -49,6 +49,32 @@ export default function SearchForm({ onResults }) {
 
   const { searchFlights, loading: searchLoading } = useFlights();
 
+  // 🗓️ Utilidades para fechas
+  const today = new Date().toISOString().split('T')[0]; // Formato YYYY-MM-DD
+
+  // 🚀 Manejar cambio de fecha de ida con validaciones
+  const handleDepartDateChange = (newDate) => {
+    setDepartDate(newDate);
+    
+    // Si la fecha de vuelta es anterior a la nueva fecha de ida, actualizarla
+    if (returnDate && newDate && returnDate < newDate) {
+      setReturnDate(newDate);
+    }
+  };
+
+  // 🚀 Manejar cambio de fecha de vuelta con validaciones
+  const handleReturnDateChange = (newDate) => {
+    // Solo permitir fechas >= fecha de ida
+    if (departDate && newDate && newDate >= departDate) {
+      setReturnDate(newDate);
+    } else if (!departDate) {
+      // Si no hay fecha de ida, permitir cualquier fecha >= hoy
+      if (newDate >= today) {
+        setReturnDate(newDate);
+      }
+    }
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
@@ -165,9 +191,13 @@ export default function SearchForm({ onResults }) {
               label="Salida"
               type="date"
               value={departDate}
-              onChange={(e) => setDepartDate(e.target.value)}
+              onChange={(e) => handleDepartDateChange(e.target.value)}
               InputLabelProps={{ shrink: true }}
               fullWidth
+              required
+              inputProps={{
+                min: today, // ✅ Solo fechas desde hoy en adelante
+              }}
               InputProps={{
                 startAdornment: (
                   <InputAdornment position="start">
@@ -184,9 +214,13 @@ export default function SearchForm({ onResults }) {
                 label="Regreso"
                 type="date"
                 value={returnDate}
-                onChange={(e) => setReturnDate(e.target.value)}
+                onChange={(e) => handleReturnDateChange(e.target.value)}
                 InputLabelProps={{ shrink: true }}
                 fullWidth
+                required
+                inputProps={{
+                  min: departDate || today, // ✅ Mínimo: fecha de ida o hoy
+                }}
                 InputProps={{
                   startAdornment: (
                     <InputAdornment position="start">
@@ -194,6 +228,7 @@ export default function SearchForm({ onResults }) {
                     </InputAdornment>
                   ),
                 }}
+                helperText={departDate ? `Debe ser ${departDate} o posterior` : "Selecciona primero la fecha de ida"}
               />
             </Grid>
           )}
