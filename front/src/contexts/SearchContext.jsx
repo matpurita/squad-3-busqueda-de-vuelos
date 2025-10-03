@@ -64,7 +64,7 @@ export const SearchProvider = ({ children }) => {
 
   // Validar si la búsqueda es válida
   const isSearchValid = () => {
-    return from && to && departDate;
+    return from && to && departDate && (tripType === 'oneway' || (tripType === 'roundtrip' && returnDate)) && adults > 0;
   };
 
   // Resetear filtros
