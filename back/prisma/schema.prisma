@@ -61,3 +61,13 @@ model Seats {
   @@index([flightId])
   @@index([flightId], map: "Seats_flightId_idx1")
 }
+
+model SearchMetrics {
+  id          String   @id @default(cuid())
+  userId      String?
+  flightsFrom String
+  flightsTo   String
+  dateFrom    DateTime
+  dateTo      DateTime
+  timestamp   DateTime @default(now())
+}
