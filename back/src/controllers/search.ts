@@ -246,7 +246,6 @@ async function sendFlightBooking(req: Request, res: Response, next: NextFunction
     const flightBooking = flightBookingSchema.parse({
       userId: req.body.userId,
       flightId: req.body.flightId,
-      direction: req.body.direction,
       timestamp: req.body.timestamp
     })
 

@@ -77,7 +77,6 @@ model FlightBookings {
   id        String   @id @default(cuid())
   userId    String
   flightId  String
-  direction String
   timestamp DateTime @default(now())
   flight    Flight   @relation(fields: [flightId], references: [id])
 }
