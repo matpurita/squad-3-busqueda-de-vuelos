@@ -7,7 +7,7 @@ export const searchMetricSchema = z.object({
   dateFrom: z.string(),
   dateTo: z.string(),
   resultsCount: z.number().int().nonnegative(),
-  timestamp: z.string()
+  timestamp: z.date().default(new Date())
 })
 
 export type SearchMetric = z.infer<typeof searchMetricSchema>

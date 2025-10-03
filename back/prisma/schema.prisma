@@ -38,6 +38,7 @@ model Flight {
   destination   Airport  @relation("FlightsTo", fields: [destinationId], references: [id])
   origin        Airport  @relation("FlightsFrom", fields: [originId], references: [id])
   seats         Seats[]
+  bookings      FlightBookings[]
 
   @@index([originId])
 }
@@ -70,4 +71,12 @@ model SearchMetrics {
   dateFrom    DateTime
   dateTo      DateTime
   timestamp   DateTime @default(now())
+}
+
+model FlightBookings {
+  id        String   @id @default(cuid())
+  userId    String
+  flightId  String
+  timestamp DateTime @default(now())
+  flight    Flight   @relation(fields: [flightId], references: [id])
 }

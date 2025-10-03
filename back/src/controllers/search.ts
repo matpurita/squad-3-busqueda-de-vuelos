@@ -6,6 +6,7 @@ import { prisma } from '../prisma/db'
 import { add, startOfDay, endOfDay, sub } from 'date-fns'
 import { Pagination } from '../schemas/pagination'
 import { getSortOptions, pairSearchResults, sortSearchResults } from '../utils/search'
+import { flightBookingSchema } from '../schemas/flightBooking'
 
 async function searchFlights(req: Request, res: Response, next: NextFunction) {
   try {
@@ -240,7 +241,32 @@ async function getFlightSuggestions(req: Request, res: Response, next: NextFunct
   }
 }
 
+async function sendFlightBooking(req: Request, res: Response, next: NextFunction) {
+  try {
+    const flightBooking = flightBookingSchema.parse({
+      userId: req.body.userId,
+      flightId: req.body.flightId,
+      timestamp: req.body.timestamp
+    })
+
+    await prisma.flightBookings.create({
+      data: flightBooking
+    })
+
+    // await fetch('[CORE]', {
+    //   method: 'POST',
+    //   headers: { 'Content-Type': 'application/json' },
+    //   body: JSON.stringify(flightBooking)
+    // })
+
+    res.status(201).json({ message: 'Booking recorded successfully' })
+  } catch (error) {
+    next(error)
+  }
+}
+
 export default {
   searchFlights,
-  getFlightSuggestions
+  getFlightSuggestions,
+  sendFlightBooking
 }
