@@ -10,6 +10,7 @@
   "scripts": {
     "install:all": "npm install --workspaces",
     "dev": "concurrently \"npm run dev -w front\" \"npm run dev -w back\"",
+    "dev:tsc": "concurrently \"npm run dev -w front\" \"npm run dev:tsc -w back\"",
     "start": "concurrently \"npm run start -w front\" \"npm run start -w back\""
   },
   "keywords": [
