@@ -62,6 +62,33 @@ export const AuthProvider = ({ children }) => {
   const setExternalToken = useCallback(async (externalToken) => {
     await validateToken(externalToken);
   }, [validateToken]);
+
+  // 🔹 Login con email y password
+  const login = useCallback(async (email, password) => {
+    try {
+      setLoading(true);
+      
+      // Aquí iría la llamada al API real
+      // const response = await fetch('/api/login', {
+      //   method: 'POST',
+      //   headers: { 'Content-Type': 'application/json' },
+      //   body: JSON.stringify({ email, password })
+      // });
+      
+      // Mock de autenticación
+      if (email === 'admin@vuelos.com' && password === 'admin123') {
+        const mockToken = 'valid-token';
+        await validateToken(mockToken);
+        return { success: true };
+      } else {
+        throw new Error('Credenciales incorrectas');
+      }
+    } catch (error) {
+      throw error;
+    } finally {
+      setLoading(false);
+    }
+  }, [validateToken]);
   
   // 🔹 Al iniciar, intenta cargar token y validar
   useEffect(() => {
@@ -86,9 +113,10 @@ export const AuthProvider = ({ children }) => {
     token,
     isAuthenticated,
     loading,
+    login,
     setExternalToken,
     logout
-  }), [user, token, isAuthenticated, loading, setExternalToken, logout]);
+  }), [user, token, isAuthenticated, loading, login, setExternalToken, logout]);
 
   return (
     <AuthContext.Provider value={contextValue}>

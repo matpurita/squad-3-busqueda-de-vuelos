@@ -10,7 +10,7 @@ const theme = createTheme({
       main: '#5d19d2ff',
     },
   },
-  shape: { borderRadius: 10 },
+  
 });
 
 export default theme;

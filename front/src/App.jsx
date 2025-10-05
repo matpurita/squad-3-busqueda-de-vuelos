@@ -1,11 +1,12 @@
 import './App.css'
 import { ThemeProvider, CssBaseline, Container, Paper, Box, Typography, Divider, AppBar, Toolbar, Button, Menu, MenuItem, Avatar, IconButton } from '@mui/material'
 import { useState, useEffect } from 'react'
-import { BrowserRouter as Router, Routes, Route } from 'react-router-dom'
+import { BrowserRouter as Router, Routes, Route, useNavigate, useLocation } from 'react-router-dom'
 import theme from './theme'
 import SearchForm from './components/SearchForm'
 import ResultsList from './components/ResultsList'
 import AuthCallback from './components/AuthCallback'
+import Login from './components/Login'
 import { SearchProvider } from './contexts/SearchContext'
 import { FlightsProvider } from './contexts/FlightsContext'
 import { AuthProvider, useAuth } from './contexts/AuthContext'
@@ -17,10 +18,8 @@ import PersonAddIcon from '@mui/icons-material/PersonAdd'
 
 function Header() {
   const [anchorEl, setAnchorEl] = useState(null)
-  // Mock state para simular autenticación
-
-
-  const { user,logout } = useAuth()
+  const { user, logout } = useAuth()
+  const navigate = useNavigate()
 
   const handleMenuOpen = (event) => {
     setAnchorEl(event.currentTarget)
@@ -31,15 +30,13 @@ function Header() {
   }
 
   const handleLogin = () => {
-    // Mock login
-    console.log('Mock: Abrir modal de login')
+    navigate('/login')
   }
 
   const handleLogout = () => {
-    // Mock logout
-    logout() // Usar la función de logout del contextos
+    logout()
+    navigate('/')
     handleMenuClose()
-    console.log('Mock: Usuario deslogueado')
   }
 
   const handleRegister = () => {
@@ -201,40 +198,47 @@ function Home() {
 }
 
 function AppContent() {
+  const location = useLocation();
+  const isLoginPage = location.pathname === '/login';
+
   return (
     <Box
       sx={{
+        width: '100vw',
         minHeight: '100vh',
         display: 'flex',
         flexDirection: 'column',
         backgroundColor: 'background.default'
       }}
     >
-      {/* Header con navegación - Ocupa toda la pantalla */}
-      <Header />
+      {/* Header con navegación - Oculto en login */}
+      {!isLoginPage && <Header />}
 
       {/* Contenido principal con rutas */}
       <Routes>
         <Route path="/" element={<Home />} />
+        <Route path="/login" element={<Login />} />
         <Route path="/auth/callback" element={<AuthCallback />} />
       </Routes>
 
-      {/* Footer - Ocupa toda la pantalla */}
-      <Box
-        sx={{
-          backgroundColor: 'grey.100',
-          py: 3,
-          textAlign: 'center',
-          mt: 'auto',
-          width: '100vw'
-        }}
-      >
-        <Container maxWidth="lg">
-          <Typography variant="body2" color="text.secondary">
-            © 2025 SkyTrack - Squad 3 | Encuentra los mejores vuelos
-          </Typography>
-        </Container>
-      </Box>
+      {/* Footer - Oculto en login */}
+      {!isLoginPage && (
+        <Box
+          sx={{
+            backgroundColor: 'grey.100',
+            py: 3,
+            textAlign: 'center',
+            mt: 'auto',
+            width: '100vw'
+          }}
+        >
+          <Container maxWidth="lg">
+            <Typography variant="body2" color="text.secondary">
+              © 2025 SkyTrack - Squad 3 | Encuentra los mejores vuelos
+            </Typography>
+          </Container>
+        </Box>
+      )}
     </Box>
   )
 }
