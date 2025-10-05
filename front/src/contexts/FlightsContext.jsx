@@ -34,14 +34,11 @@ export const FlightsProvider = ({ children }) => {
 
   // Función para seleccionar un vuelo
   const selectFlight = (idaFlight, vueltaFlight) => {
-    //hay que evaluar que alguno puede ser null dejar como estaba seleccionados
     const selected = {
       ida: idaFlight || selectedFlight?.ida || null,
       vuelta: vueltaFlight || selectedFlight?.vuelta || null
     };
     setSelectedFlight(selected);
-    
-    // Aquí puedes agregar lógica adicional como navegación o mostrar detalles
   };
 
   // Función para obtener todos los vuelos
