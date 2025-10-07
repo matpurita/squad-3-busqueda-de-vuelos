@@ -1,83 +1,45 @@
 import { Prisma } from '@prisma/client'
 import { SearchParams } from '../schemas/searchParams'
-import { Flight } from '../schemas/flight'
 import { SearchResults } from '../schemas/searchResult'
-import { Class } from '../schemas/class'
+import { Flight } from '../schemas/flight'
 
-type SeatPayload = Prisma.SeatsGetPayload<{
+type FlightPayload = Prisma.FlightGetPayload<{
   include: {
-    class: true
-    flight: {
-      include: {
-        origin: true
-        destination: true
-        airline: true
-        seats: {
-          where: {
-            isAvailable: true
-          }
-        }
-      }
-    }
+    origin: true
+    destination: true
+    airline: true
+    plane: true
   }
 }>
 
-function getSortOptions(sort?: SearchParams['sort']): Prisma.SeatsOrderByWithRelationInput {
-  switch (sort) {
-    case 'price_asc':
-      return { price: 'asc' }
-    case 'price_desc':
-      return { price: 'desc' }
-    case 'duration_asc':
-      return { flight: { duration: 'asc' } }
-    case 'duration_desc':
-      return { flight: { duration: 'desc' } }
-    default:
-      return { price: 'asc' }
-  }
-}
-
-function seatToFlight(seat: SeatPayload) {
-  const { flight: flightData, class: clazz, ...selectedSeat } = seat
-  const { seats, ...flight } = flightData
-  const body: Flight = {
-    ...flight,
-    minPrice: seats.sort((a, b) => a.price - b.price)[0]?.price,
-    currency: 'USD',
-    availableSeats: seats.length,
-    selectedSeat: {
-      class: clazz as Class,
-      ...selectedSeat
-    }
-  }
-
-  return body
-}
-
 function pairSearchResults(
-  departureSeats: SeatPayload[],
-  returnSeats: SeatPayload[] | null
+  departureFlights: FlightPayload[],
+  returnFlights: FlightPayload[] | null
 ): SearchResults[] {
   const results: SearchResults[] = []
 
-  for (const depSeat of departureSeats) {
-    if (returnSeats) {
-      for (const retSeat of returnSeats) {
+  for (const depFlight of departureFlights) {
+    if (returnFlights) {
+      for (const retFlight of returnFlights) {
         results.push({
-          departure: seatToFlight(depSeat),
-          return: seatToFlight(retSeat),
-          totalPrice: depSeat.price + retSeat.price
+          departure: depFlight,
+          return: retFlight,
+          totalPrice: depFlight.price + retFlight.price
         })
       }
     } else {
       results.push({
-        departure: seatToFlight(depSeat),
-        totalPrice: depSeat.price
+        departure: depFlight,
+        totalPrice: depFlight.price
       })
     }
   }
 
   return results
+}
+
+function getFlightDuration(flight: Flight) {
+  return (flight.arrival.getTime() - flight.departure.getTime()) / (1000 * 60) // duration in minutes
 }
 
 function sortSearchResults(searchResults: SearchResults[], sort: SearchParams['sort']) {
@@ -90,18 +52,22 @@ function sortSearchResults(searchResults: SearchResults[], sort: SearchParams['s
       case 'duration_asc':
         if (a.return && b.return) {
           return (
-            a.departure.duration + a.return.duration - (b.departure.duration + b.return.duration)
+            getFlightDuration(a.departure) +
+            getFlightDuration(a.return) -
+            (getFlightDuration(b.departure) + getFlightDuration(b.return))
           )
         } else {
-          return a.departure.duration - b.departure.duration
+          return getFlightDuration(a.departure) - getFlightDuration(b.departure)
         }
       case 'duration_desc':
         if (a.return && b.return) {
           return (
-            b.departure.duration + b.return.duration - (a.departure.duration + a.return.duration)
+            getFlightDuration(b.departure) +
+            getFlightDuration(b.return) -
+            (getFlightDuration(a.departure) + getFlightDuration(a.return))
           )
         } else {
-          return b.departure.duration - a.departure.duration
+          return getFlightDuration(b.departure) - getFlightDuration(a.departure)
         }
       default:
         return a.totalPrice - b.totalPrice
@@ -109,4 +75,4 @@ function sortSearchResults(searchResults: SearchResults[], sort: SearchParams['s
   })
 }
 
-export { getSortOptions, seatToFlight, pairSearchResults, sortSearchResults }
+export { pairSearchResults, getFlightDuration, sortSearchResults }

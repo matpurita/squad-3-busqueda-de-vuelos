@@ -5,7 +5,7 @@ import { AppError } from '../middlewares/error'
 import { prisma } from '../prisma/db'
 import { add, startOfDay, endOfDay, sub } from 'date-fns'
 import { Pagination } from '../schemas/pagination'
-import { getSortOptions, pairSearchResults, sortSearchResults } from '../utils/search'
+import { pairSearchResults, sortSearchResults } from '../utils/search'
 import { flightBookingSchema } from '../schemas/flightBooking'
 
 async function searchFlights(req: Request, res: Response, next: NextFunction) {
@@ -37,37 +37,25 @@ async function searchFlights(req: Request, res: Response, next: NextFunction) {
     )
 
     // Query seats first
-    const departurePromise = prisma.seats.findMany({
+    const departurePromise = prisma.flight.findMany({
       where: {
-        isAvailable: true,
-        class: searchParams.cabinClass ? { name: searchParams.cabinClass } : undefined,
-        flight: {
-          origin: {
-            code: searchParams.origin.toUpperCase()
-          },
-          destination: {
-            code: searchParams.destination.toUpperCase()
-          },
-          departure: {
-            gte: departureDateStart,
-            lte: departureDateEnd
-          }
+        origin: {
+          code: searchParams.origin.toUpperCase()
+        },
+        destination: {
+          code: searchParams.destination.toUpperCase()
+        },
+        departure: {
+          gte: departureDateStart,
+          lte: departureDateEnd
         }
       },
       include: {
-        class: true,
-        flight: {
-          include: {
-            origin: true,
-            destination: true,
-            airline: true,
-            seats: {
-              where: { isAvailable: true }
-            }
-          }
-        }
-      },
-      orderBy: getSortOptions(searchParams.sort)
+        origin: true,
+        destination: true,
+        airline: true,
+        plane: true
+      }
     })
 
     const returnDateStart = searchParams.returnDate
@@ -86,51 +74,31 @@ async function searchFlights(req: Request, res: Response, next: NextFunction) {
       : null
 
     const returnPromise = searchParams.returnDate
-      ? prisma.seats.findMany({
+      ? prisma.flight.findMany({
           where: {
-            isAvailable: true,
-            class: searchParams.cabinClass ? { name: searchParams.cabinClass } : undefined,
-            flight: {
-              origin: {
-                code: searchParams.destination.toUpperCase()
-              },
-              destination: {
-                code: searchParams.origin.toUpperCase()
-              },
-              departure: {
-                gte: returnDateStart!,
-                lte: returnDateEnd!
-              }
+            origin: {
+              code: searchParams.destination.toUpperCase()
+            },
+            destination: {
+              code: searchParams.origin.toUpperCase()
+            },
+            departure: {
+              gte: returnDateStart!,
+              lte: returnDateEnd!
             }
           },
           include: {
-            class: true,
-            flight: {
-              include: {
-                origin: true,
-                destination: true,
-                airline: true,
-                seats: {
-                  where: { isAvailable: true }
-                }
-              }
-            }
-          },
-          orderBy: getSortOptions(searchParams.sort)
+            origin: true,
+            destination: true,
+            airline: true,
+            plane: true
+          }
         })
       : null
 
-    let [departureSeats, returnSeats] = await Promise.all([departurePromise, returnPromise])
+    const [departureFlights, returnFlights] = await Promise.all([departurePromise, returnPromise])
 
-    if (searchParams.passengers) {
-      departureSeats = departureSeats.filter(
-        (seat) => seat.flight.seats.length >= searchParams.passengers
-      )
-      returnSeats =
-        returnSeats?.filter((seat) => seat.flight.seats.length >= searchParams.passengers) ?? null
-    }
-
-    const searchResults = pairSearchResults(departureSeats, returnSeats)
+    const searchResults = pairSearchResults(departureFlights, returnFlights)
 
     const sortedResults = sortSearchResults(searchResults, searchParams.sort)
 
