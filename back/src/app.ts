@@ -12,17 +12,16 @@ const app = express()
 
 app.use(cors())
 app.use(express.json())
-//app.use(authMiddleware)
-
-app.use('/search', searchRouter)
-
-app.use('/airport', airportRouter)
-
-app.use('/events', eventsRouter)
 
 app.use('/auth', authRouter)
 
-app.use('/metrics', metricsRouter)
+app.use('/search', searchRouter, authMiddleware)
+
+app.use('/airport', airportRouter, authMiddleware)
+
+app.use('/events', eventsRouter, authMiddleware)
+
+app.use('/metrics', metricsRouter, authMiddleware)
 
 app.use(errorHandler)
 
