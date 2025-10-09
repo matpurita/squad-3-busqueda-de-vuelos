@@ -6,6 +6,7 @@ const SECRET_KEY = process.env.JWT_SECRET || 'your_secret_key'
 
 export function authMiddleware(req: Request, res: Response, next: NextFunction) {
   const authHeader = req.headers.authorization
+
   if (!authHeader || !authHeader.startsWith('Bearer ')) {
     return res.status(401).json({ message: 'No token provided' })
   }
