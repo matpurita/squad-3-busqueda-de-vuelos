@@ -217,7 +217,7 @@ async function sendFlightBooking(req: Request, res: Response, next: NextFunction
       timestamp: req.body.timestamp
     })
 
-    await prisma.flightBookings.create({
+    await prisma.bookingIntent.create({
       data: flightBooking
     })
 

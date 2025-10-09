@@ -26,29 +26,30 @@ model Airline {
 }
 
 model Plane {
-  id        String   @id @default(cuid())
-  model     String
-  capacity  Int
-  flights Flight[]
+  id       String   @id @default(cuid())
+  model    String
+  capacity Int
+  flights  Flight[]
 }
 
 model Flight {
-  id            String   @id @default(cuid())
+  id            String          @id @default(cuid())
   flightNumber  String
   departure     DateTime
   arrival       DateTime
-  price         Float    @default(dbgenerated("random_price()"))
-  currency      String   @default("USD")
-  state         String   @default("ON_TIME")
-  planeId       String?
   airlineId     String
   originId      String
   destinationId String
-  plane         Plane?   @relation(fields: [planeId], references: [id])
-  airline       Airline  @relation(fields: [airlineId], references: [id])
-  destination   Airport  @relation("FlightsTo", fields: [destinationId], references: [id])
-  origin        Airport  @relation("FlightsFrom", fields: [originId], references: [id])
-  bookings      FlightBookings[]
+  currency      String          @default("USD")
+  planeId       String?
+  price         Float           @default(dbgenerated("random_price()"))
+  state         String          @default("ON_TIME")
+  BookingIntent BookingIntent[]
+  airline       Airline         @relation(fields: [airlineId], references: [id])
+  destination   Airport         @relation("FlightsTo", fields: [destinationId], references: [id])
+  origin        Airport         @relation("FlightsFrom", fields: [originId], references: [id])
+  plane         Plane?          @relation(fields: [planeId], references: [id])
+  bookings      Booking[]
 
   @@index([originId])
 }
@@ -63,10 +64,19 @@ model SearchMetrics {
   timestamp   DateTime @default(now())
 }
 
-model FlightBookings {
+model BookingIntent {
   id        String   @id @default(cuid())
   userId    String
   flightId  String
   timestamp DateTime @default(now())
-  flight    Flight   @relation(fields: [flightId], references: [id])
+  Flight    Flight   @relation(fields: [flightId], references: [id], map: "FlightBookings_flightId_fkey")
+}
+
+model Booking {
+  id          String   @id @default(cuid())
+  userId      String
+  flightId    String
+  bookingDate DateTime @default(now())
+  status      String   @default("CONFIRMED")
+  Flight      Flight   @relation(fields: [flightId], references: [id])
 }

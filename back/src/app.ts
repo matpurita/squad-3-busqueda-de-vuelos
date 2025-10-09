@@ -22,4 +22,10 @@ app.use('/metrics', authMiddleware, metricsRouter)
 
 app.use(errorHandler)
 
+// connectConsumer().then(() => {
+//   console.log('Kafka consumer connected and running')
+// }).catch(err => {
+//   console.error('Error connecting Kafka consumer:', err)
+// })
+
 export default app
