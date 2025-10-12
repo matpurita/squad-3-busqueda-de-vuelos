@@ -1,6 +1,4 @@
 import {
-  Card,
-  CardContent,
   Stack,
   Typography,
   Chip,
@@ -9,6 +7,7 @@ import {
 } from "@mui/material";
 
 export default function FlightDetail({ flight }) {
+
   if (!flight) return null;
   const { ida, vuelta } = flight;
   return (
