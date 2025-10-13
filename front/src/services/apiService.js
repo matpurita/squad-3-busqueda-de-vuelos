@@ -11,11 +11,38 @@ const apiClient = axios.create({
   },
 });
 
+// Interceptor para agregar token de autorización automáticamente
+apiClient.interceptors.request.use(
+  (config) => {
+    // Obtener token del sessionStorage
+    const token = sessionStorage.getItem('token');
+    
+    if (token) {
+      config.headers.Authorization = `Bearer ${token}`;
+    }
+    
+    return config;
+  },
+  (error) => {
+    return Promise.reject(error);
+  }
+);
+
 // Interceptor para manejar errores
 apiClient.interceptors.response.use(
   (response) => response,
   (error) => {
     console.error("Error en petición API:", error);
+    
+    // Si es error 401 (Unauthorized), limpiar sesión
+    if (error.response?.status === 401) {
+      sessionStorage.removeItem('token');
+      sessionStorage.removeItem('user');
+      
+      // Emitir evento personalizado para que el AuthContext maneje el logout
+      window.dispatchEvent(new CustomEvent('auth:unauthorized'));
+    }
+    
     return Promise.reject(error);
   }
 );
@@ -144,4 +171,67 @@ export const apiService = {
       throw new Error(`Error obteniendo reserva: ${error.message}`);
     }
   },
+
+  // === MÉTODOS DE AUTENTICACIÓN ===
+  
+  // Login con email y password
+  login: async (email, password) => {
+    try {
+      // Usamos una instancia sin interceptor para login (no necesita token)
+      const loginClient = axios.create({
+        baseURL: config.API_URL,
+        timeout: config.REQUEST_TIMEOUT,
+        headers: { "Content-Type": "application/json" }
+      });
+
+      const response = await loginClient.post('/auth/login', {
+        email,
+        password
+      });
+
+      return response.data;
+    } catch (error) {
+      throw new Error(`Error en login: ${error.message}`);
+    }
+  },
+
+  // Login mock (para desarrollo)
+  loginMock: async (email, password) => {
+    try {
+      const loginClient = axios.create({
+        baseURL: config.API_URL,
+        timeout: config.REQUEST_TIMEOUT,
+        headers: { "Content-Type": "application/json" }
+      });
+
+      const response = await loginClient.post('/auth/login/mock', {
+        email,
+        password
+      });
+
+      return response.data;
+    } catch (error) {
+      throw new Error(`Error en login mock: ${error.message}`);
+    }
+  },
+
+  // Obtener datos del usuario autenticado
+  getUserData: async () => {
+    try {
+      const response = await apiClient.get('/auth/user');
+      return response.data;
+    } catch (error) {
+      throw new Error(`Error obteniendo datos del usuario: ${error.message}`);
+    }
+  },
+
+  // Verificar si el token es válido
+  validateToken: async () => {
+    try {
+      const response = await apiClient.get('/auth/user');
+      return { valid: true, user: response.data };
+    } catch (error) {
+      return { valid: false, error: error.message };
+    }
+  }
 };
