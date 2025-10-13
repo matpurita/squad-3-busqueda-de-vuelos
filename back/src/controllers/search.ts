@@ -55,7 +55,10 @@ async function searchFlights(req: Request, res: Response, next: NextFunction) {
         origin: true,
         destination: true,
         airline: true,
-        plane: true
+        plane: true,
+        _count: {
+          select: { bookings: true }
+        }
       }
     })
 
@@ -92,14 +95,26 @@ async function searchFlights(req: Request, res: Response, next: NextFunction) {
             origin: true,
             destination: true,
             airline: true,
-            plane: true
+            plane: true,
+            _count: {
+              select: { bookings: true }
+            }
           }
         })
       : null
 
     const [departureFlights, returnFlights] = await Promise.all([departurePromise, returnPromise])
 
-    const searchResults = pairSearchResults(departureFlights, returnFlights)
+    const filterBySeats = (flights: typeof departureFlights) =>
+      flights.filter((flight) => {
+        const availableSeats = flight.plane?.capacity ?? 50 - flight._count.bookings
+        return availableSeats >= searchParams.passengers
+      })
+
+    const filteredDepartureFlights = filterBySeats(departureFlights)
+    const filteredReturnFlights = returnFlights ? filterBySeats(returnFlights) : null
+
+    const searchResults = pairSearchResults(filteredDepartureFlights, filteredReturnFlights)
 
     const sortedResults = sortSearchResults(searchResults, searchParams.sort)
 
