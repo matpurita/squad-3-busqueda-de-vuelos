@@ -4,7 +4,6 @@ import airportRouter from './routes/airport'
 import authRouter from './routes/auth'
 import metricsRouter from './routes/metrics'
 import { errorHandler } from './middlewares/error'
-import { authMiddleware } from './middlewares/auth'
 import cors from 'cors'
 
 const app = express()
@@ -14,11 +13,11 @@ app.use(express.json())
 
 app.use('/auth', authRouter)
 
-app.use('/search', authMiddleware, searchRouter)
+app.use('/search', searchRouter)
 
-app.use('/airport', authMiddleware, airportRouter)
+app.use('/airport', airportRouter)
 
-app.use('/metrics', authMiddleware, metricsRouter)
+app.use('/metrics', metricsRouter)
 
 app.use(errorHandler)
 
