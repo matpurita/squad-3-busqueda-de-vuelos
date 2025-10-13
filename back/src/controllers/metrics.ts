@@ -1,6 +1,7 @@
 import { NextFunction, Request, Response } from 'express'
 import { searchMetricSchema } from '../schemas/searchMetric'
 import { prisma } from '../prisma/db'
+// import { getProducer } from '../kafka/kafka'
 
 async function postSearchMetric(req: Request, res: Response, next: NextFunction) {
   try {
@@ -16,12 +17,13 @@ async function postSearchMetric(req: Request, res: Response, next: NextFunction)
 
     prisma.searchMetrics.create({ data: searchMetric })
 
-    // Send to core
-    // await fetch('http://localhost:9090/metrics', {
-    //   method: 'POST',
-    //   headers: { 'Content-Type': 'application/json' }
-    // })
+    // const producer = await getProducer()
 
+    // await producer.send({
+    //   topic: 'search_metrics',
+    //   messages: [{ value: JSON.stringify(searchMetric) }]
+    // })
+  
     res.status(201).json({ message: 'Search metric recorded' })
   } catch (error) {
     next(error)
