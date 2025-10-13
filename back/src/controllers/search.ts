@@ -238,5 +238,5 @@ async function sendBookingIntent(req: Request, res: Response, next: NextFunction
 export default {
   searchFlights,
   getFlightSuggestions,
-  sendFlightBooking: sendBookingIntent
+  sendBookingIntent
 }
