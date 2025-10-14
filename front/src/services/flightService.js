@@ -163,7 +163,7 @@ const getMockedFlights = ({
   to,
   departDate,
   returnDate,
-  onlyDirect,
+  flexibleDates,
 } = criterios) => {
   let vuelosFiltrados = vuelos.filter(
     (vuelo) =>
@@ -199,9 +199,30 @@ const getMockedFlights = ({
     });
   }
 
-  // Filtrar por vuelos directos si se solicita
-  if (onlyDirect) {
-    vuelosFiltrados = vuelosFiltrados.filter((vuelo) => vuelo.escalas === 0);
+  // Si fechas flexibles está activado, incluir vuelos de fechas cercanas (+/- 3 días)
+  if (flexibleDates && departDate) {
+    const baseDate = new Date(departDate);
+    const threeDaysBefore = new Date(baseDate);
+    threeDaysBefore.setDate(baseDate.getDate() - 3);
+    const threeDaysAfter = new Date(baseDate);
+    threeDaysAfter.setDate(baseDate.getDate() + 3);
+    
+    // Expandir búsqueda para incluir fechas en el rango
+    const flexibleFlights = vuelos.filter((vuelo) => {
+      const flightDate = new Date(vuelo.fechaSalida);
+      return flightDate >= threeDaysBefore && flightDate <= threeDaysAfter &&
+             vuelo.origen.toLowerCase().includes(from.toLowerCase()) &&
+             vuelo.destino.toLowerCase().includes(to.toLowerCase());
+    });
+    
+    // Combinar vuelos originales con vuelos flexibles (sin duplicados)
+    const allFlights = [...vuelosFiltrados];
+    flexibleFlights.forEach(flight => {
+      if (!allFlights.find(existing => existing.id === flight.id)) {
+        allFlights.push(flight);
+      }
+    });
+    vuelosFiltrados = allFlights;
   }
 
   console.log("Criterios de búsqueda:", criterios);

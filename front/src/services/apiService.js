@@ -73,20 +73,28 @@ export const apiService = {
         params: filtros,
       });
 
-      const vuelosIda = [];
-      const vuelosRegreso = [];
+      //const vuelosIda = [];
+      //const vuelosRegreso = [];
 
-      response.data.results.forEach((vuelo) => {
-        vuelosIda.push(mapearVuelo(vuelo.departure));
-        if (vuelo.return != undefined) {
-          vuelosRegreso.push(mapearVuelo(vuelo.return));
+      //response.data.results.forEach((vuelo) => {
+      //  vuelosIda.push(mapearVuelo(vuelo.departure));
+      //  if (vuelo.return != undefined) {
+      //    vuelosRegreso.push(mapearVuelo(vuelo.return));
+      //  }
+      //});
+
+      const vuelos = response.data.results.map((vuelo) => {
+        const departure = mapearVuelo(vuelo.departure);
+        if (vuelo.return) {
+          const returnFlight = mapearVuelo(vuelo.return);
+          return { departure, return: returnFlight };
         }
+        return { departure };
       });
 
       return {
-        vuelosIda,
-        vuelosRegreso,
-        pagination: response.data.pagination
+        pagination: response.data.pagination,
+        vuelos
       };
     } catch (error) {
       throw new Error(`Error buscando vuelos: ${error.message}`);
@@ -188,7 +196,7 @@ export const apiService = {
 
       return response.data;
     } catch (error) {
-      throw new Error(`Error en login: ${error.message}`);
+      throw error;
     }
   },
 
