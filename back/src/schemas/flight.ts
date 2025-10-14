@@ -13,7 +13,7 @@ export const flightSchema = z.object({
   plane: planeSchema.nullable(),
   price: z.number(),
   currency: z.string().length(3),
-  state: z.string()
+  status: z.string()
 })
 
 export type Flight = z.infer<typeof flightSchema>
