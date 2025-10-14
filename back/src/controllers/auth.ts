@@ -22,25 +22,10 @@ async function getUserData(req: Request, res: Response, next: NextFunction) {
 
 async function login(req: Request, res: Response, next: NextFunction) {
   try {
-    console.log(req.body)
     const loginPayload = loginPayloadSchema.parse({
       email: req.body.email,
       password: req.body.password
     })
-
-    // Si USE_MOCK_AUTH está habilitado, usar mock
-    if (process.env.USE_MOCK_AUTH === 'true') {
-      const mockResult = authMock.validateMockCredentials(
-        loginPayload.email, 
-        loginPayload.password
-      )
-      
-      if (!mockResult) {
-        return res.status(401).json({ message: 'Invalid credentials' })
-      }
-      
-      return res.json(mockResult)
-    }
 
     const response = await fetch(`${process.env.AUTH_SERVICE_URL}/login`, {
       method: 'POST',

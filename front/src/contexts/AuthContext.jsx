@@ -8,18 +8,7 @@ export const AuthProvider = ({ children }) => {
   const [token, setToken] = useState(null);
   const [loading, setLoading] = useState(true);
 
-  // 🔹 Mock función (sin dependencias) - debe estar primero
-  const mockValidateToken = useCallback(async (tokenToValidate) => {
-    return new Promise((resolve, reject) => {
-      setTimeout(() => {
-        if (tokenToValidate === "valid-token") {
-          resolve({ name: "Juan Pérez", email: "juan.perez@example.com" });
-        } else {
-          reject(new Error("Token inválido"));
-        }
-      }, 1000);
-    });
-  }, []);
+  
 
   // 🔹 Cerrar sesión (sin dependencias) - segundo
   const logout = useCallback(() => {
@@ -75,7 +64,7 @@ export const AuthProvider = ({ children }) => {
       setLoading(true);
       
       // Llamar al API de login (o loginMock para desarrollo)
-      const response = await apiService.loginMock(email, password); // Cambiar a apiService.login en producción
+      const response = await apiService.login(email, password); // Cambiar a apiService.login en producción
       
       if (response.success && response.token) {
         // Guardar token y validar

@@ -9,20 +9,17 @@ const MOCK_USERS = [
   {
     userId: '1',
     email: 'admin@test.com',
-    password: 'admin123',
-    roles: ['admin']
+    password: 'adminadmin123',
   },
   {
     userId: '2', 
     email: 'user@test.com',
     password: 'user123',
-    roles: ['user']
   },
   {
     userId: '3',
     email: 'test@example.com',
     password: 'test123',
-    roles: ['user']
   }
 ]
 
@@ -47,7 +44,6 @@ async function loginMock(req: Request, res: Response, next: NextFunction) {
     const tokenPayload = {
       userId: mockUser.userId,
       email: mockUser.email,
-      roles: mockUser.roles,
       exp: Math.floor(Date.now() / 1000) + (60 * 60 * 24) // 24 horas
     }
 
@@ -55,12 +51,7 @@ async function loginMock(req: Request, res: Response, next: NextFunction) {
 
     return res.json({ 
       success: true,
-      token,
-      user: {
-        userId: mockUser.userId,
-        email: mockUser.email,
-        roles: mockUser.roles
-      }
+      token
     })
   } catch (error) {
     next(error)
@@ -81,7 +72,6 @@ function validateMockCredentials(email: string, password: string) {
   const tokenPayload = {
     userId: mockUser.userId,
     email: mockUser.email,
-    roles: mockUser.roles,
     exp: Math.floor(Date.now() / 1000) + (60 * 60 * 24) // 24 horas
   }
 
@@ -93,7 +83,6 @@ function validateMockCredentials(email: string, password: string) {
     user: {
       userId: mockUser.userId,
       email: mockUser.email,
-      roles: mockUser.roles
     }
   }
 }
@@ -102,8 +91,7 @@ function validateMockCredentials(email: string, password: string) {
 function getMockUsers() {
   return MOCK_USERS.map(user => ({
     userId: user.userId,
-    email: user.email,
-    roles: user.roles
+    email: user.email
     // No devolvemos password por seguridad
   }))
 }

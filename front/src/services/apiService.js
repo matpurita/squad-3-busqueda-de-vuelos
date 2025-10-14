@@ -36,9 +36,6 @@ apiClient.interceptors.response.use(
     
     // Si es error 401 (Unauthorized), limpiar sesión
     if (error.response?.status === 401) {
-      sessionStorage.removeItem('token');
-      sessionStorage.removeItem('user');
-      
       // Emitir evento personalizado para que el AuthContext maneje el logout
       window.dispatchEvent(new CustomEvent('auth:unauthorized'));
     }
@@ -50,20 +47,20 @@ apiClient.interceptors.response.use(
 const mapearVuelo = (vuelo) => {
   return {
     uuid: crypto.randomUUID(),
-    id: vuelo.id,
-    airline: vuelo.airline.name,
-    from: vuelo.origin.name,
-    to: vuelo.destination.name,
-    departTime: utilidades.formatearHora(vuelo.departure),
-    arriveTime: utilidades.formatearHora(vuelo.arrival),
-    price: utilidades.formatearPrecio(vuelo.selectedSeat.price),
+    id: vuelo.id || null,
+    airline: vuelo.airline?.name || null,
+    from: vuelo.origin?.name || null,
+    to: vuelo.destination?.name || null,
+    departTime: vuelo.departure || null,
+    arriveTime: vuelo.arrival || null,
+    price: vuelo.TotalPrice || null,
     direct: true,
-    numeroVuelo: vuelo.flightNumber,
-    duracion: vuelo.duration,
-    fechaSalida: vuelo.departure,
-    fechaLlegada: vuelo.arrival,
-    clase: vuelo.selectedSeat.class.name,
-    asiento: vuelo.selectedSeat.seatNumber
+    numeroVuelo: vuelo.flightNumber || null,
+    duracion: vuelo.duration || null,
+    fechaSalida: vuelo.departure || null,
+    fechaLlegada: vuelo.arrival || null,
+    clase: vuelo.selectedSeat?.class?.name || null,
+    asiento: vuelo.selectedSeat?.seatNumber || null
   };
 };
 
@@ -184,7 +181,7 @@ export const apiService = {
         headers: { "Content-Type": "application/json" }
       });
 
-      const response = await loginClient.post('/auth/login', {
+      const response = await loginClient.post(endpoints.AUTH.LOGIN, {
         email,
         password
       });
@@ -195,30 +192,12 @@ export const apiService = {
     }
   },
 
-  // Login mock (para desarrollo)
-  loginMock: async (email, password) => {
-    try {
-      const loginClient = axios.create({
-        baseURL: config.API_URL,
-        timeout: config.REQUEST_TIMEOUT,
-        headers: { "Content-Type": "application/json" }
-      });
-
-      const response = await loginClient.post('/auth/login/mock', {
-        email,
-        password
-      });
-
-      return response.data;
-    } catch (error) {
-      throw new Error(`Error en login mock: ${error.message}`);
-    }
-  },
+  
 
   // Obtener datos del usuario autenticado
   getUserData: async () => {
     try {
-      const response = await apiClient.get('/auth/user');
+      const response = await apiClient.get(endpoints.AUTH.ME);
       return response.data;
     } catch (error) {
       throw new Error(`Error obteniendo datos del usuario: ${error.message}`);
