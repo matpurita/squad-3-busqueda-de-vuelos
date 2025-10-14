@@ -1,12 +1,19 @@
 import { Kafka } from 'kafkajs'
 import { prisma } from '../prisma/db'
+import {
+  AircraftOrAirlineUpdatedEvent,
+  FlightCreatedEvent,
+  FlightUpdatedEvent,
+  ReservationCreatedEvent,
+  ReservationUpdatedEvent
+} from './events'
 
 const EVENTS = {
   FLIGHT_CREATED: 'flights.flight.created',
   FLIGHT_UPDATED: 'flights.flight.updated',
   RESERVATION_CREATED: 'reservations.reservation.created',
   RESERVATION_UPDATED: 'reservations.reservation.updated',
-  AIRLINE_OR_FLIGHT_UPDATED: 'flights.aircraft_or_airline.updated'
+  AIRCRAFT_OR_AIRLINE_UPDATED: 'flights.aircraft_or_airline.updated'
 }
 
 const kafka = new Kafka({ clientId: 'search-node', brokers: [process.env.KAFKA_BROKER || ''] })
@@ -18,45 +25,91 @@ const connectConsumer = async () => {
 
   await consumer.run({
     eachMessage: async ({ topic, message }) => {
-      const content = JSON.parse(message.value!.toString())
+      console.log(`[${topic}] ${message.key?.toString() || ''} -> ${message.value?.toString()}`)
+
+      const data = JSON.parse(message.value!.toString())
 
       switch (topic) {
-        case EVENTS.FLIGHT_CREATED:
-          console.log(`Handling flight created event with data: ${content}`)
+        case EVENTS.FLIGHT_CREATED: {
+          const content: FlightCreatedEvent = data
 
           await prisma.flight.create({
-            data: content
+            data: {
+              id: content.flightId,
+              flightNumber: content.flightNumber,
+              origin: {
+                connect: { code: content.origin }
+              },
+              destination: {
+                connect: { code: content.destination }
+              },
+              plane: {
+                connect: { model: content.aircraftModel }
+              },
+              airline: {
+                connect: { code: content.flightNumber.slice(0, 2) }
+              },
+              departure: new Date(content.departureAt),
+              arrival: new Date(content.arrivalAt),
+              status: content.status,
+              price: content.price,
+              currency: content.currency
+            }
           })
+
           break
-        case EVENTS.FLIGHT_UPDATED:
-          console.log(`Handling flight updated event with data: ${content}`)
+        }
+        case EVENTS.FLIGHT_UPDATED: {
+          const content: FlightUpdatedEvent = data
 
           await prisma.flight.update({
-            where: { id: content.id },
-            data: content
+            where: { id: content.flightId },
+            data: {
+              status: content.newStatus,
+              departure: content.newDepartureAt ? new Date(content.newDepartureAt) : undefined,
+              arrival: content.newArrivalAt ? new Date(content.newArrivalAt) : undefined
+            }
           })
+
           break
-        case EVENTS.RESERVATION_CREATED:
-          console.log(`Sending booking confirmation email with data: ${content}`)
+        }
+        case EVENTS.RESERVATION_CREATED: {
+          const content: ReservationCreatedEvent = data
 
           await prisma.booking.create({
-            data: content
+            data: {
+              id: content.reservationId,
+              userId: content.userId,
+              flightId: content.flightId,
+              bookingDate: new Date(content.reservedAt)
+            }
           })
+
           break
-        case EVENTS.RESERVATION_UPDATED:
-          console.log(`Handling reservation updated event with data: ${content}`)
+        }
+        case EVENTS.RESERVATION_UPDATED: {
+          const content: ReservationUpdatedEvent = data
 
           await prisma.booking.update({
-            where: { id: content.id },
-            data: content
+            where: { id: content.reservationId },
+            data: {
+              status: content.newStatus,
+              bookingDate: content.reservationDate ? new Date(content.reservationDate) : undefined
+            }
           })
-          break
-
-        case EVENTS.AIRLINE_OR_FLIGHT_UPDATED:
-          console.log(`Handling airline or flight updated event with data: ${content}`)
-          // Update related flights
 
           break
+        }
+        case EVENTS.AIRCRAFT_OR_AIRLINE_UPDATED: {
+          const content: AircraftOrAirlineUpdatedEvent = data
+
+          await prisma.plane.update({
+            where: { id: content.aircraftId },
+            data: { capacity: content.capacity }
+          })
+
+          break
+        }
 
         default:
           console.log(`No handler for topic: ${topic}`)
