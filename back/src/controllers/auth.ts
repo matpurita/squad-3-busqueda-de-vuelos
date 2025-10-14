@@ -8,13 +8,20 @@ async function getUserData(req: Request, res: Response, next: NextFunction) {
   }
 
   try {
-    console.log('Usuario autenticado:', req.user) // Log para testing
-    res.json({
-      user: {
-        userId: req.user.userId,
-        email: req.user.email
+    const response = await fetch(`${process.env.AUTH_SERVICE_URL}/me`, {
+      method: 'GET',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${req.headers.authorization?.split(' ')[1]}`
       }
-    })
+    }).then((response) => response.json())
+
+    if (!response.success) {
+      console.error('Failed to fetch user data:', response)
+      return res.status(401).json({ message: 'Failed to fetch user data' })
+    }
+
+    return res.json(response.data.user)
   } catch (error) {
     next(error)
   }
@@ -38,7 +45,7 @@ async function login(req: Request, res: Response, next: NextFunction) {
       return res.status(401).json({ message: 'Invalid credentials' })
     }
 
-    return res.json({ token: response.data })
+    return res.json(response.data)
   } catch (error) {
     next(error)
   }

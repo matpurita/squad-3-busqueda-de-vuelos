@@ -33,8 +33,8 @@ export const AuthProvider = ({ children }) => {
         
         // Si llegamos aquí, el token es válido
         setToken(tokenToValidate);
-        setUser(response.user);
-        sessionStorage.setItem("user", JSON.stringify(response.user));
+        setUser(response);
+        sessionStorage.setItem("user", JSON.stringify(response));
       } catch (error) {
         // Restaurar token anterior si falló
         if (oldToken) {
@@ -66,7 +66,7 @@ export const AuthProvider = ({ children }) => {
       // Llamar al API de login (o loginMock para desarrollo)
       const response = await apiService.login(email, password); // Cambiar a apiService.login en producción
       
-      if (response.success && response.token) {
+      if (response.token) {
         // Guardar token y validar
         sessionStorage.setItem("token", response.token);
         if (response.user) {

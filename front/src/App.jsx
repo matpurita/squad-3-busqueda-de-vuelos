@@ -58,7 +58,7 @@ function Header() {
               <>
                 {/* Usuario logueado */}
                 <Typography variant="body2" sx={{ mr: 1, display: { xs: 'none', sm: 'block' } }}>
-                  Hola, {user?.email}
+                  Hola, {user?.nombre_completo}
                 </Typography>
 
                 <IconButton
@@ -85,14 +85,12 @@ function Header() {
                 >
                   <MenuItem onClick={handleMenuClose}>
                     <Box>
-                      <Typography variant="subtitle2">{user?.email}</Typography>
+                      <Typography variant="subtitle2">{user?.nombre_completo}</Typography>
                       <Typography variant="caption" color="text.secondary">{user?.email}</Typography>
                     </Box>
                   </MenuItem>
                   <Divider />
                   <MenuItem onClick={handleMenuClose}>Mi Perfil</MenuItem>
-                  <MenuItem onClick={handleMenuClose}>Mis Reservas</MenuItem>
-                  <MenuItem onClick={handleMenuClose}>Configuración</MenuItem>
                   <Divider />
                   <MenuItem onClick={handleLogout}>Cerrar Sesión</MenuItem>
                 </Menu>

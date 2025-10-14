@@ -207,7 +207,7 @@ export const apiService = {
   // Verificar si el token es válido
   validateToken: async () => {
     try {
-      const response = await apiClient.get('/auth/user');
+      const response = await apiClient.get(endpoints.AUTH.ME);
       return { valid: true, user: response.data };
     } catch (error) {
       return { valid: false, error: error.message };
