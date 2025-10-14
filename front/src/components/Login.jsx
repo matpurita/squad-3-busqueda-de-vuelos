@@ -36,8 +36,7 @@ export default function Login() {
       // Si el login es exitoso, navegar a la página principal
       navigate("/");
     } catch (err) {
-      console.error("Error en login:", err);
-      setError(err.message || "Error al iniciar sesión. Verifica tus credenciales.");
+      setError(err.response?.data?.message || err.message || "Error al iniciar sesión. Verifica tus credenciales.");
     } finally {
       setIsLoading(false);
     }

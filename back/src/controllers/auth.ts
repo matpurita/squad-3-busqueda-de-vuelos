@@ -1,5 +1,6 @@
 import { NextFunction, Request, Response } from 'express'
 import { loginPayloadSchema } from '../schemas/loginPayload'
+import authMock from './authMock'
 
 async function getUserData(req: Request, res: Response, next: NextFunction) {
   if (!req.user) {
@@ -28,7 +29,6 @@ async function getUserData(req: Request, res: Response, next: NextFunction) {
 
 async function login(req: Request, res: Response, next: NextFunction) {
   try {
-    console.log(req.body)
     const loginPayload = loginPayloadSchema.parse({
       email: req.body.email,
       password: req.body.password

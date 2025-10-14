@@ -13,7 +13,7 @@ export const SearchProvider = ({ children }) => {
   const [departDate, setDepartDate] = useState('');
   const [returnDate, setReturnDate] = useState('');
   const [adults, setAdults] = useState(1);
-  const [onlyDirect, setOnlyDirect] = useState(false);
+  const [flexibleDates, setFlexibleDates] = useState(false);
   const [selectedClass, setSelectedClass] = useState('')
   const [sort, setSort] = useState('price_asc')
   
@@ -56,7 +56,7 @@ export const SearchProvider = ({ children }) => {
       departureDate: departDate,
       returnDate: tripType === 'roundtrip' ? returnDate : undefined,
       adults,
-      onlyDirect,
+      flexibleDates,
       selectedClass,
       sort: sort ?? undefined
     };
@@ -75,18 +75,18 @@ export const SearchProvider = ({ children }) => {
     setDepartDate('');
     setReturnDate('');
     setAdults(1);
-    setOnlyDirect(false);
+    setFlexibleDates(false);
     setError(null);
   };
 
   const value = {
     // Estado
-    tripType, from, to, departDate, returnDate, adults, onlyDirect,
+    tripType, from, to, departDate, returnDate, adults, flexibleDates,
     aeropuertos, loading, error, selectedClass, sort,
     
     // Setters
     setTripType, setFrom, setTo, setDepartDate, setReturnDate,
-    setAdults, setOnlyDirect, setAeropuertos, setLoading, setError, setSelectedClass, setSort,
+    setAdults, setFlexibleDates, setAeropuertos, setLoading, setError, setSelectedClass, setSort,
     
     // Utilidades
     getSearchCriteria, isSearchValid, resetFilters

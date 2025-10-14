@@ -32,7 +32,7 @@ const [to, setTo] = useState(null);
 const [departDate, setDepartDate] = useState('');
 const [returnDate, setReturnDate] = useState('');
 const [adults, setAdults] = useState(1);
-const [onlyDirect, setOnlyDirect] = useState(false);
+const [flexibleDates, setFlexibleDates] = useState(false);
 const [aeropuertos, setAeropuertos] = useState([]);
 const [loading, setLoading] = useState(false);
 const [error, setError] = useState(null);
@@ -75,9 +75,9 @@ import { useFlights } from '../contexts/FlightsContext';
 
 function SearchForm() {
   const {
-    tripType, from, to, departDate, adults, onlyDirect,
+    tripType, from, to, departDate, adults, flexibleDates,
     aeropuertos, loading: aeropuertosLoading,
-    setTripType, setFrom, setTo, setDepartDate, setAdults, setOnlyDirect,
+    setTripType, setFrom, setTo, setDepartDate, setAdults, setFlexibleDates,
     getSearchCriteria, isSearchValid
   } = useSearch();
 

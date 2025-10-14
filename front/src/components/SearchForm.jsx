@@ -31,7 +31,7 @@ export default function SearchForm({ onResults }) {
     departDate,
     returnDate,
     adults,
-    onlyDirect,
+    flexibleDates,
     aeropuertos,
     loading: aeropuertosLoading,
     setTripType,
@@ -40,7 +40,7 @@ export default function SearchForm({ onResults }) {
     setDepartDate,
     setReturnDate,
     setAdults,
-    setOnlyDirect,
+    setFlexibleDates,
     getSearchCriteria,
     isSearchValid,
     selectedClass,
@@ -275,11 +275,11 @@ export default function SearchForm({ onResults }) {
         <FormControlLabel
           control={
             <Switch
-              checked={onlyDirect}
-              onChange={(e) => setOnlyDirect(e.target.checked)}
+              checked={flexibleDates}
+              onChange={(e) => setFlexibleDates(e.target.checked)}
             />
           }
-          label="Solo directos"
+          label="Fechas flexibles"
           sx={{ mt: 2 }}
         />
 
