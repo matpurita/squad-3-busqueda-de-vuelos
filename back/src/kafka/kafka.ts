@@ -2,14 +2,15 @@ import { Kafka } from 'kafkajs'
 import { prisma } from '../prisma/db'
 
 const EVENTS = {
-  FLIGHT_CREATED: 'flight_created',
-  FLIGHT_UPDATED: 'flight_updated',
-  FLIGHT_DELETED: 'flight_deleted',
-  FLIGHT_BOOKED: 'flight_booked'
+  FLIGHT_CREATED: 'flights.flight.created',
+  FLIGHT_UPDATED: 'flights.flight.updated',
+  RESERVATION_CREATED: 'reservations.reservation.created',
+  RESERVATION_UPDATED: 'reservations.reservation.updated',
+  AIRLINE_OR_FLIGHT_UPDATED: 'flights.aircraft_or_airline.updated'
 }
 
-const kafka = new Kafka({ clientId: 'search-service', brokers: [process.env.KAFKA_BROKER || ''] })
-const consumer = kafka.consumer({ groupId: 'search-group' })
+const kafka = new Kafka({ clientId: 'search-node', brokers: [process.env.KAFKA_BROKER || ''] })
+const consumer = kafka.consumer({ groupId: 'search-node-group' })
 
 const connectConsumer = async () => {
   await consumer.connect()
@@ -35,20 +36,28 @@ const connectConsumer = async () => {
             data: content
           })
           break
-        case EVENTS.FLIGHT_DELETED:
-          console.log(`Handling flight deleted event with data: ${content}`)
-
-          await prisma.flight.delete({
-            where: { id: content.id }
-          })
-          break
-        case EVENTS.FLIGHT_BOOKED:
+        case EVENTS.RESERVATION_CREATED:
           console.log(`Sending booking confirmation email with data: ${content}`)
 
           await prisma.booking.create({
             data: content
           })
           break
+        case EVENTS.RESERVATION_UPDATED:
+          console.log(`Handling reservation updated event with data: ${content}`)
+
+          await prisma.booking.update({
+            where: { id: content.id },
+            data: content
+          })
+          break
+
+        case EVENTS.AIRLINE_OR_FLIGHT_UPDATED:
+          console.log(`Handling airline or flight updated event with data: ${content}`)
+          // Update related flights
+
+          break
+
         default:
           console.log(`No handler for topic: ${topic}`)
       }
