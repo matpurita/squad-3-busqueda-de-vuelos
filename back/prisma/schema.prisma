@@ -27,7 +27,7 @@ model Airline {
 
 model Plane {
   id       String   @id @default(cuid())
-  model    String
+  model    String   @unique
   capacity Int
   flights  Flight[]
 }
@@ -43,13 +43,13 @@ model Flight {
   currency      String          @default("USD")
   planeId       String?
   price         Float           @default(dbgenerated("random_price()"))
-  state         String          @default("ON_TIME")
+  status        String          @default("ON_TIME")
+  bookings      Booking[]
   BookingIntent BookingIntent[]
   airline       Airline         @relation(fields: [airlineId], references: [id])
   destination   Airport         @relation("FlightsTo", fields: [destinationId], references: [id])
   origin        Airport         @relation("FlightsFrom", fields: [originId], references: [id])
   plane         Plane?          @relation(fields: [planeId], references: [id])
-  bookings      Booking[]
 
   @@index([originId])
 }
