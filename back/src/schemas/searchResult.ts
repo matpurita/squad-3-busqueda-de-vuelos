@@ -2,8 +2,8 @@ import { z } from 'zod'
 import { flightSchema } from './flight'
 
 export const searchResultSchema = z.object({
-  departure: flightSchema,
-  return: flightSchema.optional(),
+  departure: flightSchema.nullable(),
+  return: flightSchema.nullable().optional(),
   totalPrice: z.number()
 })
 

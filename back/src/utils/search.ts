@@ -18,8 +18,18 @@ function pairSearchResults(
 ): SearchResults[] {
   const results: SearchResults[] = []
 
+  if (departureFlights.length === 0 && returnFlights) {
+    for (const retFlight of returnFlights) {
+      results.push({
+        departure: null,
+        return: retFlight,
+        totalPrice: retFlight.price
+      })
+    }
+  }
+
   for (const depFlight of departureFlights) {
-    if (returnFlights) {
+    if (returnFlights && returnFlights.length > 0) {
       for (const retFlight of returnFlights) {
         results.push({
           departure: depFlight,
@@ -38,7 +48,8 @@ function pairSearchResults(
   return results
 }
 
-function getFlightDuration(flight: Flight) {
+function getFlightDuration(flight: Flight | null) {
+  if (!flight) return 0
   return (flight.arrival.getTime() - flight.departure.getTime()) / (1000 * 60) // duration in minutes
 }
 
