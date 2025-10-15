@@ -43,8 +43,6 @@ export default function SearchForm({ onResults }) {
     setFlexibleDates,
     getSearchCriteria,
     isSearchValid,
-    selectedClass,
-    setSelectedClass,
   } = useSearch();
 
   const { searchFlights, loading: searchLoading } = useFlights();
@@ -251,25 +249,6 @@ export default function SearchForm({ onResults }) {
             />
           </Grid>
 
-          <Grid item xs={12} sm={6}>
-            <FormControl fullWidth>
-              <InputLabel id="label-class">Clase</InputLabel>
-              <Select
-                labelId="label-class"
-                value={selectedClass}
-                onChange={(e) => setSelectedClass(e.target.value)}
-                startAdornment={
-                  <InputAdornment position="start">
-                    <ClassIcon />
-                  </InputAdornment>
-                }
-              >
-                <MenuItem value="economy">Económica</MenuItem>
-                <MenuItem value="premium">Premium</MenuItem>
-                <MenuItem value="business">Business</MenuItem>
-              </Select>
-            </FormControl>
-          </Grid>
         </Grid>
 
         <FormControlLabel

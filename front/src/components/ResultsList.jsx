@@ -24,10 +24,20 @@ export default function ResultsList() {
   
   console.log("VUELOS:", vuelos);
 
-  const onSort = (event) => {
-    const sortOrder = event.target.value;
-    setSort(sortOrder);
+  const onSort = async (event) => {
+  const sortOrder = event.target.value;
+  setSort(sortOrder);
+  
+  // Ejecutar nueva búsqueda con el nuevo criterio de ordenamiento
+  const criteria = {
+    ...getSearchCriteria(),
+    sort: sortOrder,
+    offset: 0, // Resetear a la primera página
+    limit: rowsPerPage
   };
+
+  await searchFlights(criteria);
+};
 
   const handleChangePage = async (event, newPage) => {
     const criteria = {
