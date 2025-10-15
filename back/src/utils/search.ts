@@ -37,6 +37,12 @@ function pairSearchResults(
           totalPrice: depFlight.price + retFlight.price
         })
       }
+    } else if (returnFlights && returnFlights.length === 0) {
+      results.push({
+        departure: depFlight,
+        return: null,
+        totalPrice: depFlight.price
+      })
     } else {
       results.push({
         departure: depFlight,
