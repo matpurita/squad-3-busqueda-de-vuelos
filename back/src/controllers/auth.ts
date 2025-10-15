@@ -1,6 +1,5 @@
 import { NextFunction, Request, Response } from 'express'
 import { loginPayloadSchema } from '../schemas/loginPayload'
-import authMock from './authMock'
 
 async function getUserData(req: Request, res: Response, next: NextFunction) {
   if (!req.user) {

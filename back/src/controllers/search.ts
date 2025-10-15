@@ -7,7 +7,7 @@ import { add, startOfDay, endOfDay, sub } from 'date-fns'
 import { Pagination } from '../schemas/pagination'
 import { pairSearchResults, sortSearchResults } from '../utils/search'
 import { bookingIntentSchema } from '../schemas/bookingIntent'
-// import { getProducer } from '../kafka/kafka'
+import { getProducer } from '../kafka/kafka'
 
 async function searchFlights(req: Request, res: Response, next: NextFunction) {
   try {
@@ -237,12 +237,12 @@ async function sendBookingIntent(req: Request, res: Response, next: NextFunction
       data: flightBooking
     })
 
-    // const producer = await getProducer()
+    const producer = await getProducer()
 
-    // await producer.send({
-    //   topic: 'booking_intent',
-    //   messages: [{ value: JSON.stringify(flightBooking) }]
-    // })
+    await producer.send({
+      topic: 'search.reservation.intent',
+      messages: [{ value: JSON.stringify(flightBooking) }]
+    })
 
     res.status(201).json({ message: 'Booking recorded successfully' })
   } catch (error) {
