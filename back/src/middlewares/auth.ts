@@ -14,6 +14,7 @@ export function authMiddleware(req: Request, res: Response, next: NextFunction) 
   const token = authHeader.split(' ')[1]
   try {
     const decoded = jwt.verify(token, SECRET_KEY)
+
     const authPayload = AuthPayloadSchema.parse(decoded)
 
     if (authPayload.exp && Date.now() >= authPayload.exp * 1000) {

@@ -1,9 +1,9 @@
 import { z } from 'zod'
 
-export const flightBookingSchema = z.object({
+export const bookingIntentSchema = z.object({
   userId: z.string(),
   flightId: z.string(),
   timestamp: z.date().default(new Date())
 })
 
-export type FlightBooking = z.infer<typeof flightBookingSchema>
+export type BookingIntent = z.infer<typeof bookingIntentSchema>

@@ -4,8 +4,8 @@ import airportRouter from './routes/airport'
 import authRouter from './routes/auth'
 import metricsRouter from './routes/metrics'
 import { errorHandler } from './middlewares/error'
-import { authMiddleware } from './middlewares/auth'
 import cors from 'cors'
+import { connectConsumer } from './kafka/kafka'
 
 const app = express()
 
@@ -14,18 +14,18 @@ app.use(express.json())
 
 app.use('/auth', authRouter)
 
-app.use('/search', authMiddleware, searchRouter)
+app.use('/search', searchRouter)
 
-app.use('/airport', authMiddleware, airportRouter)
+app.use('/airport', airportRouter)
 
-app.use('/metrics', authMiddleware, metricsRouter)
+app.use('/metrics', metricsRouter)
 
 app.use(errorHandler)
 
-// connectConsumer().then(() => {
-//   console.log('Kafka consumer connected and running')
-// }).catch(err => {
-//   console.error('Error connecting Kafka consumer:', err)
-// })
+connectConsumer().then(() => {
+  console.log('Kafka consumer connected and running')
+}).catch(err => {
+  console.error('Error connecting Kafka consumer:', err)
+})
 
 export default app

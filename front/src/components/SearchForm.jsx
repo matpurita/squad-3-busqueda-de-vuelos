@@ -31,7 +31,7 @@ export default function SearchForm({ onResults }) {
     departDate,
     returnDate,
     adults,
-    onlyDirect,
+    flexibleDates,
     aeropuertos,
     loading: aeropuertosLoading,
     setTripType,
@@ -40,11 +40,9 @@ export default function SearchForm({ onResults }) {
     setDepartDate,
     setReturnDate,
     setAdults,
-    setOnlyDirect,
+    setFlexibleDates,
     getSearchCriteria,
     isSearchValid,
-    selectedClass,
-    setSelectedClass,
   } = useSearch();
 
   const { searchFlights, loading: searchLoading } = useFlights();
@@ -251,35 +249,16 @@ export default function SearchForm({ onResults }) {
             />
           </Grid>
 
-          <Grid item xs={12} sm={6}>
-            <FormControl fullWidth>
-              <InputLabel id="label-class">Clase</InputLabel>
-              <Select
-                labelId="label-class"
-                value={selectedClass}
-                onChange={(e) => setSelectedClass(e.target.value)}
-                startAdornment={
-                  <InputAdornment position="start">
-                    <ClassIcon />
-                  </InputAdornment>
-                }
-              >
-                <MenuItem value="economy">Económica</MenuItem>
-                <MenuItem value="premium">Premium</MenuItem>
-                <MenuItem value="business">Business</MenuItem>
-              </Select>
-            </FormControl>
-          </Grid>
         </Grid>
 
         <FormControlLabel
           control={
             <Switch
-              checked={onlyDirect}
-              onChange={(e) => setOnlyDirect(e.target.checked)}
+              checked={flexibleDates}
+              onChange={(e) => setFlexibleDates(e.target.checked)}
             />
           }
-          label="Solo directos"
+          label="Fechas flexibles"
           sx={{ mt: 2 }}
         />
 

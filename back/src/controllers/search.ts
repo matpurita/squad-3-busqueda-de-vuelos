@@ -6,7 +6,8 @@ import { prisma } from '../prisma/db'
 import { add, startOfDay, endOfDay, sub } from 'date-fns'
 import { Pagination } from '../schemas/pagination'
 import { pairSearchResults, sortSearchResults } from '../utils/search'
-import { flightBookingSchema } from '../schemas/flightBooking'
+import { bookingIntentSchema } from '../schemas/bookingIntent'
+import { getProducer } from '../kafka/kafka'
 
 async function searchFlights(req: Request, res: Response, next: NextFunction) {
   try {
@@ -54,7 +55,10 @@ async function searchFlights(req: Request, res: Response, next: NextFunction) {
         origin: true,
         destination: true,
         airline: true,
-        plane: true
+        plane: true,
+        _count: {
+          select: { bookings: true }
+        }
       }
     })
 
@@ -91,14 +95,26 @@ async function searchFlights(req: Request, res: Response, next: NextFunction) {
             origin: true,
             destination: true,
             airline: true,
-            plane: true
+            plane: true,
+            _count: {
+              select: { bookings: true }
+            }
           }
         })
       : null
 
     const [departureFlights, returnFlights] = await Promise.all([departurePromise, returnPromise])
 
-    const searchResults = pairSearchResults(departureFlights, returnFlights)
+    const filterBySeats = (flights: typeof departureFlights) =>
+      flights.filter((flight) => {
+        const availableSeats = flight.plane?.capacity ?? 50 - flight._count.bookings
+        return availableSeats >= searchParams.passengers
+      })
+
+    const filteredDepartureFlights = filterBySeats(departureFlights)
+    const filteredReturnFlights = returnFlights ? filterBySeats(returnFlights) : null
+
+    const searchResults = pairSearchResults(filteredDepartureFlights, filteredReturnFlights)
 
     const sortedResults = sortSearchResults(searchResults, searchParams.sort)
 
@@ -209,9 +225,9 @@ async function getFlightSuggestions(req: Request, res: Response, next: NextFunct
   }
 }
 
-async function sendFlightBooking(req: Request, res: Response, next: NextFunction) {
+async function sendBookingIntent(req: Request, res: Response, next: NextFunction) {
   try {
-    const flightBooking = flightBookingSchema.parse({
+    const flightBooking = bookingIntentSchema.parse({
       userId: req.body.userId,
       flightId: req.body.flightId,
       timestamp: req.body.timestamp
@@ -221,11 +237,12 @@ async function sendFlightBooking(req: Request, res: Response, next: NextFunction
       data: flightBooking
     })
 
-    // await fetch('[CORE]', {
-    //   method: 'POST',
-    //   headers: { 'Content-Type': 'application/json' },
-    //   body: JSON.stringify(flightBooking)
-    // })
+    const producer = await getProducer()
+
+    await producer.send({
+      topic: 'search.reservation.intent',
+      messages: [{ value: JSON.stringify(flightBooking) }]
+    })
 
     res.status(201).json({ message: 'Booking recorded successfully' })
   } catch (error) {
@@ -236,5 +253,5 @@ async function sendFlightBooking(req: Request, res: Response, next: NextFunction
 export default {
   searchFlights,
   getFlightSuggestions,
-  sendFlightBooking
+  sendBookingIntent
 }

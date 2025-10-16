@@ -5,7 +5,7 @@ info:
   version: 1.0.0
 
 servers:
-  - url: https://squad-3-busqueda-de-vuelos-back-m80hyd66s.vercel.app
+  - url: https://squad-3-busqueda-de-vuelos-back-prod.vercel.app
     description: Development server
 
 paths:
@@ -50,7 +50,7 @@ paths:
           schema:
             type: string
             pattern: '^\d{4}-\d{2}-\d{2}$'
-          description: Return date (YYYY-MM-DD)
+          description: Return date (YYYY-MM-DD) — optional
         - name: returnRange
           in: query
           schema:
@@ -67,12 +67,6 @@ paths:
             maximum: 9
             default: 1
           description: Number of passengers
-        - name: cabinClass
-          in: query
-          schema:
-            type: string
-            enum: [Economy, 'Premium Economy', Business, First]
-          description: Cabin class preference
         - name: currency
           in: query
           schema:
@@ -150,6 +144,118 @@ paths:
         '500':
           description: Internal server error
 
+  /search/intent:
+    post:
+      summary: Create booking intent
+      description: Records a booking intent and publishes an event to Kafka
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/BookingIntent'
+      responses:
+        '201':
+          description: Booking recorded successfully
+        '400':
+          description: Bad request - invalid payload
+        '401':
+          description: Unauthorized - missing or invalid token
+        '500':
+          description: Internal server error
+
+  /auth/login:
+    post:
+      summary: Login user
+      description: Authenticate against external auth service
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/LoginPayload'
+      responses:
+        '200':
+          description: Authentication successful
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                  data:
+                    type: object
+        '401':
+          description: Invalid credentials
+        '500':
+          description: Internal server error
+
+  /auth/login/mock:
+    post:
+      summary: Mock login
+      description: Local mock login for development/testing
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/LoginPayload'
+      responses:
+        '200':
+          description: Mock login successful (returns token)
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                  token:
+                    type: string
+        '401':
+          description: Invalid credentials
+        '500':
+          description: Internal server error
+
+  /auth/user:
+    get:
+      summary: Get user data
+      description: Retrieves user data from auth service for authenticated user
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: User data
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AuthPayload'
+        '401':
+          description: Unauthorized
+        '500':
+          description: Internal server error
+
+  /metrics/search:
+    post:
+      summary: Post search metric
+      description: Records search metrics and publishes event to Kafka
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SearchMetric'
+      responses:
+        '201':
+          description: Search metric recorded
+        '400':
+          description: Bad request - invalid payload
+        '500':
+          description: Internal server error
+
   /airport:
     get:
       summary: Get all airports
@@ -186,6 +292,12 @@ paths:
           description: Internal server error
 
 components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+
   schemas:
     SearchResult:
       type: object
@@ -337,3 +449,69 @@ components:
           description: Airline IATA code
         name:
           type: string
+
+    BookingIntent:
+      type: object
+      required:
+        - userId
+        - flightId
+      properties:
+        userId:
+          type: string
+        flightId:
+          type: string
+        timestamp:
+          type: string
+          format: date-time
+
+    LoginPayload:
+      type: object
+      required:
+        - email
+        - password
+      properties:
+        email:
+          type: string
+          format: email
+        password:
+          type: string
+          minLength: 8
+
+    AuthPayload:
+      type: object
+      properties:
+        userId:
+          type: string
+        email:
+          type: string
+        rol:
+          type: string
+        exp:
+          type: number
+        iat:
+          type: number
+
+    SearchMetric:
+      type: object
+      required:
+        - flightsFrom
+        - flightsTo
+        - dateFrom
+        - dateTo
+        - resultsCount
+      properties:
+        userId:
+          type: string
+        flightsFrom:
+          type: string
+        flightsTo:
+          type: string
+        dateFrom:
+          type: string
+        dateTo:
+          type: string
+        resultsCount:
+          type: integer
+        timestamp:
+          type: string
+          format: date-time

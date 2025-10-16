@@ -13,8 +13,7 @@ export const SearchProvider = ({ children }) => {
   const [departDate, setDepartDate] = useState('');
   const [returnDate, setReturnDate] = useState('');
   const [adults, setAdults] = useState(1);
-  const [onlyDirect, setOnlyDirect] = useState(false);
-  const [selectedClass, setSelectedClass] = useState('')
+  const [flexibleDates, setFlexibleDates] = useState(false);
   const [sort, setSort] = useState('price_asc')
   
   // Estado de aeropuertos y carga
@@ -46,20 +45,29 @@ export const SearchProvider = ({ children }) => {
     cargarAeropuertos();
   }, []);
 
-  // Obtener criterios de búsqueda formateados
-  const getSearchCriteria = () => {
-    console.log('SORT:', sort)
-    return {
-      tripType,
+   const getSearchCriteria = () => {
+    const criteria = {
       origin: from?.code,
       destination: to?.code,
       departureDate: departDate,
-      returnDate: tripType === 'roundtrip' ? returnDate : undefined,
-      adults,
-      onlyDirect,
-      selectedClass,
-      sort: sort ?? undefined
+      departureRange: flexibleDates ? 1 : 0, // Si es flexible, buscar ±3 días
+      passengers: adults,
+      currency: 'USD', // Por defecto USD, podrías hacerlo configurable
     };
+
+    // Solo agregar returnDate y returnRange si es viaje de ida y vuelta
+    if (tripType === 'roundtrip' && returnDate) {
+      criteria.returnDate = returnDate;
+      criteria.returnRange = flexibleDates ? 1 : 0; // Si es flexible, buscar ±1 día
+    }
+
+    // Solo agregar sort si está definido
+    if (sort) {
+      criteria.sort = sort;
+    }
+
+    console.log('Search criteria for backend:', criteria);
+    return criteria;
   };
 
   // Validar si la búsqueda es válida
@@ -75,18 +83,18 @@ export const SearchProvider = ({ children }) => {
     setDepartDate('');
     setReturnDate('');
     setAdults(1);
-    setOnlyDirect(false);
+    setFlexibleDates(false);
     setError(null);
   };
 
   const value = {
     // Estado
-    tripType, from, to, departDate, returnDate, adults, onlyDirect,
-    aeropuertos, loading, error, selectedClass, sort,
+    tripType, from, to, departDate, returnDate, adults, flexibleDates,
+    aeropuertos, loading, error, sort,
     
     // Setters
     setTripType, setFrom, setTo, setDepartDate, setReturnDate,
-    setAdults, setOnlyDirect, setAeropuertos, setLoading, setError, setSelectedClass, setSort,
+    setAdults, setFlexibleDates, setAeropuertos, setLoading, setError, setSort,
     
     // Utilidades
     getSearchCriteria, isSearchValid, resetFilters

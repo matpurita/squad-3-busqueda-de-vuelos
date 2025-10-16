@@ -1,4 +1,5 @@
 import { createContext, useContext, useState, useEffect, useCallback, useMemo } from "react";
+import { apiService } from "../services/apiService";
 
 const AuthContext = createContext();
 
@@ -7,18 +8,7 @@ export const AuthProvider = ({ children }) => {
   const [token, setToken] = useState(null);
   const [loading, setLoading] = useState(true);
 
-  // 🔹 Mock función (sin dependencias) - debe estar primero
-  const mockValidateToken = useCallback(async (tokenToValidate) => {
-    return new Promise((resolve, reject) => {
-      setTimeout(() => {
-        if (tokenToValidate === "valid-token") {
-          resolve({ name: "Juan Pérez", email: "juan.perez@example.com" });
-        } else {
-          reject(new Error("Token inválido"));
-        }
-      }, 1000);
-    });
-  }, []);
+  
 
   // 🔹 Cerrar sesión (sin dependencias) - segundo
   const logout = useCallback(() => {
@@ -29,61 +19,69 @@ export const AuthProvider = ({ children }) => {
     sessionStorage.removeItem("user");
   }, [setUser, setToken]);
 
-  // 🔹 Validar token (depende de mockValidateToken y logout) - tercero
+  // 🔹 Validar token usando API real
   const validateToken = useCallback(async (tokenToValidate) => {
     try {
-      //const res = await fetch("http://localhost:4000/api/validate-token", {
-      //  headers: { Authorization: `Bearer ${tokenToValidate}` }
-      //});
       setLoading(true);
 
-      // Mock de validación
-      const response = await mockValidateToken(tokenToValidate);
+      // Temporal: guardar token en sessionStorage para que el interceptor lo use
+      const oldToken = sessionStorage.getItem('token');
+      sessionStorage.setItem('token', tokenToValidate);
 
-      if (!response) throw new Error("Token inválido");
-
-      // Guardar token y user solo después de validar
-      setToken(tokenToValidate);
-      setUser(response);
-
-      sessionStorage.setItem("token", tokenToValidate);
-      sessionStorage.setItem("user", JSON.stringify(response));
+      try {
+        const response = await apiService.getUserData();
+        
+        // Si llegamos aquí, el token es válido
+        setToken(tokenToValidate);
+        setUser(response);
+        sessionStorage.setItem("user", JSON.stringify(response));
+      } catch (error) {
+        // Restaurar token anterior si falló
+        if (oldToken) {
+          sessionStorage.setItem('token', oldToken);
+        } else {
+          sessionStorage.removeItem('token');
+        }
+        throw error;
+      }
     } catch (err) {
       console.error("Error validando token:", err);
       logout();
       throw err;
-      
     } finally {
       setLoading(false);
     }
-  }, [mockValidateToken, logout]);
+  }, [logout]);
 
   // 🔹 Punto de entrada para token externo (depende de validateToken) - cuarto
   const setExternalToken = useCallback(async (externalToken) => {
     await validateToken(externalToken);
   }, [validateToken]);
 
-  // 🔹 Login con email y password
+  // 🔹 Login con email y password usando API real
   const login = useCallback(async (email, password) => {
     try {
       setLoading(true);
       
-      // Aquí iría la llamada al API real
-      // const response = await fetch('/api/login', {
-      //   method: 'POST',
-      //   headers: { 'Content-Type': 'application/json' },
-      //   body: JSON.stringify({ email, password })
-      // });
+      // Llamar al API de login (o loginMock para desarrollo)
+      const response = await apiService.login(email, password); // Cambiar a apiService.login en producción
       
-      // Mock de autenticación
-      if (email === 'admin@vuelos.com' && password === 'admin123') {
-        const mockToken = 'valid-token';
-        await validateToken(mockToken);
+      if (response.token) {
+        // Guardar token y validar
+        sessionStorage.setItem("token", response.token);
+        if (response.user) {
+          setUser(response.user);
+          setToken(response.token);
+          sessionStorage.setItem("user", JSON.stringify(response.user));
+        } else {
+          await validateToken(response.token);
+        }
         return { success: true };
       } else {
-        throw new Error('Credenciales incorrectas');
+        throw new Error('Login fallido');
       }
     } catch (error) {
+      console.error('Error en login:', error);
       throw error;
     } finally {
       setLoading(false);
@@ -103,6 +101,22 @@ export const AuthProvider = ({ children }) => {
       setLoading(false);
     }
   }, [validateToken]);
+
+  // 🔹 Escuchar eventos de logout desde apiService
+  useEffect(() => {
+    const handleUnauthorized = () => {
+      console.log('Token expirado o inválido - cerrando sesión automáticamente');
+      logout();
+    };
+
+    // Agregar listener para eventos de unauthorized
+    window.addEventListener('auth:unauthorized', handleUnauthorized);
+
+    // Cleanup
+    return () => {
+      window.removeEventListener('auth:unauthorized', handleUnauthorized);
+    };
+  }, [logout]);
 
   // 🔹 Valor computado para autenticación
   const isAuthenticated = useMemo(() => !!user, [user]);
