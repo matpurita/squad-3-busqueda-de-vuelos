@@ -1,4 +1,5 @@
 // Configuración de la aplicación
+console.log("API URL:", import.meta.env);
 export const config = {
   // API
   API_URL: import.meta.env.VITE_API_URL || 'http://localhost:3000/',
