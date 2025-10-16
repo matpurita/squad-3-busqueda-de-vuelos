@@ -5,7 +5,7 @@ info:
   version: 1.0.0
 
 servers:
-  - url: https://squad-3-busqueda-de-vuelos-back-m80hyd66s.vercel.app
+  - url: https://squad-3-busqueda-de-vuelos-back-prod.vercel.app
     description: Development server
 
 paths:
@@ -50,7 +50,7 @@ paths:
           schema:
             type: string
             pattern: '^\d{4}-\d{2}-\d{2}$'
-          description: Return date (YYYY-MM-DD)
+          description: Return date (YYYY-MM-DD) — optional
         - name: returnRange
           in: query
           schema:
@@ -67,12 +67,6 @@ paths:
             maximum: 9
             default: 1
           description: Number of passengers
-        - name: cabinClass
-          in: query
-          schema:
-            type: string
-            enum: [Economy, 'Premium Economy', Business, First]
-          description: Cabin class preference
         - name: currency
           in: query
           schema:
@@ -169,24 +163,6 @@ paths:
           description: Bad request - invalid payload
         '401':
           description: Unauthorized - missing or invalid token
-        '500':
-          description: Internal server error
-
-  /search/intent/mock:
-    post:
-      summary: Create booking intent (mock)
-      description: Same as /search/intent but for testing (if implemented)
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/BookingIntent'
-      responses:
-        '201':
-          description: Booking recorded (mock)
-        '400':
-          description: Bad request - invalid payload
         '500':
           description: Internal server error
 
