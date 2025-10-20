@@ -7,8 +7,8 @@ import { add, startOfDay, endOfDay, sub } from 'date-fns'
 import { Pagination } from '../schemas/pagination'
 import { pairSearchResults, sortSearchResults } from '../utils/search'
 import { bookingIntentSchema } from '../schemas/bookingIntent'
-import { getProducer } from '../kafka/kafka'
 import { searchMetricSchema } from '../schemas/searchMetric'
+import { postEvent } from '../kafka/kafka'
 
 async function searchFlights(req: Request, res: Response, next: NextFunction) {
   try {
@@ -131,14 +131,7 @@ async function searchFlights(req: Request, res: Response, next: NextFunction) {
 
     prisma.searchMetrics.create({ data: searchMetric })
 
-    const producer = await getProducer()
-
-    const meta = await producer.send({
-      topic: 'search.search.performed',
-      messages: [{ value: JSON.stringify(searchMetric) }]
-    })
-
-    console.log('Search metric sent to Kafka:', searchMetric, meta)
+    await postEvent('search.search.performed', searchMetric)
 
     const pagination: Pagination = {
       total: sortedResults.length,
@@ -259,14 +252,7 @@ async function sendBookingIntent(req: Request, res: Response, next: NextFunction
       data: flightBooking
     })
 
-    const producer = await getProducer()
-
-    const meta = await producer.send({
-      topic: 'search.cart.item.added',
-      messages: [{ value: JSON.stringify(flightBooking) }]
-    })
-
-    console.log('Booking intent sent to Kafka:', flightBooking, meta)
+    postEvent('search.cart.item.added', flightBooking)
 
     res.status(201).json({ message: 'Booking recorded successfully' })
   } catch (error) {

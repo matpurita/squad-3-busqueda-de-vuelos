@@ -118,10 +118,21 @@ const connectConsumer = async () => {
   })
 }
 
-const getProducer = async () => {
-  const producer = kafka.producer({ createPartitioner: Partitioners.DefaultPartitioner })
-  await producer.connect()
-  return producer
+type EventType = 'search.search.performed' | 'search.cart.item.added'
+type EventPayload<T extends EventType> = {
+  'search.search.performed': SearchMetric
+  'search.cart.item.added': BookingIntent
+}[T]
+
+const postEvent = async <T extends EventType>(type: T, payload: EventPayload<T>) => {
+  await fetch('http://34.172.179.60/events', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      'X-API-Key': 'microservices-api-key-2024-secure'
+    },
+    body: JSON.stringify({ event_type: type, ...payload })
+  })
 }
 
-export { connectConsumer, getProducer, EVENTS }
+export { connectConsumer, postEvent, EVENTS }
