@@ -55,13 +55,13 @@ model Flight {
 }
 
 model SearchMetrics {
-  id          String   @id @default(cuid())
-  userId      String?
-  flightsFrom String
-  flightsTo   String
-  dateFrom    DateTime
-  dateTo      DateTime
-  timestamp   DateTime @default(now())
+  id            String   @id @default(cuid())
+  userId        String?
+  flightsFrom   String
+  flightsTo     String
+  departureDate DateTime
+  returnDate    DateTime?
+  timestamp     DateTime @default(now())
 }
 
 model BookingIntent {

@@ -1,4 +1,4 @@
-import { Kafka } from 'kafkajs'
+import { Kafka, logLevel, Partitioners } from 'kafkajs'
 import { prisma } from '../prisma/db'
 import {
   AircraftOrAirlineUpdatedEvent,
@@ -16,12 +16,12 @@ const EVENTS = {
   AIRCRAFT_OR_AIRLINE_UPDATED: 'flights.aircraft_or_airline.updated'
 }
 
-const kafka = new Kafka({ clientId: 'search-node', brokers: [process.env.KAFKA_BROKER || ''] })
+const kafka = new Kafka({ clientId: 'search-node', brokers: [process.env.KAFKA_BROKER || ''], logLevel: logLevel.INFO })
 const consumer = kafka.consumer({ groupId: 'search-node-group' })
 
 const connectConsumer = async () => {
   await consumer.connect()
-  await consumer.subscribe({ topics: Object.values(EVENTS) })
+  await consumer.subscribe({ topics: Object.values(EVENTS), fromBeginning: true })
 
   await consumer.run({
     eachMessage: async ({ topic, message }) => {
@@ -119,7 +119,7 @@ const connectConsumer = async () => {
 }
 
 const getProducer = async () => {
-  const producer = kafka.producer()
+  const producer = kafka.producer({ createPartitioner: Partitioners.DefaultPartitioner })
   await producer.connect()
   return producer
 }
