@@ -1,4 +1,4 @@
-import { Kafka, logLevel, Partitioners } from 'kafkajs'
+import { Kafka, logLevel } from 'kafkajs'
 import { prisma } from '../prisma/db'
 import {
   AircraftOrAirlineUpdatedEvent,
@@ -125,13 +125,27 @@ type EventPayload<T extends EventType> = {
 }[T]
 
 const postEvent = async <T extends EventType>(type: T, payload: EventPayload<T>) => {
+  const now = new Date().toISOString()
+  const messageId = `msg-${Date.now()}`
+  const correlationId = `corr-${Date.now()}`
+  const idempotencyKey = `search-${Date.now()}`
+
   await fetch('http://34.172.179.60/events', {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
       'X-API-Key': 'microservices-api-key-2024-secure'
     },
-    body: JSON.stringify({ event_type: type, ...payload })
+    body: JSON.stringify({
+      messageId,
+      eventType: type,
+      schemaVersion: '1.0',
+      occurredAt: now,
+      producer: 'search-service',
+      correlationId,
+      idempotencyKey,
+      payload: JSON.stringify(payload)
+    })
   })
 }
 
