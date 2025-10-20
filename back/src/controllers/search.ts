@@ -262,7 +262,7 @@ async function sendBookingIntent(req: Request, res: Response, next: NextFunction
     const producer = await getProducer()
 
     const meta = await producer.send({
-      topic: 'search.reservation.intent',
+      topic: 'search.cart.item.added',
       messages: [{ value: JSON.stringify(flightBooking) }]
     })
 

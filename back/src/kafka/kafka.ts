@@ -21,7 +21,7 @@ const consumer = kafka.consumer({ groupId: 'search-node-group' })
 
 const connectConsumer = async () => {
   await consumer.connect()
-  await consumer.subscribe({ topics: Object.values(EVENTS), fromBeginning: true })
+  await consumer.subscribe({ topics: ['flights.events', 'reservations.events'], fromBeginning: true })
 
   await consumer.run({
     eachMessage: async ({ topic, message }) => {
