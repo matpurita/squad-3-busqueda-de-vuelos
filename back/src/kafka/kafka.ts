@@ -1,4 +1,4 @@
-import { Kafka } from 'kafkajs'
+import { Kafka, logLevel } from 'kafkajs'
 import { prisma } from '../prisma/db'
 import {
   AircraftOrAirlineUpdatedEvent,
@@ -7,121 +7,181 @@ import {
   ReservationCreatedEvent,
   ReservationUpdatedEvent
 } from './events'
+import { SearchMetric } from '../schemas/searchMetric'
+import { BookingIntent } from '../schemas/bookingIntent'
+import { PrismaClientKnownRequestError } from '@prisma/client/runtime/library'
 
 const EVENTS = {
   FLIGHT_CREATED: 'flights.flight.created',
   FLIGHT_UPDATED: 'flights.flight.updated',
+  AIRCRAFT_OR_AIRLINE_UPDATED: 'flights.aircraft_or_airline.updated',
   RESERVATION_CREATED: 'reservations.reservation.created',
-  RESERVATION_UPDATED: 'reservations.reservation.updated',
-  AIRCRAFT_OR_AIRLINE_UPDATED: 'flights.aircraft_or_airline.updated'
-}
+  RESERVATION_UPDATED: 'reservations.reservation.updated'
+} as const
 
-const kafka = new Kafka({ clientId: 'search-node', brokers: [process.env.KAFKA_BROKER || ''] })
-const consumer = kafka.consumer({ groupId: 'search-node-group' })
+const kafka = new Kafka({
+  clientId: 'search-node',
+  brokers: [process.env.KAFKA_BROKER || ''],
+  logLevel: logLevel.INFO
+})
+const consumer = kafka.consumer({ groupId: 'search-node-group-replda7f81' })
 
 const connectConsumer = async () => {
   await consumer.connect()
-  await consumer.subscribe({ topics: Object.values(EVENTS) })
+  await consumer.subscribe({ topics: ['search.events'], fromBeginning: true })
 
   await consumer.run({
-    eachMessage: async ({ topic, message }) => {
-      console.log(`[${topic}] ${message.key?.toString() || ''} -> ${message.value?.toString()}`)
+    eachMessage: async ({ message }) => {
+      const { payload: payloadString, ...data } = JSON.parse(message.value!.toString())
+      const payload = payloadString ? JSON.parse(payloadString) : null
 
-      const data = JSON.parse(message.value!.toString())
+      console.log(`[${data.eventType}]:`, data)
 
-      switch (topic) {
-        case EVENTS.FLIGHT_CREATED: {
-          const content: FlightCreatedEvent = data
+      try {
+        switch (data.eventType) {
+          case EVENTS.FLIGHT_CREATED: {
+            const content: FlightCreatedEvent = payload
 
-          await prisma.flight.create({
-            data: {
-              id: content.flightId,
-              flightNumber: content.flightNumber,
-              origin: {
-                connect: { code: content.origin }
-              },
-              destination: {
-                connect: { code: content.destination }
-              },
-              plane: {
-                connect: { model: content.aircraftModel }
-              },
-              airline: {
-                connect: { code: content.flightNumber.slice(0, 2) }
-              },
-              departure: new Date(content.departureAt),
-              arrival: new Date(content.arrivalAt),
-              status: content.status,
-              price: content.price,
-              currency: content.currency
-            }
-          })
+            await prisma.flight.create({
+              data: {
+                id: content.flightId,
+                flightNumber: content.flightNumber,
+                origin: {
+                  connect: { code: content.origin }
+                },
+                destination: {
+                  connect: { code: content.destination }
+                },
+                plane: {
+                  connect: { model: content.aircraftModel }
+                },
+                airline: {
+                  connect: { code: content.flightNumber.slice(0, 2) }
+                },
+                departure: new Date(content.departureAt),
+                arrival: new Date(content.arrivalAt),
+                status: content.status,
+                price: content.price,
+                currency: content.currency
+              }
+            })
 
-          break
+            break
+          }
+          case EVENTS.FLIGHT_UPDATED: {
+            const content: FlightUpdatedEvent = payload
+
+            await prisma.flight.update({
+              where: { id: content.flightId },
+              data: {
+                status: content.newStatus,
+                departure: content.newDepartureAt ? new Date(content.newDepartureAt) : undefined,
+                arrival: content.newArrivalAt ? new Date(content.newArrivalAt) : undefined
+              }
+            })
+
+            break
+          }
+          case EVENTS.AIRCRAFT_OR_AIRLINE_UPDATED: {
+            const content: AircraftOrAirlineUpdatedEvent = payload
+
+            await prisma.plane.update({
+              where: { id: content.aircraftId },
+              data: { capacity: content.capacity }
+            })
+
+            break
+          }
+          case EVENTS.RESERVATION_CREATED: {
+            const content: ReservationCreatedEvent = payload
+
+            await prisma.booking.create({
+              data: {
+                id: content.reservationId,
+                userId: content.userId,
+                flightId: content.flightId,
+                bookingDate: new Date(content.reservedAt)
+              }
+            })
+
+            break
+          }
+          case EVENTS.RESERVATION_UPDATED: {
+            const content: ReservationUpdatedEvent = payload
+
+            await prisma.booking.update({
+              where: { id: content.reservationId },
+              data: {
+                status: content.newStatus,
+                bookingDate: content.reservationDate ? new Date(content.reservationDate) : undefined
+              }
+            })
+
+            break
+          }
+
+          default:
+            console.log(`No handler for event: ${payload.eventType}`)
         }
-        case EVENTS.FLIGHT_UPDATED: {
-          const content: FlightUpdatedEvent = data
-
-          await prisma.flight.update({
-            where: { id: content.flightId },
-            data: {
-              status: content.newStatus,
-              departure: content.newDepartureAt ? new Date(content.newDepartureAt) : undefined,
-              arrival: content.newArrivalAt ? new Date(content.newArrivalAt) : undefined
-            }
-          })
-
-          break
+      } catch (error) {
+        if (error instanceof PrismaClientKnownRequestError) {
+          // P2002. "Unique constraint failed on the {constraint}".
+          if (error.code === 'P2002') {
+            // Handle unique constraint violation (e.g., duplicate entries)
+            console.warn(
+              'Duplicate entry detected, skipping...',
+              error.meta?.modelName,
+              '->',
+              error.meta?.target
+            )
+            return
+          } else {
+            console.error(
+              'Prisma error code:',
+              error.code,
+              '\nMeta:',
+              error.meta,
+              '\nMessage:',
+              data,
+              '\nPayload:',
+              payload
+            )
+          }
         }
-        case EVENTS.RESERVATION_CREATED: {
-          const content: ReservationCreatedEvent = data
-
-          await prisma.booking.create({
-            data: {
-              id: content.reservationId,
-              userId: content.userId,
-              flightId: content.flightId,
-              bookingDate: new Date(content.reservedAt)
-            }
-          })
-
-          break
-        }
-        case EVENTS.RESERVATION_UPDATED: {
-          const content: ReservationUpdatedEvent = data
-
-          await prisma.booking.update({
-            where: { id: content.reservationId },
-            data: {
-              status: content.newStatus,
-              bookingDate: content.reservationDate ? new Date(content.reservationDate) : undefined
-            }
-          })
-
-          break
-        }
-        case EVENTS.AIRCRAFT_OR_AIRLINE_UPDATED: {
-          const content: AircraftOrAirlineUpdatedEvent = data
-
-          await prisma.plane.update({
-            where: { id: content.aircraftId },
-            data: { capacity: content.capacity }
-          })
-
-          break
-        }
-
-        default:
-          console.log(`No handler for topic: ${topic}`)
       }
     }
   })
 }
 
-const getProducer = async () => {
-  const producer = kafka.producer()
-  await producer.connect()
-  return producer
+type EventType = 'search.search.performed' | 'search.cart.item.added'
+type EventPayload<T extends EventType> = {
+  'search.search.performed': SearchMetric
+  'search.cart.item.added': BookingIntent
+}[T]
+
+const postEvent = async <T extends EventType>(type: T, payload: EventPayload<T>) => {
+  const now = new Date().toISOString()
+  const messageId = `msg-${Date.now()}`
+  const correlationId = `corr-${Date.now()}`
+  const idempotencyKey = `search-${Date.now()}`
+
+  await fetch(process.env.CORE_URL + '/events', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      'X-API-Key': 'microservices-api-key-2024-secure'
+    },
+    body: JSON.stringify({
+      messageId,
+      eventType: type,
+      schemaVersion: '1.0',
+      occurredAt: now,
+      producer: 'search-service',
+      correlationId,
+      idempotencyKey,
+      payload: JSON.stringify(payload)
+    })
+  })
 }
 
-export { connectConsumer, getProducer, EVENTS }
+export { connectConsumer, postEvent, EVENTS }

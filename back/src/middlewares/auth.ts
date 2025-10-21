@@ -8,7 +8,7 @@ export function authMiddleware(req: Request, res: Response, next: NextFunction) 
   const authHeader = req.headers.authorization
 
   if (!authHeader || !authHeader.startsWith('Bearer ')) {
-    return res.status(401).json({ message: 'No token provided' })
+    return next()
   }
 
   const token = authHeader.split(' ')[1]
@@ -27,4 +27,11 @@ export function authMiddleware(req: Request, res: Response, next: NextFunction) 
     console.error('JWT verification error:', err)
     return res.status(401).json({ message: 'Invalid token' })
   }
+}
+
+export function requireAuth(req: Request, res: Response, next: NextFunction) {
+  if (!req.user) {
+    return res.status(401).json({ message: 'Unauthorized' })
+  }
+  next()
 }

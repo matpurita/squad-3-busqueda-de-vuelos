@@ -55,21 +55,21 @@ model Flight {
 }
 
 model SearchMetrics {
-  id          String   @id @default(cuid())
-  userId      String?
-  flightsFrom String
-  flightsTo   String
-  dateFrom    DateTime
-  dateTo      DateTime
-  timestamp   DateTime @default(now())
+  id            String    @id @default(cuid())
+  userId        String?
+  flightsFrom   String
+  flightsTo     String
+  timestamp     DateTime  @default(now())
+  departureDate DateTime
+  returnDate    DateTime?
 }
 
 model BookingIntent {
-  id        String   @id @default(cuid())
-  userId    String
-  flightId  String
-  timestamp DateTime @default(now())
-  Flight    Flight   @relation(fields: [flightId], references: [id], map: "FlightBookings_flightId_fkey")
+  id       String   @id @default(cuid())
+  userId   String
+  flightId String
+  addedAt  DateTime @default(now())
+  Flight   Flight   @relation(fields: [flightId], references: [id], map: "FlightBookings_flightId_fkey")
 }
 
 model Booking {

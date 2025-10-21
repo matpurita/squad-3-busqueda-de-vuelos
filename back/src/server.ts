@@ -1,5 +1,6 @@
 import app from './app'
 import dotenv from 'dotenv'
+import { connectConsumer } from './kafka/kafka'
 
 dotenv.config()
 
@@ -11,4 +12,12 @@ const config = {
 
 app.listen(config, () => {
   console.log(`Server running on port ${config.port}`)
+  
+  connectConsumer()
+    .then(() => {
+      console.log('Kafka consumer connected and running')
+    })
+    .catch((err) => {
+      console.error('Error connecting Kafka consumer:', err)
+    })
 })
