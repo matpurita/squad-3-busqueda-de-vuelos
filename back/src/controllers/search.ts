@@ -244,8 +244,7 @@ async function sendBookingIntent(req: Request, res: Response, next: NextFunction
   try {
     const flightBooking = bookingIntentSchema.parse({
       userId: req.body.userId,
-      flightId: req.body.flightId,
-      timestamp: req.body.timestamp
+      flightId: req.body.flightId
     })
 
     await prisma.bookingIntent.create({

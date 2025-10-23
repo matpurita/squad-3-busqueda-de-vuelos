@@ -26,6 +26,7 @@ export default function Sidebar() {
     }, [selectedFlight, tripType]);
 
     const onSidebarClose = (event, reason) => {
+        setSelectedFlight(null);
         setOpen(false);
     };
 

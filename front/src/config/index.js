@@ -37,8 +37,7 @@ export const endpoints = {
     SEARCH: '/airports/search'
   },
   BOOKINGS: {
-    CREATE: '/bookings',
-    BY_ID: '/bookings/:id'
+    CREATE: '/search/intent',
   },
   AUTH: {
     LOGIN: config.USE_AUTH_MOCK ? '/auth/login/mock' : '/auth/login',

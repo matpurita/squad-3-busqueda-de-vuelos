@@ -149,6 +149,7 @@ const mapearVueloIndividual = (vueloData) => {
   
   return {
     uuid: crypto.randomUUID(),
+    planeId: vueloData.planeId || null,
     id: vueloData.id,
     airline: vueloData.airline?.name || '',
     airlineCode: vueloData.airline?.code || '',
@@ -165,7 +166,7 @@ const mapearVueloIndividual = (vueloData) => {
     price: vueloData.price || 0,
     currency: vueloData.currency || 'USD',
     direct: true, // Asumir que es directo por defecto
-    numeroVuelo: vueloData.flightNumber || '',
+    numeroVuelo: vueloData.flightNumber || null,
     duracion: calcularDuracion(vueloData.departure, vueloData.arrival),
     fechaSalida: vueloData.departure,
     fechaLlegada: vueloData.arrival,

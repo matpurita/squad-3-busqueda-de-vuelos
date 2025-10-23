@@ -4,9 +4,22 @@ import {
   Chip,
   Button,
   Box,
+  Alert,
+  Link as MuiLink,
+  CircularProgress,
 } from "@mui/material";
+import { useState } from "react";
+import { Link as RouterLink } from "react-router-dom";
+import { useAuth } from "../contexts/AuthContext";
+import { useFlights } from "../contexts/FlightsContext";
+import LoginIcon from '@mui/icons-material/Login';
 
 export default function FlightDetail({ flight }) {
+  const { user } = useAuth();
+  const { reservarVuelo } = useFlights();
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState(null);
+  const [success, setSuccess] = useState(false);
 
   if (!flight) return null;
   const { ida, vuelta } = flight;
@@ -112,13 +125,73 @@ export default function FlightDetail({ flight }) {
           </Box>
         </Stack>
       )}
+
+       {/* Leyenda para usuarios no logueados */}
+      {!user && (
+        <Alert 
+          severity="info" 
+          sx={{ 
+            textAlign: "center",
+            '& .MuiAlert-message': {
+              width: '100%'
+            }
+          }}
+        >
+          <Typography variant="body2" gutterBottom>
+            Para agendar este vuelo debes iniciar sesión
+          </Typography>
+          <MuiLink 
+            component={RouterLink} 
+            to="/login"
+            sx={{ 
+              display: 'inline-flex',
+              alignItems: 'center',
+              gap: 0.5,
+              textDecoration: 'none',
+              fontWeight: 'medium',
+              '&:hover': {
+                textDecoration: 'underline'
+              }
+            }}
+          >
+            <LoginIcon fontSize="small" />
+            Iniciar Sesión
+          </MuiLink>
+        </Alert>
+      )}
       <Button
+        disabled={!user || loading || success}
         variant="contained"
         sx={{ minWidth: 120 }}
-        onClick={() => alert("Reserva realizada con exito")}
+        onClick={async () => {
+          setLoading(true);
+          setError(null);
+          setSuccess(false);
+          try {
+            await reservarVuelo(ida, vuelta);
+            setSuccess(true);
+          } catch (error) {
+            setError('Error al reservar vuelo');
+          } finally {
+            setLoading(false);
+          }
+        }}
       >
-        Reservar
+        {vuelta ? "Agendar Vuelos" : "Agendar Vuelo"}
+        {loading && <CircularProgress size={24} sx={{ ml: 1 }} />}
       </Button>
+      { success && (
+        <Alert severity="success">
+          Vuelo{vuelta ? 's' : ''} agendado{vuelta ? 's' : ''} con éxito.
+        </Alert>
+      ) }
+      { error && (
+        <Alert severity="error">
+          {error}
+        </Alert>
+      )
+
+      }
     </Stack>
   
   );
