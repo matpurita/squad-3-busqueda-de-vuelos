@@ -47,11 +47,11 @@ export default function Login() {
   };
 
   const handleRegisterClick = () => {
-    navigate("/register");
+    window.open('https://grupo5-usuarios.vercel.app/register', '_blank')
   };
 
   const handleForgotPassword = () => {
-    console.log("Redirigir a recuperación de contraseña");
+    window.open('https://grupo5-usuarios.vercel.app', '_blank')
     // navigate("/forgot-password");
   };
 
