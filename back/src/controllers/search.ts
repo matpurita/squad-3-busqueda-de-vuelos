@@ -20,7 +20,6 @@ async function searchFlights(req: Request, res: Response, next: NextFunction) {
       returnDate: req.query.returnDate,
       returnRange: req.query.returnRange,
       passengers: req.query.passengers,
-      cabinClass: req.query.cabinClass,
       currency: req.query.currency,
       sort: req.query.sort,
       limit: req.query.limit,
