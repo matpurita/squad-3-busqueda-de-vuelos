@@ -10,6 +10,7 @@ import {
 } from "@mui/material";
 import { useFlights } from "../contexts/FlightsContext";
 import { useSearch } from "../contexts/SearchContext";
+import { utilidades } from "../services";
 
 export default function Flight({ flight, resultado }) {
   const { selectFlight, selectedFlight } = useFlights();
@@ -79,6 +80,11 @@ export default function Flight({ flight, resultado }) {
           <Typography variant="body2" color="text.secondary">
             {vuelo.departTime} - {vuelo.arriveTime}
           </Typography>
+          {vuelo.fechaSalida && (
+            <Typography variant="caption" color="text.secondary" display="block">
+              📅 {utilidades.formatearFecha(vuelo.fechaSalida)}
+            </Typography>
+          )}
           <Typography variant="caption" color="text.secondary">
             Duración: {formatDuration(vuelo.duracion)}
           </Typography>

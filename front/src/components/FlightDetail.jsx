@@ -12,6 +12,7 @@ import { useState } from "react";
 import { Link as RouterLink } from "react-router-dom";
 import { useAuth } from "../contexts/AuthContext";
 import { useFlights } from "../contexts/FlightsContext";
+import { utilidades } from "../services";
 import LoginIcon from '@mui/icons-material/Login';
 
 export default function FlightDetail({ flight }) {
@@ -39,42 +40,62 @@ export default function FlightDetail({ flight }) {
 
       {ida && (
         <>
-      <Stack spacing={2} alignItems="center">
-        <Box textAlign={"center"}>
-          <Typography variant="h6">{ida?.airline}</Typography>
-          <Typography variant="caption" color="text.secondary">
-            {ida?.numeroVuelo}
-          </Typography>
-        </Box>
-        {ida?.direct && <Chip size="small" color="success" label="Directo" />}
-        {!ida?.direct && (
-          <Chip size="small" color="warning" label="Con escalas" />
-        )}
-      </Stack>
+          {/* Fecha destacada para el vuelo de ida */}
+          <Box 
+            sx={{ 
+              textAlign: 'center',
+              backgroundColor: 'grey.100',
+              color: 'text.primary',
+              borderRadius: 1,
+              py: 1,
+              px: 2,
+              mb: 2,
+              border: '1px solid',
+              borderColor: 'grey.300'
+            }}
+          >
+            <Typography variant="body1" fontWeight="medium">
+              {utilidades.formatearFecha(ida?.fechaSalida)}
+            </Typography>
+            <Typography variant="caption" color="text.secondary">
+              Fecha de Salida
+            </Typography>
+          </Box>
 
-      <Stack direction="column" spacing={2} alignItems="center">
-        <Box textAlign={"center"}>
-          <Typography variant="body1" fontWeight="medium">
-            {ida?.from} → {ida?.to}
-          </Typography>
-          <Typography variant="body2" color="text.secondary">
-            {ida?.departTime} - {ida?.arriveTime}
-          </Typography>
-          <Typography variant="caption" color="text.secondary">
-            Duración: {ida?.duracion}
-          </Typography>
-        </Box>
-      </Stack>
+          <Stack spacing={2} alignItems="center">
+            <Box textAlign={"center"}>
+              <Typography variant="h6">{ida?.airline}</Typography>
+              <Typography variant="caption" color="text.secondary">
+                {ida?.numeroVuelo}
+              </Typography>
+            </Box>
+            {ida?.direct && <Chip size="small" color="success" label="Directo" />}
+            {!ida?.direct && (
+              <Chip size="small" color="warning" label="Con escalas" />
+            )}
+          </Stack>
 
-      <Stack direction="column" spacing={2} alignItems="center">
-        <Box textAlign="center">
-          <Typography variant="h6" color="primary">
-            {ida?.clase}
-          </Typography>
+          <Stack direction="column" spacing={2} alignItems="center">
+            <Box textAlign={"center"}>
+              <Typography variant="body1" fontWeight="medium">
+                {ida?.from} → {ida?.to}
+              </Typography>
+              <Typography variant="body2" color="text.secondary">
+                {ida?.departTime} - {ida?.arriveTime}
+              </Typography>
+              <Typography variant="caption" color="text.secondary">
+                Duración: {ida?.duracion}
+              </Typography>
+            </Box>
+          </Stack>
 
-        </Box>
-      </Stack>
-    
+          <Stack direction="column" spacing={2} alignItems="center">
+            <Box textAlign="center">
+              <Typography variant="h6" color="primary">
+                {ida?.clase}
+              </Typography>
+            </Box>
+          </Stack>
         </>
       )}
         
@@ -85,6 +106,28 @@ export default function FlightDetail({ flight }) {
           <Typography variant="h5" color="primary" textAlign="center" fontWeight="bold" sx={{ mt: 4 }}>
             Vuelo de Regreso
           </Typography>
+          
+          {/* Fecha destacada para el vuelo de vuelta */}
+          <Box 
+            sx={{ 
+              textAlign: 'center',
+              backgroundColor: 'grey.100',
+              color: 'text.primary',
+              borderRadius: 1,
+              py: 1,
+              px: 2,
+              mb: 2,
+              border: '1px solid',
+              borderColor: 'grey.300'
+            }}
+          >
+            <Typography variant="body1" fontWeight="medium">
+              {utilidades.formatearFecha(vuelta?.fechaSalida)}
+            </Typography>
+            <Typography variant="caption" color="text.secondary">
+              Fecha de Regreso
+            </Typography>
+          </Box>
           
           <Stack spacing={2} alignItems="center">
             <Box textAlign={"center"}>
@@ -98,32 +141,29 @@ export default function FlightDetail({ flight }) {
               <Chip size="small" color="warning" label="Con escalas" />
             )}
           </Stack>
+
+          <Stack direction="column" spacing={2} alignItems="center">
+            <Box textAlign={"center"}>
+              <Typography variant="body1" fontWeight="medium">
+                {vuelta?.from} → {vuelta?.to}
+              </Typography>
+              <Typography variant="body2" color="text.secondary">
+                {vuelta?.departTime} - {vuelta?.arriveTime}
+              </Typography>
+              <Typography variant="caption" color="text.secondary">
+                Duración: {vuelta?.duracion}
+              </Typography>
+            </Box>
+          </Stack>
+          
+          <Stack direction="column" spacing={2} alignItems="center">
+            <Box textAlign="center">
+              <Typography variant="h6" color="primary">
+                {vuelta?.clase}
+              </Typography>
+            </Box>
+          </Stack>
         </>
-      )}
-      {vuelta && (
-        <Stack direction="column" spacing={2} alignItems="center">
-          <Box textAlign={"center"}>
-            <Typography variant="body1" fontWeight="medium">
-              {vuelta?.from} → {vuelta?.to}
-            </Typography>
-            <Typography variant="body2" color="text.secondary">
-              {vuelta?.departTime} - {vuelta?.arriveTime}
-            </Typography>
-            <Typography variant="caption" color="text.secondary">
-              Duración: {vuelta?.duracion}
-            </Typography>
-          </Box>
-        </Stack>
-      )}
-      
-      {vuelta && (
-        <Stack direction="column" spacing={2} alignItems="center">
-          <Box textAlign="center">
-            <Typography variant="h6" color="primary">
-              {vuelta?.clase}
-            </Typography>
-          </Box>
-        </Stack>
       )}
 
        {/* Leyenda para usuarios no logueados */}

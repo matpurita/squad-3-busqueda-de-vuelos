@@ -22,7 +22,19 @@ export const config = {
   DEFAULT_CURRENCY: import.meta.env.VITE_DEFAULT_CURRENCY || 'USD',
   
   // Configuración de idioma
-  DEFAULT_LANGUAGE: import.meta.env.VITE_DEFAULT_LANGUAGE || 'es-AR'
+  DEFAULT_LANGUAGE: import.meta.env.VITE_DEFAULT_LANGUAGE || 'es-AR',
+  
+  // Configuración del theme
+  THEME: {
+    PRIMARY_COLOR: import.meta.env.VITE_PRIMARY_COLOR || '#1976d2',
+    SECONDARY_COLOR: import.meta.env.VITE_SECONDARY_COLOR || '#dc004e',
+    BACKGROUND_COLOR: import.meta.env.VITE_BACKGROUND_COLOR || '#f5f5f5',
+    SURFACE_COLOR: import.meta.env.VITE_SURFACE_COLOR || '#ffffff',
+    ERROR_COLOR: import.meta.env.VITE_ERROR_COLOR || '#d32f2f',
+    WARNING_COLOR: import.meta.env.VITE_WARNING_COLOR || '#ed6c02',
+    INFO_COLOR: import.meta.env.VITE_INFO_COLOR || '#0288d1',
+    SUCCESS_COLOR: import.meta.env.VITE_SUCCESS_COLOR || '#2e7d32'
+  }
 };
 
 // Endpoints de la API
