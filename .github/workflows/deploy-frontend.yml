@@ -25,13 +25,22 @@ jobs:
       - name: Configure Docker for Artifact Registry
         run: gcloud auth configure-docker southamerica-west1-docker.pkg.dev
 
+      - name: Set environment tag
+        id: env_tag
+        run: |
+          if [[ "${GITHUB_REF##*/}" == "main" ]]; then
+            echo "tag=dev" >> $GITHUB_OUTPUT
+          else
+            echo "tag=prod" >> $GITHUB_OUTPUT
+          fi
+
       - name: Build Docker image
         run: |
-          docker build -t southamerica-west1-docker.pkg.dev/uade-476411/frontend/frontend:latest -f front/Dockerfile front
+          docker build -t southamerica-west1-docker.pkg.dev/uade-476411/frontend/frontend:${{ steps.env_tag.outputs.tag }} -f front/Dockerfile front
 
       - name: Push Docker image
         run: |
-          docker push southamerica-west1-docker.pkg.dev/uade-476411/frontend/frontend:latest
+          docker push southamerica-west1-docker.pkg.dev/uade-476411/frontend/frontend:${{ steps.env_tag.outputs.tag }}
 
       - name: Setup Terraform
         uses: hashicorp/setup-terraform@v3
