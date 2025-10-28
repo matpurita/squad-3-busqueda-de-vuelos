@@ -1,0 +1,38 @@
+# .github/workflows/deploy-backend.yml
+name: Deploy Backend Terraform
+
+on:
+  push:
+    branches:
+      - main
+      - prod
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Authenticate with Google Cloud
+        uses: google-github-actions/auth@v2
+        with:
+          credentials_json: ${{ secrets.GCP_SA_KEY }}
+
+      - name: Configure Docker for Artifact Registry
+        run: gcloud auth configure-docker southamerica-west1-docker.pkg.dev
+
+      - name: Build Docker image
+        run: |
+          docker build -t southamerica-west1-docker.pkg.dev/uade-476411/backend/backend:latest -f back/Dockerfile back
+
+      - name: Push Docker image
+        run: |
+          docker push southamerica-west1-docker.pkg.dev/uade-476411/backend/backend:latest
+
+      - name: Deploy with Terraform
+        run: |
+          cd infra
+          terraform init
+          terraform apply -auto-approve
