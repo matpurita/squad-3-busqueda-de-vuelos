@@ -7,5 +7,6 @@ const router = Router()
 router.get('/', searchController.searchFlights)
 router.get('/suggestions', searchController.getFlightSuggestions)
 router.post('/intent', requireAuth, searchController.sendBookingIntent)
+router.get('/history', requireAuth, searchController.getSearchHistory)
 
 export default router
