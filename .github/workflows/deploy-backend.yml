@@ -31,6 +31,11 @@ jobs:
         run: |
           docker push southamerica-west1-docker.pkg.dev/uade-476411/backend/backend:latest
 
+      - name: Setup Terraform
+        uses: hashicorp/setup-terraform@v3
+        with:
+          terraform_version: 1.9.6
+
       - name: Deploy with Terraform
         run: |
           cd infra
