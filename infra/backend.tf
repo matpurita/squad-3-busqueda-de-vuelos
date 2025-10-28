@@ -12,13 +12,13 @@ resource "google_artifact_registry_repository" "backend" {
 #  Cloud Run Service
 # =============================
 resource "google_cloud_run_service" "backend" {
-  name     = "flightsearch-backend"
+  name     = "flightsearch-backend-${var.env}"
   location = "southamerica-west1"
 
   template {
     spec {
       containers {
-        image = "southamerica-west1-docker.pkg.dev/uade-476411/backend/backend:latest"
+        image = "southamerica-west1-docker.pkg.dev/uade-476411/backend/backend:${var.env}"
       }
     }
   }

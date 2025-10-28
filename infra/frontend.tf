@@ -12,13 +12,13 @@ resource "google_artifact_registry_repository" "frontend" {
 #  Cloud Run Service
 # =============================
 resource "google_cloud_run_service" "frontend" {
-  name     = "flightsearch-frontend"
+  name     = "flightsearch-frontend-${var.env}"
   location = "southamerica-west1"
 
   template {
     spec {
       containers {
-        image = "southamerica-west1-docker.pkg.dev/uade-476411/frontend/frontend:latest"
+        image = "southamerica-west1-docker.pkg.dev/uade-476411/frontend/frontend:${var.env}"
         ports {
           container_port = 80
         }

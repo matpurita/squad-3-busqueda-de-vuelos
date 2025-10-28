@@ -52,4 +52,4 @@ jobs:
           cd infra
           terraform init
           terraform apply -auto-approve -target=google_artifact_registry_repository.frontend
-          terraform apply -auto-approve -target=google_cloud_run_service.frontend
+          terraform apply -auto-approve -target=google_cloud_run_service.frontend var=env=${{ steps.env_tag.outputs.tag }}
