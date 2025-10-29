@@ -20,6 +20,7 @@ FROM nginx:alpine
 
 # Copiar build generado a la carpeta de Nginx
 COPY --from=builder /app/dist /usr/share/nginx/html
+COPY --from=builder /app/.env .env
 
 # Copiar configuración personalizada si tenés (opcional)
 # COPY nginx.conf /etc/nginx/conf.d/default.conf
