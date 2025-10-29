@@ -1,11 +1,13 @@
 import { createContext, useContext, useEffect, useState } from 'react';
-import { vuelosService, utilidades } from '../services';
+import { apiService, vuelosService } from '../services';
+import { useAuth } from './AuthContext';
 
 // Crear el contexto
 const FlightsContext = createContext();
 
 // Provider del contexto
 export const FlightsProvider = ({ children }) => {
+  const { user } = useAuth();
   // Estado de vuelos
   const [vuelos, setVuelos] = useState([]);
   const [loading, setLoading] = useState(false);
@@ -88,16 +90,43 @@ export const FlightsProvider = ({ children }) => {
     setVuelos(prev => prev.filter(vuelo => vuelo.id !== vueloId));
   };
 
+  const reservarVuelo = async (ida, vuelta) => {
+    const { id: idIda } = ida;
+
+    if (user) {
+      try {
+        await apiService.crearReserva({
+          userId: user.id,
+          flightId: idIda
+        });
+        if (vuelta) {
+          const { id: idVuelta } = vuelta;
+          await apiService.crearReserva({
+            userId: user.id,
+            flightId: idVuelta
+          });
+        }
+        console.log(`Reserva realizada para el vuelo ${idIda} por el usuario ${user.id}`);
+      } catch (error) {
+        console.error('Error al crear reserva:', error);
+        throw error;
+      }
+
+    } else {
+      throw new Error('Usuario no autenticado. No se puede realizar la reserva.');
+    }
+  };
+
   const value = {
     // Estado
     vuelos, loading, error, selectedFlight, searchPerformed,
-    
+
     // Setters
     setVuelos, setLoading, setError, setSelectedFlight, setSearchPerformed,
-    
+
     // Funciones
     searchFlights, selectFlight, loadAllFlights, getFlightById,
-    clearResults, addVuelo, removeVuelo
+    clearResults, addVuelo, removeVuelo, reservarVuelo,
   };
 
   return (

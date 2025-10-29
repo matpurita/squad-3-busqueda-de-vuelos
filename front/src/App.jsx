@@ -40,7 +40,7 @@ function Header() {
   }
 
   const handleRegister = () => {
-    console.log('Mock: Abrir modal de registro')
+    window.open('https://grupo5-usuarios.vercel.app/register', '_blank')
   }
 
   return (

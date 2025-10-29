@@ -238,5 +238,6 @@ const searchFlights = async (criteria) => {
     return response
   } catch (error) {
     console.error("Error buscando vuelos con filtros en API:", error);
+    throw error;
   }
 };

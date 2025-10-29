@@ -20,7 +20,6 @@ async function searchFlights(req: Request, res: Response, next: NextFunction) {
       returnDate: req.query.returnDate,
       returnRange: req.query.returnRange,
       passengers: req.query.passengers,
-      cabinClass: req.query.cabinClass,
       currency: req.query.currency,
       sort: req.query.sort,
       limit: req.query.limit,
@@ -245,7 +244,7 @@ async function sendBookingIntent(req: Request, res: Response, next: NextFunction
     const flightBooking = bookingIntentSchema.parse({
       userId: req.body.userId,
       flightId: req.body.flightId,
-      timestamp: req.body.timestamp
+      addedAt: req.body.addedAt ? new Date(req.body.addedAt) : undefined
     })
 
     await prisma.bookingIntent.create({
@@ -260,8 +259,28 @@ async function sendBookingIntent(req: Request, res: Response, next: NextFunction
   }
 }
 
+async function getSearchHistory(req: Request, res: Response, next: NextFunction) {
+  try {
+    const userId = req.user!.userId
+    const history = await prisma.searchMetrics.findMany({
+      where: {
+        userId: userId
+      },
+      orderBy: {
+        timestamp: 'desc'
+      },
+      take: 20
+    })
+
+    res.json({ history })
+  } catch (error) {
+    next(error)
+  }
+}
+
 export default {
   searchFlights,
   getFlightSuggestions,
-  sendBookingIntent
+  sendBookingIntent,
+  getSearchHistory
 }
