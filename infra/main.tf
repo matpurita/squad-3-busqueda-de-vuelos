@@ -20,6 +20,6 @@ resource "google_compute_network" "vpc_network" {
 }
 
 variable "env" {
-  type = string
+  type    = string
   default = "dev"
 }

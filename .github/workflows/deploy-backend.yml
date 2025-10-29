@@ -25,22 +25,25 @@ jobs:
       - name: Configure Docker for Artifact Registry
         run: gcloud auth configure-docker southamerica-west1-docker.pkg.dev
 
-      - name: Set environment tag
-        id: env_tag
+      - name: Build Docker Image
+        if : github.ref == 'refs/heads/main'
         run: |
-          if [[ "${GITHUB_REF##*/}" == "main" ]]; then
-            echo "tag=dev" >> $GITHUB_OUTPUT
-          else
-            echo "tag=prod" >> $GITHUB_OUTPUT
-          fi
+          docker build -t southamerica-west1-docker.pkg.dev/uade-476411/backend/dev:latest -f back/Dockerfile back
 
-      - name: Build Docker image
+      - name: Build Docker Image
+        if : github.ref == 'refs/heads/prod'
         run: |
-          docker build -t southamerica-west1-docker.pkg.dev/uade-476411/backend/backend:${{ steps.env_tag.outputs.tag }} -f back/Dockerfile back
+          docker build -t southamerica-west1-docker.pkg.dev/uade-476411/backend/prod:latest -f back/Dockerfile back
 
-      - name: Push Docker image
+      - name: Push Docker Image
+        if : github.ref == 'refs/heads/main'
         run: |
-          docker push southamerica-west1-docker.pkg.dev/uade-476411/backend/backend:${{ steps.env_tag.outputs.tag }}
+          docker push southamerica-west1-docker.pkg.dev/uade-476411/backend/dev:latest
+
+      - name: Push Docker Image
+        if : github.ref == 'refs/heads/prod'
+        run: |
+          docker push southamerica-west1-docker.pkg.dev/uade-476411/backend/prod:latest
 
       - name: Setup Terraform
         uses: hashicorp/setup-terraform@v3
@@ -48,8 +51,17 @@ jobs:
           terraform_version: 1.9.6
 
       - name: Deploy with Terraform
+        if: github.ref == 'refs/heads/main'
         run: |
           cd infra
           terraform init
           terraform apply -auto-approve -target=google_artifact_registry_repository.backend
-          terraform apply -auto-approve -target=google_cloud_run_service.backend var=env=${{ steps.env_tag.outputs.tag }}
+          terraform apply -auto-approve -target=google_cloud_run_service.backend_dev
+          
+      - name: Deploy with Terraform 
+        if: github.ref == 'refs/heads/prod'
+        run: |
+          cd infra
+          terraform init
+          terraform apply -auto-approve -target=google_artifact_registry_repository.backend
+          terraform apply -auto-approve -target=google_cloud_run_service.backend_prod
