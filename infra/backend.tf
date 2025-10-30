@@ -22,6 +22,12 @@ resource "google_cloud_run_service" "backend_dev" {
       }
     }
   }
+
+  lifecycle {
+    ignore_changes = [
+      template[0].spec[0].containers[0].env
+    ]
+  }
 }
 
 # ===================================
@@ -49,6 +55,12 @@ resource "google_cloud_run_service" "backend_prod" {
         image = "southamerica-west1-docker.pkg.dev/uade-476411/backend/prod:latest"
       }
     }
+  }
+
+  lifecycle {
+    ignore_changes = [
+      template[0].spec[0].containers[0].env
+    ]
   }
 }
 
