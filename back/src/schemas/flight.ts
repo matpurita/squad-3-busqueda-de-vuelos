@@ -9,7 +9,7 @@ export const flightSchema = z.object({
   arrival: z.date(),
   origin: airportSchema,
   destination: airportSchema,
-  airline: airlineSchema,
+  airline: airlineSchema.nullable(),
   plane: planeSchema.nullable(),
   price: z.number(),
   currency: z.string().length(3),

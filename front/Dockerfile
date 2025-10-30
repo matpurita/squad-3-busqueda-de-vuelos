@@ -12,6 +12,10 @@ RUN npm install -g pnpm && pnpm install --frozen-lockfile
 # Copiar código fuente
 COPY . .
 
+# Variables de entorno para producción
+ARG VITE_API_URL
+ENV VITE_API_URL=$VITE_API_URL
+
 # Build de Vite
 RUN pnpm build
 

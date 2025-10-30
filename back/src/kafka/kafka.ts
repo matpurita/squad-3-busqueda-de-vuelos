@@ -24,7 +24,7 @@ const kafka = new Kafka({
   brokers: [process.env.KAFKA_BROKER || ''],
   logLevel: logLevel.INFO
 })
-const consumer = kafka.consumer({ groupId: 'search-node-group-replda7f81' })
+const consumer = kafka.consumer({ groupId: 'search-node-group-aoraetacaaaplccda7f8' })
 
 const connectConsumer = async () => {
   await consumer.connect()
@@ -36,6 +36,7 @@ const connectConsumer = async () => {
       const payload = payloadString ? JSON.parse(payloadString) : null
 
       console.log(`[${data.eventType}]:`, data)
+      console.log('Payload:', payload)
 
       try {
         switch (data.eventType) {
@@ -44,7 +45,7 @@ const connectConsumer = async () => {
 
             await prisma.flight.create({
               data: {
-                id: content.flightId,
+                id: content.flightId.toString(),
                 flightNumber: content.flightNumber,
                 origin: {
                   connect: { code: content.origin }
