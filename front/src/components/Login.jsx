@@ -224,7 +224,7 @@ const handleGoHome = () => {
                 fontSize: 14,
               }}
             >
-              { /*
+              { /* comentario de olvido de contraseña
               <Link 
                 component="button"
                 type="button"
