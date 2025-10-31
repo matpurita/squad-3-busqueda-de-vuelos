@@ -37,6 +37,10 @@
   },
   "dependencies": {
     "@fontsource/roboto": "^5.2.6",
-    "axios": "^1.12.2"
+    "@mui/x-date-pickers": "^8.16.0",
+    "@mui/x-date-pickers-pro": "^8.16.0",
+    "axios": "^1.12.2",
+    "date-fns": "^4.1.0",
+    "dayjs": "^1.11.19"
   }
 }
