@@ -224,6 +224,7 @@ const handleGoHome = () => {
                 fontSize: 14,
               }}
             >
+              { /*
               <Link 
                 component="button"
                 type="button"
@@ -237,6 +238,7 @@ const handleGoHome = () => {
               >
                 ¿Olvidaste tu contraseña?
               </Link>
+              */}
               <Link 
                 component="button"
                 type="button"
