@@ -4,6 +4,11 @@ terraform {
       source  = "hashicorp/google"
       version = "6.8.0"
     }
+
+    docker = {
+      source  = "kreuzwerker/docker"
+      version = "2.22.0"
+    }
   }
 
   required_version = ">= 1.5.0"
@@ -15,11 +20,10 @@ provider "google" {
   zone    = "southamerica-west1-a"
 }
 
-resource "google_compute_network" "vpc_network" {
-  name = "terraform-network"
+provider "docker" {
+  host = "unix:///var/run/docker.sock"
 }
 
-variable "env" {
-  type    = string
-  default = "dev"
+resource "google_compute_network" "vpc_network" {
+  name = "terraform-network"
 }

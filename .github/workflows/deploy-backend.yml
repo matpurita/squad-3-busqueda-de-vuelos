@@ -7,7 +7,9 @@ on:
       - main
       - prod
     paths:
-      - back/** 
+      - back/**
+      - infra/**/backend.tf
+      - .github/workflows/deploy-backend.yml
 
 jobs:
   build-and-deploy:
@@ -22,46 +24,29 @@ jobs:
         with:
           credentials_json: ${{ secrets.GCP_SA_KEY }}
 
-      - name: Configure Docker for Artifact Registry
-        run: gcloud auth configure-docker southamerica-west1-docker.pkg.dev
-
-      - name: Build Docker Image
-        if : github.ref == 'refs/heads/main'
-        run: |
-          docker build -t southamerica-west1-docker.pkg.dev/uade-476411/backend/dev:latest -f back/Dockerfile back
-
-      - name: Build Docker Image
-        if : github.ref == 'refs/heads/prod'
-        run: |
-          docker build -t southamerica-west1-docker.pkg.dev/uade-476411/backend/prod:latest -f back/Dockerfile back
-
-      - name: Push Docker Image
-        if : github.ref == 'refs/heads/main'
-        run: |
-          docker push southamerica-west1-docker.pkg.dev/uade-476411/backend/dev:latest
-
-      - name: Push Docker Image
-        if : github.ref == 'refs/heads/prod'
-        run: |
-          docker push southamerica-west1-docker.pkg.dev/uade-476411/backend/prod:latest
-
       - name: Setup Terraform
         uses: hashicorp/setup-terraform@v3
         with:
           terraform_version: 1.9.6
 
-      - name: Deploy with Terraform
+      - name: Deploy to DEV
         if: github.ref == 'refs/heads/main'
         run: |
           cd infra
           terraform init
-          terraform apply -auto-approve -target=google_artifact_registry_repository.backend
-          terraform apply -auto-approve -target=google_cloud_run_service.backend_dev
-          
-      - name: Deploy with Terraform 
+          terraform plan \
+            -target=google_artifact_registry_repository.backend \
+            -target=google_cloud_run_service.backend_dev \
+            -out=backend.plan
+          terraform apply -auto-approve backend.plan
+
+      - name: Deploy to PROD
         if: github.ref == 'refs/heads/prod'
         run: |
           cd infra
           terraform init
-          terraform apply -auto-approve -target=google_artifact_registry_repository.backend
-          terraform apply -auto-approve -target=google_cloud_run_service.backend_prod
+          terraform plan \
+            -target=google_artifact_registry_repository.backend \
+            -target=google_cloud_run_service.backend_prod \
+            -out=backend.plan
+          terraform apply -auto-approve backend.plan

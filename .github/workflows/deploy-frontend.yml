@@ -8,6 +8,8 @@ on:
       - prod
     paths:
       - front/**
+      - infra/**/frontend.tf
+      - .github/workflows/deploy-frontend.yml
 
 jobs:
   build-and-deploy:
@@ -22,46 +24,29 @@ jobs:
         with:
           credentials_json: ${{ secrets.GCP_SA_KEY }}
 
-      - name: Configure Docker for Artifact Registry
-        run: gcloud auth configure-docker southamerica-west1-docker.pkg.dev
-
-      - name: Build Docker Image
-        if : github.ref == 'refs/heads/main'
-        run: |
-          docker build --build-arg VITE_API_URL="https://flightsearch-backend-dev-3w6ge26cuq-tl.a.run.app" -t southamerica-west1-docker.pkg.dev/uade-476411/frontend/dev:latest -f front/Dockerfile front
-
-      - name: Build Docker Image
-        if : github.ref == 'refs/heads/prod'
-        run: |
-          docker build --build-arg VITE_API_URL="https://flightsearch-backend-prod-3w6ge26cuq-tl.a.run.app" -t southamerica-west1-docker.pkg.dev/uade-476411/frontend/prod:latest -f front/Dockerfile front
-
-      - name: Push Docker Image
-        if : github.ref == 'refs/heads/main'
-        run: |
-          docker push southamerica-west1-docker.pkg.dev/uade-476411/frontend/dev:latest
-          
-      - name: Push Docker Image
-        if : github.ref == 'refs/heads/prod'
-        run: |
-          docker push southamerica-west1-docker.pkg.dev/uade-476411/frontend/prod:latest
-
       - name: Setup Terraform
         uses: hashicorp/setup-terraform@v3
         with:
           terraform_version: 1.9.6
 
-      - name: Deploy with Terraform
+      - name: Deploy to DEV
         if: github.ref == 'refs/heads/main'
         run: |
           cd infra
           terraform init
-          terraform apply -auto-approve -target=google_artifact_registry_repository.frontend
-          terraform apply -auto-approve -target=google_cloud_run_service.frontend_dev
-      
-      - name: Deploy with Terraform 
+          terraform plan \
+          -target=google_artifact_registry_repository.frontend \
+          -target=google_cloud_run_service.frontend_dev \
+            -out=frontend.plan
+          terraform apply -auto-approve frontend.plan
+
+      - name: Deploy to PROD
         if: github.ref == 'refs/heads/prod'
         run: |
           cd infra
           terraform init
-          terraform apply -auto-approve -target=google_artifact_registry_repository.frontend
-          terraform apply -auto-approve -target=google_cloud_run_service.frontend_prod
+          terraform plan \
+            -target=google_artifact_registry_repository.frontend \
+            -target=google_cloud_run_service.frontend_prod \
+            -out=frontend.plan
+          terraform apply -auto-approve frontend.plan
