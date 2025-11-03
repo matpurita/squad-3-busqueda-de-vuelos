@@ -10,6 +10,7 @@ import {
 import { SearchMetric } from '../schemas/searchMetric'
 import { BookingIntent } from '../schemas/bookingIntent'
 import { PrismaClientKnownRequestError } from '@prisma/client/runtime/library'
+import { Prisma } from '@prisma/client'
 
 const EVENTS = {
   FLIGHT_CREATED: 'flights.flight.created',
@@ -35,8 +36,11 @@ const connectConsumer = async () => {
       const { payload: payloadString, ...data } = JSON.parse(message.value!.toString())
       const payload = payloadString ? JSON.parse(payloadString) : null
 
-      console.log(`[${data.eventType}]:`, data)
-      console.log('Payload:', payload)
+      const logEntry: Prisma.EventLogCreateInput = {
+        event: data.eventType,
+        message: JSON.stringify(data),
+        payload: payloadString || null
+      }
 
       try {
         switch (data.eventType) {
@@ -129,26 +133,16 @@ const connectConsumer = async () => {
           // P2002. "Unique constraint failed on the {constraint}".
           if (error.code === 'P2002') {
             // Handle unique constraint violation (e.g., duplicate entries)
-            console.warn(
-              'Duplicate entry detected, skipping...',
-              error.meta?.modelName,
-              '->',
-              error.meta?.target
-            )
+
             return
           } else {
-            console.error(
-              'Prisma error code:',
-              error.code,
-              '\nMeta:',
-              error.meta,
-              '\nMessage:',
-              data,
-              '\nPayload:',
-              payload
-            )
+            logEntry.error = JSON.stringify(error)
           }
+        } else {
+          logEntry.error = JSON.stringify(error)
         }
+      } finally {
+        await prisma.eventLog.create({ data: logEntry })
       }
     }
   })

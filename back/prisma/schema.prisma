@@ -80,3 +80,12 @@ model Booking {
   status      String   @default("CONFIRMED")
   Flight      Flight   @relation(fields: [flightId], references: [id])
 }
+
+model EventLog {
+  id        String   @id @default(cuid())
+  event     String
+  message   String?
+  payload   String?
+  error     String?
+  timestamp DateTime @default(now())
+}
