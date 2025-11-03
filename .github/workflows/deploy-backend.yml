@@ -45,4 +45,4 @@ jobs:
           terraform init
 
       - name: Deploy
-        run: terraform apply -auto-approve -target=google_cloud_run_service.backend
+        run: terraform apply -auto-approve -target="google_cloud_run_service.backend"
