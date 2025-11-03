@@ -87,5 +87,6 @@ model EventLog {
   message   String?
   payload   String?
   error     String?
+  fixed     Boolean?
   timestamp DateTime @default(now())
 }
