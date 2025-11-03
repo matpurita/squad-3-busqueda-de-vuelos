@@ -44,8 +44,5 @@ jobs:
           cd infra/prod
           terraform init
 
-      - name: Terraform Repository Setup
-        run: terraform apply -auto-approve -target=google_artifact_registry_repository.backend
-
       - name: Deploy
         run: terraform apply -auto-approve -target=google_cloud_run_service.backend
