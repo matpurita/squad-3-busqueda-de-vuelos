@@ -32,17 +32,17 @@ jobs:
         with:
           terraform_version: 1.9.6
 
-      - name: Initialize Terraform
+      - name: Initialize and Run Terraform (Dev)
         if: github.ref == 'refs/heads/main'
         run: |
           cd infra/dev
           terraform init
+          terraform apply -auto-approve -target="google_cloud_run_service.backend"
 
-      - name: Initialize Terraform
+
+      - name: Initialize and Run Terraform (Prod)
         if: github.ref == 'refs/heads/prod'
         run: |
           cd infra/prod
           terraform init
-
-      - name: Deploy
-        run: terraform apply -auto-approve -target="google_cloud_run_service.backend"
+          terraform apply -auto-approve -target="google_cloud_run_service.backend"
