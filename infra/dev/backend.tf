@@ -1,7 +1,7 @@
 # =============================
 #  Docker Image Build (Dev)
 # =============================
-resource "docker_image" "backend_dev" {
+resource "docker_image" "backend" {
   name = "southamerica-west1-docker.pkg.dev/uade-476411/backend/dev:latest"
   build {
     path       = "${path.module}/../frontend"
@@ -18,7 +18,7 @@ resource "docker_image" "backend_dev" {
 # =============================
 #  Cloud Run Service (Dev)
 # =============================
-resource "google_cloud_run_service" "backend_dev" {
+resource "google_cloud_run_service" "backend" {
   name     = "flightsearch-backend-dev"
   location = "southamerica-west1"
 
@@ -40,11 +40,11 @@ resource "google_cloud_run_service" "backend_dev" {
 # ===================================
 #  IAM Binding – Public Access (Dev)
 # ===================================
-resource "google_cloud_run_service_iam_binding" "backend_dev_public" {
-  location = google_cloud_run_service.backend_dev.location
-  service  = google_cloud_run_service.backend_dev.name
+resource "google_cloud_run_service_iam_binding" "backend_public" {
+  location = google_cloud_run_service.backend.location
+  service  = google_cloud_run_service.backend.name
   role     = "roles/run.invoker"
   members  = ["allUsers"]
 
-  depends_on = [google_cloud_run_service.backend_dev]
+  depends_on = [google_cloud_run_service.backend]
 }

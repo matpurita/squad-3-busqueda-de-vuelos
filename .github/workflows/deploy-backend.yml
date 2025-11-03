@@ -29,24 +29,20 @@ jobs:
         with:
           terraform_version: 1.9.6
 
-      - name: Deploy to DEV
+      - name: Initialize Terraform
         if: github.ref == 'refs/heads/main'
         run: |
-          cd infra
+          cd infra/dev
           terraform init
-          terraform plan \
-            -target=google_artifact_registry_repository.backend \
-            -target=google_cloud_run_service.backend_dev \
-            -out=backend.plan
-          terraform apply -auto-approve backend.plan
 
-      - name: Deploy to PROD
+      - name: Initialize Terraform
         if: github.ref == 'refs/heads/prod'
         run: |
-          cd infra
+          cd infra/prod
           terraform init
-          terraform plan \
-            -target=google_artifact_registry_repository.backend \
-            -target=google_cloud_run_service.backend_prod \
-            -out=backend.plan
-          terraform apply -auto-approve backend.plan
+
+      - name: Terraform Repository Setup
+        run: terraform apply -auto-approve -target=google_artifact_registry_repository.backend
+
+      - name: Deploy
+        run: terraform apply -auto-approve -target=google_cloud_run_service.backend

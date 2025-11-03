@@ -1,7 +1,7 @@
 # =============================
 #  Docker Image Build (Prod)
 # =============================
-resource "docker_image" "frontend_prod" {
+resource "docker_image" "frontend" {
   name = "southamerica-west1-docker.pkg.dev/uade-476411/frontend/prod:latest"
   build {
     path       = "${path.module}/../frontend"
@@ -18,7 +18,7 @@ resource "docker_image" "frontend_prod" {
 # =============================
 #  Cloud Run Service (Prod)
 # =============================
-resource "google_cloud_run_service" "frontend_prod" {
+resource "google_cloud_run_service" "frontend" {
   name     = "flightsearch-frontend-prod"
   location = "southamerica-west1"
 
@@ -48,11 +48,11 @@ resource "google_cloud_run_service" "frontend_prod" {
 # ===================================
 #  IAM Binding – Public Access (Prod)
 # ===================================
-resource "google_cloud_run_service_iam_binding" "frontend_prod_public" {
-  location = google_cloud_run_service.frontend_prod.location
-  service  = google_cloud_run_service.frontend_prod.name
+resource "google_cloud_run_service_iam_binding" "frontend_public" {
+  location = google_cloud_run_service.frontend.location
+  service  = google_cloud_run_service.frontend.name
   role     = "roles/run.invoker"
   members  = ["allUsers"]
 
-  depends_on = [google_cloud_run_service.frontend_prod]
+  depends_on = [google_cloud_run_service.frontend]
 }
