@@ -193,6 +193,28 @@ paths:
         '500':
           description: Internal server error
 
+  /auth/register:
+    post:
+      summary: Register user
+      description: Register a new user in the external auth service
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/RegisterPayload'
+      responses:
+        '201':
+          description: Registration successful
+          content:
+            application/json:
+              schema:
+                type: object
+        '400':
+          description: Registration failed
+        '500':
+          description: Internal server error
+
   /auth/login/mock:
     post:
       summary: Mock login
@@ -496,6 +518,26 @@ components:
         password:
           type: string
           minLength: 8
+
+    RegisterPayload:
+      type: object
+      required:
+        - name
+        - email
+        - password
+        - nacionalidad
+      properties:
+        name:
+          type: string
+          minLength: 2
+        email:
+          type: string
+          format: email
+        password:
+          type: string
+          minLength: 8
+        nacionalidad:
+          type: string
 
     AuthPayload:
       type: object

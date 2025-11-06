@@ -1,5 +1,6 @@
 import { NextFunction, Request, Response } from 'express'
 import { loginPayloadSchema } from '../schemas/loginPayload'
+import { registerPayloadSchema } from '../schemas/registerPayload'
 
 async function getUserData(req: Request, res: Response, next: NextFunction) {
   if (!req.user) {
@@ -33,7 +34,7 @@ async function login(req: Request, res: Response, next: NextFunction) {
       password: req.body.password
     })
 
-    const response = await fetch(`${process.env.AUTH_SERVICE_URL}/login`, {
+    const response = await fetch(`${process.env.AUTH_SERVICE_URL}/auth/login`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(loginPayload)
@@ -50,4 +51,31 @@ async function login(req: Request, res: Response, next: NextFunction) {
   }
 }
 
-export default { getUserData, login }
+async function register(req: Request, res: Response, next: NextFunction) {
+  try {
+    const registerPayload = registerPayloadSchema.parse({
+      name: req.body.name,
+      email: req.body.email,
+      password: req.body.password,
+      nacionalidad: req.body.nacionalidad
+    })
+
+    const response = await fetch(`${process.env.AUTH_SERVICE_URL}/usuarios`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(registerPayload)
+    }).then((response) => response.json())
+
+    if (!response.success) {
+      console.error('Registration failed:', response)
+      return res.status(400).json({ message: 'Registration failed', errors: response.errors })
+    }
+
+    return res.status(201).json(response.data)
+  }
+  catch (error) {
+    next(error)
+  }
+}
+
+export default { getUserData, login, register }
