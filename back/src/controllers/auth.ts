@@ -1,6 +1,7 @@
 import { NextFunction, Request, Response } from 'express'
 import { loginPayloadSchema } from '../schemas/loginPayload'
 import { registerPayloadSchema } from '../schemas/registerPayload'
+import { postEvent } from '../kafka/kafka'
 
 async function getUserData(req: Request, res: Response, next: NextFunction) {
   if (!req.user) {
@@ -53,25 +54,23 @@ async function login(req: Request, res: Response, next: NextFunction) {
 
 async function register(req: Request, res: Response, next: NextFunction) {
   try {
-    const registerPayload = registerPayloadSchema.parse({
+    const { name, ...registerPayload } = registerPayloadSchema.parse({
       name: req.body.name,
       email: req.body.email,
       password: req.body.password,
-      nacionalidad: req.body.nacionalidad
+      nationalityOrOrigin: req.body.nationalityOrOrigin
     })
 
-    const response = await fetch(`${process.env.AUTH_SERVICE_URL}/usuarios`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(registerPayload)
-    }).then((response) => response.json())
+     postEvent('users.user.created', {
+      ...registerPayload,
+      nombre_completo: name,
+      roles: ['usuario'],
+      createdAt: new Date().toISOString(),
+      userId: '1'
+      
+    })
 
-    if (!response.success) {
-      console.error('Registration failed:', response)
-      return res.status(400).json({ message: 'Registration failed', errors: response.errors })
-    }
-
-    return res.status(201).json(response.data)
+    return res.status(201).json({ message: 'User registered successfully' })
   }
   catch (error) {
     next(error)

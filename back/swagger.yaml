@@ -525,7 +525,7 @@ components:
         - name
         - email
         - password
-        - nacionalidad
+        - nationalityOrOrigin
       properties:
         name:
           type: string
@@ -536,7 +536,7 @@ components:
         password:
           type: string
           minLength: 8
-        nacionalidad:
+        nationalityOrOrigin:
           type: string
 
     AuthPayload:
