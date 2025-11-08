@@ -147,17 +147,13 @@ export default function Register() {
     try {
       // Crear payload base
       const registerData = {
-        nombre_completo: formData.nombre_completo,
+        name: formData.nombre_completo,
         email: formData.email,
         password: formData.password,
-        nacionalidad: formData.nacionalidad,
-        created_by_admin: false
+        nationalityOrOrigin: formData.nacionalidad,
+        
       };
 
-      // Solo agregar teléfono si tiene valor
-      if (formData.telefono.trim()) {
-        registerData.telefono = formData.telefono;
-      }
 
       // Convertir a JSON para envío
       const jsonPayload = JSON.stringify(registerData);
@@ -360,25 +356,7 @@ export default function Register() {
               }}
             />
 
-            {/* Teléfono - Opcional */}
-            <TextField
-              fullWidth
-              label="Teléfono (opcional)"
-              type="tel"
-              value={formData.telefono}
-              onChange={handleChange('telefono')}
-              margin="normal"
-              disabled={isLoading}
-              autoComplete="tel"
-              helperText="Opcional - para contactarte en caso de ser necesario"
-              InputProps={{
-                startAdornment: (
-                  <InputAdornment position="start">
-                    <Phone />
-                  </InputAdornment>
-                ),
-              }}
-            />
+           
 
             {/* Nacionalidad */}
             <FormControl 

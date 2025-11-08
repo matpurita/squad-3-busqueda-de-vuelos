@@ -1,4 +1,4 @@
-import { createTheme } from '@mui/material/styles';
+import { createTheme, alpha } from '@mui/material/styles';
 import { config } from './config';
 
 const theme = createTheme({
@@ -34,6 +34,9 @@ const theme = createTheme({
     },
   },
 });
+
+// Agregar la función alpha al theme para compatibilidad con @mui/x-date-pickers
+theme.alpha = alpha;
 
 export default theme;
 
