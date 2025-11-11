@@ -3,11 +3,15 @@ import { useEffect, useState } from "react";
 import { useFlights } from "../contexts/FlightsContext";
 import { useSearch } from "../contexts/SearchContext";
 import FlightDetail from "./FlightDetail";
+import { useAuth } from "../contexts/AuthContext";
+import { useFlights } from "../contexts/FlightsContext";
 
 export default function Sidebar() {
     const { selectedFlight, setSelectedFlight } = useFlights();
     const { tripType } = useSearch();
     const [open, setOpen] = useState(false);
+    const { user } = useAuth();
+    const { reservarVuelo } = useFlights();
 
     useEffect(() => {
         if (!selectedFlight) {
@@ -32,7 +36,7 @@ export default function Sidebar() {
 
     return (
         <Drawer open={open} onClose={onSidebarClose} anchor='right'>
-            {open && <FlightDetail flight={selectedFlight} />}
+            {open && <FlightDetail flight={selectedFlight} user={user} reservarVuelo={reservarVuelo} />}
         </Drawer>
     );
 }
