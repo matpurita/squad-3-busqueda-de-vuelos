@@ -27,3 +27,9 @@ provider "docker" {
 resource "google_compute_network" "vpc_network" {
   name = "terraform-network"
 }
+
+resource "null_resource" "always_run" {
+  triggers = {
+    timestamp = "${timestamp()}"
+  }
+}
