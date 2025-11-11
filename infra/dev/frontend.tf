@@ -23,7 +23,7 @@ resource "docker_image" "frontend" {
 
 resource "null_resource" "push_frontend_image" {
   triggers = {
-    docker_image = docker_image.frontend
+    repo_digest = docker_image.frontend.repo_digest
   }
 
   provisioner "local-exec" {

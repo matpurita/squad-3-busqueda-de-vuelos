@@ -24,7 +24,7 @@ resource "docker_image" "backend" {
 
 resource "null_resource" "push_backend_image" {
   triggers = {
-    docker_image = docker_image.backend
+    docker_image = docker_image.backend.repo_digest
   }
 
   provisioner "local-exec" {
