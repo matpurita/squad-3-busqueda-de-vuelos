@@ -12,18 +12,12 @@ resource "docker_image" "frontend" {
     }
   }
 
-  lifecycle {
-    replace_triggered_by = [
-      null_resource.always_run
-    ]
-  }
-
   depends_on = [google_artifact_registry_repository.frontend]
 }
 
 resource "null_resource" "push_frontend_image" {
   triggers = {
-    docker_image = docker_image.frontend.repo_digest
+    repo_digest = docker_image.frontend.repo_digest
   }
 
   provisioner "local-exec" {

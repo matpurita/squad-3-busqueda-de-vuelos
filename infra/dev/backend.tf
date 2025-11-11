@@ -13,18 +13,12 @@ resource "docker_image" "backend" {
 
   keep_locally = false
 
-  lifecycle {
-    replace_triggered_by = [
-      null_resource.always_run
-    ]
-  }
-
   depends_on = [google_artifact_registry_repository.backend]
 }
 
 resource "null_resource" "push_backend_image" {
   triggers = {
-    docker_image = docker_image.backend.repo_digest
+    repo_digest = docker_image.backend.repo_digest
   }
 
   provisioner "local-exec" {

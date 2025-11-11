@@ -12,12 +12,6 @@ resource "docker_image" "frontend" {
     }
   }
 
-  lifecycle {
-    replace_triggered_by = [
-      null_resource.always_run
-    ]
-  }
-
   depends_on = [google_artifact_registry_repository.frontend]
 }
 

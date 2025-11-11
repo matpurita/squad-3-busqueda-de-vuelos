@@ -21,16 +21,10 @@ provider "google" {
 }
 
 provider "docker" {
-  host = "unix:///var/run/docker.sock" //linux
-  // host = "npipe:////./pipe/docker_engine" //windows
+  // host = "unix:///var/run/docker.sock" //linux
+  host = "npipe:////./pipe/docker_engine" //windows
 }
 
 resource "google_compute_network" "vpc_network" {
   name = "terraform-network"
-}
-
-resource "null_resource" "always_run" {
-  triggers = {
-    timestamp = "${timestamp()}"
-  }
 }
