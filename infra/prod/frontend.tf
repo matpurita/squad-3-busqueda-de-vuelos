@@ -4,16 +4,16 @@
 resource "docker_image" "frontend" {
   name = "southamerica-west1-docker.pkg.dev/uade-476411/frontend/prod:latest"
   build {
-    path       = "${path.module}/../../front"
+    path = "${path.module}/../../front"
 
     build_arg = {
-      ENV = "prod"
+      ENV          = "prod"
       VITE_API_URL = "https://flightsearch-backend-prod-778211537053.southamerica-west1.run.app"
     }
   }
 
   lifecycle {
-     replace_triggered_by = [
+    replace_triggered_by = [
       null_resource.always_run
     ]
   }
@@ -22,7 +22,9 @@ resource "docker_image" "frontend" {
 }
 
 resource "null_resource" "push_frontend_image" {
-  triggers = [docker_image.frontend]
+  triggers = {
+    docker_image = docker_image.frontend
+  }
 
   provisioner "local-exec" {
     command = "docker push southamerica-west1-docker.pkg.dev/uade-476411/frontend/prod:latest"

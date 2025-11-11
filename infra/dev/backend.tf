@@ -4,7 +4,7 @@
 resource "docker_image" "backend" {
   name = "southamerica-west1-docker.pkg.dev/uade-476411/backend/dev:latest"
   build {
-    path       = "${path.module}/../../back"
+    path = "${path.module}/../../back"
 
     build_arg = {
       ENV = "dev"
@@ -14,7 +14,7 @@ resource "docker_image" "backend" {
   keep_locally = false
 
   lifecycle {
-     replace_triggered_by = [
+    replace_triggered_by = [
       null_resource.always_run
     ]
   }
@@ -23,7 +23,9 @@ resource "docker_image" "backend" {
 }
 
 resource "null_resource" "push_backend_image" {
-  triggers = [docker_image.backend]
+  triggers = {
+    docker_image = docker_image.backend
+  }
 
   provisioner "local-exec" {
     command = "docker push southamerica-west1-docker.pkg.dev/uade-476411/backend/dev:latest"
