@@ -84,9 +84,9 @@ model Booking {
 model EventLog {
   id        String   @id @default(cuid())
   event     String
-  message   String?
-  payload   String?
-  error     String?
-  fixed     Boolean?
+  message   Json?    @db.Json
+  payload   Json?    @db.Json
+  error     Json?    @db.Json
   timestamp DateTime @default(now())
+  fixed     Boolean?
 }
