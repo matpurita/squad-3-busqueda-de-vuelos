@@ -38,10 +38,13 @@ export interface ReservationUpdatedEvent {
   flightDate?: string;       // Optional, can be undefined
 }
 
-// Airline or Aircraft Updated Event
-export interface AircraftOrAirlineUpdatedEvent {
-  airlineBrand: string;
-  aircraftId: string;
-  capacity: number; // Minimum 1
-  seatMapId?: string; // Optional, can be undefined
+// User Created Event
+export interface UserCreateEvent {
+  userId: string;
+  nombre_completo: string;
+  email: string;
+  password: string;
+  nationalityOrOrigin: string;
+  roles: string[];
+  createdAt: string; // ISO 8601 date-time format
 }

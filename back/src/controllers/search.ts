@@ -226,7 +226,7 @@ async function getFlightSuggestions(req: Request, res: Response, next: NextFunct
       suggestions: suggestions.map((flight) => ({
         id: flight.id,
         flightNumber: flight.flightNumber,
-        label: `${flight.airline.code}${flight.flightNumber} - ${flight.origin.city} (${flight.origin.code}) to ${flight.destination.city} (${flight.destination.code})`,
+        label: `${flight.airline?.code}${flight.flightNumber} - ${flight.origin.city} (${flight.origin.code}) to ${flight.destination.city} (${flight.destination.code})`,
         departure: flight.departure,
         arrival: flight.arrival,
         airline: flight.airline,

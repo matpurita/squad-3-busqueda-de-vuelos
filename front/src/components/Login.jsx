@@ -15,6 +15,9 @@ import {
 } from "@mui/material";
 import { Visibility, VisibilityOff } from "@mui/icons-material";
 import { useAuth } from "../contexts/AuthContext";
+import HomeIcon from '@mui/icons-material/Home';
+import ArrowBack from '@mui/icons-material/ArrowBack';
+
 
 export default function Login() {
   const [email, setEmail] = useState("");
@@ -42,12 +45,24 @@ export default function Login() {
     }
   };
 
+  const handleGoBack = () => {
+  if (window.history.length > 1) {
+    navigate(-1); // Volver atrás si hay historial
+  } else {
+    navigate("/"); // Ir al inicio si no hay historial
+  }
+};
+
+const handleGoHome = () => {
+  navigate("/");
+};
+
   const handleTogglePassword = () => {
     setShowPassword(!showPassword);
   };
 
   const handleRegisterClick = () => {
-    window.open('https://grupo5-usuarios.vercel.app/register', '_blank')
+    navigate("/register");
   };
 
   const handleForgotPassword = () => {
@@ -74,8 +89,48 @@ export default function Login() {
             borderRadius: 4,
             backdropFilter: "blur(12px)",
             bgcolor: "rgba(255,255,255,0.8)",
+            position: "relative",
           }}
         >
+             {/* Botones de navegación en la esquina superior */}
+          <Box
+            sx={{
+              position: "absolute",
+              top: 16,
+              left: 16,
+              display: "flex",
+              gap: 1,
+            }}
+          >
+            <IconButton
+              onClick={handleGoBack}
+              size="small"
+              disabled={isLoading}
+              sx={{
+                backgroundColor: "rgba(255,255,255,0.8)",
+                "&:hover": {
+                  backgroundColor: "rgba(255,255,255,0.9)",
+                },
+              }}
+              title="Volver atrás"
+            >
+              <ArrowBack fontSize="small" />
+            </IconButton>
+            <IconButton
+              onClick={handleGoHome}
+              size="small"
+              disabled={isLoading}
+              sx={{
+                backgroundColor: "rgba(255,255,255,0.8)",
+                "&:hover": {
+                  backgroundColor: "rgba(255,255,255,0.9)",
+                },
+              }}
+              title="Ir al inicio"
+            >
+              <HomeIcon fontSize="small" />
+            </IconButton>
+          </Box>
           <Typography variant="h4" fontWeight="bold" textAlign="center" gutterBottom>
             SkyTrack
           </Typography>
@@ -169,6 +224,7 @@ export default function Login() {
                 fontSize: 14,
               }}
             >
+              { /* comentario de olvido de contraseña
               <Link 
                 component="button"
                 type="button"
@@ -182,6 +238,7 @@ export default function Login() {
               >
                 ¿Olvidaste tu contraseña?
               </Link>
+              */}
               <Link 
                 component="button"
                 type="button"

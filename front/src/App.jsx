@@ -7,6 +7,7 @@ import SearchForm from './components/SearchForm'
 import ResultsList from './components/ResultsList'
 import AuthCallback from './components/AuthCallback'
 import Login from './components/Login'
+import Register from './components/Register'
 import { SearchProvider } from './contexts/SearchContext'
 import { FlightsProvider } from './contexts/FlightsContext'
 import { AuthProvider, useAuth } from './contexts/AuthContext'
@@ -15,6 +16,8 @@ import Sidebar from './components/Sidebar'
 import AccountCircleIcon from '@mui/icons-material/AccountCircle'
 import LoginIcon from '@mui/icons-material/Login'
 import PersonAddIcon from '@mui/icons-material/PersonAdd'
+import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
+import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 
 function Header() {
   const [anchorEl, setAnchorEl] = useState(null)
@@ -40,7 +43,7 @@ function Header() {
   }
 
   const handleRegister = () => {
-    window.open('https://grupo5-usuarios.vercel.app/register', '_blank')
+    navigate("/register");
   }
 
   return (
@@ -181,7 +184,9 @@ function Home() {
           <Typography variant="h5" gutterBottom textAlign="center" color="primary.main" fontWeight="bold">
             Buscar Vuelos
           </Typography>
-          <SearchForm />
+          <LocalizationProvider dateAdapter={AdapterDayjs}>
+            <SearchForm />
+          </LocalizationProvider>
         </Box>
 
         {/* Resultados Centrados */}
@@ -190,7 +195,7 @@ function Home() {
         <Box sx={{ width: { lg: 350 }, flexShrink: 0 }}>
           <Sidebar />
         </Box>
-      </Container>
+      </Container >
     </>
   );
 }
@@ -198,6 +203,7 @@ function Home() {
 function AppContent() {
   const location = useLocation();
   const isLoginPage = location.pathname === '/login';
+  const isRegisterPage = location.pathname === '/register';
 
   return (
     <Box
@@ -210,17 +216,18 @@ function AppContent() {
       }}
     >
       {/* Header con navegación - Oculto en login */}
-      {!isLoginPage && <Header />}
+      {!isLoginPage && !isRegisterPage && <Header />}
 
       {/* Contenido principal con rutas */}
       <Routes>
         <Route path="/" element={<Home />} />
         <Route path="/login" element={<Login />} />
+        <Route path="/register" element={<Register />} />
         <Route path="/auth/callback" element={<AuthCallback />} />
       </Routes>
 
       {/* Footer - Oculto en login */}
-      {!isLoginPage && (
+      {!isLoginPage && !isRegisterPage && (
         <Box
           sx={{
             backgroundColor: 'grey.100',

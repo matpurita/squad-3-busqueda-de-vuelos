@@ -4,6 +4,7 @@ export const config = {
   // API
   API_URL: import.meta.env.VITE_API_URL || 'http://localhost:3000/',
   
+  API_USER_URL: import.meta.env.VITE_API_USER_URL || 'https://grupo5-usuarios.vercel.app/',
   // Modo de desarrollo (mock vs API)
   USE_MOCK: import.meta.env.VITE_USE_MOCK === 'true', //borro el or porque si la condicion de la izquierda da false va a entrar por el true de la derecha
 
@@ -33,7 +34,9 @@ export const config = {
     ERROR_COLOR: import.meta.env.VITE_ERROR_COLOR || '#d32f2f',
     WARNING_COLOR: import.meta.env.VITE_WARNING_COLOR || '#ed6c02',
     INFO_COLOR: import.meta.env.VITE_INFO_COLOR || '#0288d1',
-    SUCCESS_COLOR: import.meta.env.VITE_SUCCESS_COLOR || '#2e7d32'
+    SUCCESS_COLOR: import.meta.env.VITE_SUCCESS_COLOR || '#2e7d32',
+    DISABLED_COLOR: import.meta.env.VITE_DISABLED_COLOR || '#9e9e9e',
+
   }
 };
 
@@ -50,9 +53,10 @@ export const endpoints = {
   },
   BOOKINGS: {
     CREATE: '/search/intent',
-  },
+  }, 
   AUTH: {
     LOGIN: config.USE_AUTH_MOCK ? '/auth/login/mock' : '/auth/login',
-    ME: '/auth/user'
+    ME: '/auth/user',
+    REGISTER: '/auth/register'
   }
 };

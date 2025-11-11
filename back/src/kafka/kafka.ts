@@ -1,20 +1,20 @@
 import { Kafka, logLevel } from 'kafkajs'
 import { prisma } from '../prisma/db'
 import {
-  AircraftOrAirlineUpdatedEvent,
   FlightCreatedEvent,
   FlightUpdatedEvent,
   ReservationCreatedEvent,
-  ReservationUpdatedEvent
+  ReservationUpdatedEvent,
+  UserCreateEvent
 } from './events'
 import { SearchMetric } from '../schemas/searchMetric'
 import { BookingIntent } from '../schemas/bookingIntent'
 import { PrismaClientKnownRequestError } from '@prisma/client/runtime/library'
+import { Prisma } from '@prisma/client'
 
 const EVENTS = {
   FLIGHT_CREATED: 'flights.flight.created',
   FLIGHT_UPDATED: 'flights.flight.updated',
-  AIRCRAFT_OR_AIRLINE_UPDATED: 'flights.aircraft_or_airline.updated',
   RESERVATION_CREATED: 'reservations.reservation.created',
   RESERVATION_UPDATED: 'reservations.reservation.updated'
 } as const
@@ -24,7 +24,7 @@ const kafka = new Kafka({
   brokers: [process.env.KAFKA_BROKER || ''],
   logLevel: logLevel.INFO
 })
-const consumer = kafka.consumer({ groupId: 'search-node-group-replda7f81' })
+const consumer = kafka.consumer({ groupId: 'search-node-group-aoraetacaaaplccda7f8' })
 
 const connectConsumer = async () => {
   await consumer.connect()
@@ -35,7 +35,14 @@ const connectConsumer = async () => {
       const { payload: payloadString, ...data } = JSON.parse(message.value!.toString())
       const payload = payloadString ? JSON.parse(payloadString) : null
 
-      console.log(`[${data.eventType}]:`, data)
+      const logEntry: Prisma.EventLogCreateInput = {
+        event: data.eventType,
+        message: JSON.stringify(data),
+        payload: payloadString || null
+      }
+
+      console.log(data)
+
 
       try {
         switch (data.eventType) {
@@ -44,7 +51,7 @@ const connectConsumer = async () => {
 
             await prisma.flight.create({
               data: {
-                id: content.flightId,
+                id: content.flightId.toString(),
                 flightNumber: content.flightNumber,
                 origin: {
                   connect: { code: content.origin }
@@ -78,16 +85,6 @@ const connectConsumer = async () => {
                 departure: content.newDepartureAt ? new Date(content.newDepartureAt) : undefined,
                 arrival: content.newArrivalAt ? new Date(content.newArrivalAt) : undefined
               }
-            })
-
-            break
-          }
-          case EVENTS.AIRCRAFT_OR_AIRLINE_UPDATED: {
-            const content: AircraftOrAirlineUpdatedEvent = payload
-
-            await prisma.plane.update({
-              where: { id: content.aircraftId },
-              data: { capacity: content.capacity }
             })
 
             break
@@ -128,35 +125,26 @@ const connectConsumer = async () => {
           // P2002. "Unique constraint failed on the {constraint}".
           if (error.code === 'P2002') {
             // Handle unique constraint violation (e.g., duplicate entries)
-            console.warn(
-              'Duplicate entry detected, skipping...',
-              error.meta?.modelName,
-              '->',
-              error.meta?.target
-            )
+
             return
           } else {
-            console.error(
-              'Prisma error code:',
-              error.code,
-              '\nMeta:',
-              error.meta,
-              '\nMessage:',
-              data,
-              '\nPayload:',
-              payload
-            )
+            logEntry.error = JSON.stringify(error)
           }
+        } else {
+          logEntry.error = JSON.stringify(error)
         }
+      } finally {
+        await prisma.eventLog.create({ data: logEntry })
       }
     }
   })
 }
 
-type EventType = 'search.search.performed' | 'search.cart.item.added'
+type EventType = 'search.search.performed' | 'search.cart.item.added' | 'users.user.created'
 type EventPayload<T extends EventType> = {
   'search.search.performed': SearchMetric
   'search.cart.item.added': BookingIntent
+  'users.user.created': UserCreateEvent
 }[T]
 
 const postEvent = async <T extends EventType>(type: T, payload: EventPayload<T>) => {

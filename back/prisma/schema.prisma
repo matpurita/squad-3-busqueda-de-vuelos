@@ -37,7 +37,7 @@ model Flight {
   flightNumber  String
   departure     DateTime
   arrival       DateTime
-  airlineId     String
+  airlineId     String?
   originId      String
   destinationId String
   currency      String          @default("USD")
@@ -46,7 +46,7 @@ model Flight {
   status        String          @default("ON_TIME")
   bookings      Booking[]
   BookingIntent BookingIntent[]
-  airline       Airline         @relation(fields: [airlineId], references: [id])
+  airline       Airline?        @relation(fields: [airlineId], references: [id])
   destination   Airport         @relation("FlightsTo", fields: [destinationId], references: [id])
   origin        Airport         @relation("FlightsFrom", fields: [originId], references: [id])
   plane         Plane?          @relation(fields: [planeId], references: [id])
@@ -79,4 +79,14 @@ model Booking {
   bookingDate DateTime @default(now())
   status      String   @default("CONFIRMED")
   Flight      Flight   @relation(fields: [flightId], references: [id])
+}
+
+model EventLog {
+  id        String   @id @default(cuid())
+  event     String
+  message   String?
+  payload   String?
+  error     String?
+  fixed     Boolean?
+  timestamp DateTime @default(now())
 }
