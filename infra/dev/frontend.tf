@@ -22,7 +22,7 @@ resource "docker_image" "frontend" {
 }
 
 resource "null_resource" "push_frontend_image" {
-  depends_on = [docker_image.frontend]
+  triggers = [docker_image.frontend]
 
   provisioner "local-exec" {
     command = "docker push southamerica-west1-docker.pkg.dev/uade-476411/frontend/dev:latest"
