@@ -49,7 +49,7 @@ export default function FlightDetail({ flight, user, reservarVuelo }) {
               borderColor: 'grey.300'
             }}
           >
-            <Typography variant="body1" fontWeight="medium">
+            <Typography variant="body1" fontWeight="medium" data-testid="fecha-salida">
               {formatearFecha(ida?.fechaSalida)}
             </Typography>
             <Typography variant="caption" color="text.secondary">
@@ -60,7 +60,7 @@ export default function FlightDetail({ flight, user, reservarVuelo }) {
           <Stack spacing={2} alignItems="center">
             <Box textAlign={"center"}>
               <Typography variant="h6">{ida?.airline}</Typography>
-              <Typography variant="caption" color="text.secondary">
+              <Typography variant="caption" color="text.secondary" data-testid="numero-vuelo">
                 {ida?.numeroVuelo}
               </Typography>
             </Box>
