@@ -57,6 +57,6 @@ export const endpoints = {
   AUTH: {
     LOGIN: config.USE_AUTH_MOCK ? '/auth/login/mock' : '/auth/login',
     ME: '/auth/user',
-    REGISTER: '/api/usuarios'
+    REGISTER: '/auth/register'
   }
 };

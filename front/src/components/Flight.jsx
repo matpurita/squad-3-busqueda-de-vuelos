@@ -114,8 +114,8 @@ export default function Flight({ flight, resultado }) {
   return (
     <Card 
       variant="outlined"
-      sx={{
-        backgroundColor: isSelected ? 'primary.50' : 'transparent',
+      sx={(theme) => ({
+        backgroundColor: isSelected ? theme.alpha(theme.palette.primary.main, 0.05) : 'transparent',
         border: isSelected ? 2 : 1,
         borderColor: isSelected ? 'primary.main' : 'divider',
         transition: 'all 0.2s ease',
@@ -123,7 +123,7 @@ export default function Flight({ flight, resultado }) {
           boxShadow: 2,
           borderColor: 'primary.light'
         }
-      }}
+      })}
     >
       <CardContent>
         <Stack spacing={2}>

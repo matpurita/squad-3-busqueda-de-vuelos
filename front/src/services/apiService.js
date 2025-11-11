@@ -349,7 +349,7 @@ export const apiService = {
     try {
       // Usamos una instancia sin interceptor para register (no necesita token)
       const registerClient = axios.create({
-        baseURL: config.API_USER_URL,
+        baseURL: config.API_URL,
         timeout: config.REQUEST_TIMEOUT,
         headers: { "Content-Type": "application/json" }
       });
