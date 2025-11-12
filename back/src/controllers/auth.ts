@@ -9,7 +9,7 @@ async function getUserData(req: Request, res: Response, next: NextFunction) {
   }
 
   try {
-    const response = await fetch(`${process.env.AUTH_SERVICE_URL}/me`, {
+    const response = await fetch(`${process.env.AUTH_SERVICE_URL}/auth/me`, {
       method: 'GET',
       headers: {
         'Content-Type': 'application/json',
