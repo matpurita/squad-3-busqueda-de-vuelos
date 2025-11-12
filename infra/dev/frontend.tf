@@ -21,7 +21,7 @@ resource "null_resource" "push_frontend_image" {
   }
 
   provisioner "local-exec" {
-    command = "docker push southamerica-west1-docker.pkg.dev/uade-476411/frontend/dev:latest"
+    command = "docker push ${docker_image.frontend.name}"
   }
 }
 
@@ -35,7 +35,7 @@ resource "google_cloud_run_service" "frontend" {
   template {
     spec {
       containers {
-        image = "southamerica-west1-docker.pkg.dev/uade-476411/frontend/dev:latest"
+        image = docker_image.frontend.name
         ports {
           container_port = 80
         }
@@ -54,7 +54,7 @@ resource "google_cloud_run_service" "frontend" {
     ]
   }
 
-  depends_on = [null_resource.push_frontend_image]
+  depends_on = [docker_image.frontend, null_resource.push_frontend_image]
 }
 
 # ===================================
