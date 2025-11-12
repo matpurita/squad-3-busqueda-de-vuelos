@@ -4,7 +4,6 @@ import { useFlights } from "../contexts/FlightsContext";
 import { useSearch } from "../contexts/SearchContext";
 import FlightDetail from "./FlightDetail";
 import { useAuth } from "../contexts/AuthContext";
-import { useFlights } from "../contexts/FlightsContext";
 
 export default function Sidebar() {
     const { selectedFlight, setSelectedFlight } = useFlights();
