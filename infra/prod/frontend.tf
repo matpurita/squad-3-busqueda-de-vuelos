@@ -28,29 +28,28 @@ resource "null_resource" "push_frontend_image" {
 # =============================
 #  Cloud Run Service (Prod)
 # =============================
-resource "google_cloud_run_service" "frontend" {
+resource "google_cloud_run_v2_service" "frontend" {
   name     = "flightsearch-frontend-prod"
   location = "southamerica-west1"
 
   template {
-    spec {
-      containers {
-        image = docker_image.frontend.name
-        ports {
-          container_port = 80
-        }
+    containers {
+      image = docker_image.frontend.name
+      ports {
+        container_port = 80
       }
     }
+  
   }
 
   traffic {
     percent         = 100
-    latest_revision = true
+    revision = "latest"
   }
 
   lifecycle {
     ignore_changes = [
-      template[0].spec[0].containers[0].env
+      template[0].containers[0].env
     ]
   }
 
@@ -61,10 +60,10 @@ resource "google_cloud_run_service" "frontend" {
 #  IAM Binding – Public Access (Prod)
 # ===================================
 resource "google_cloud_run_service_iam_binding" "frontend_public" {
-  location = google_cloud_run_service.frontend.location
-  service  = google_cloud_run_service.frontend.name
+  location = google_cloud_run_v2_service.frontend.location
+  service  = google_cloud_run_v2_service.frontend.name
   role     = "roles/run.invoker"
   members  = ["allUsers"]
 
-  depends_on = [google_cloud_run_service.frontend]
+  depends_on = [google_cloud_run_v2_service.frontend]
 }

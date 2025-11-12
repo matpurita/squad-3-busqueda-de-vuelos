@@ -29,21 +29,19 @@ resource "null_resource" "push_backend_image" {
 # =============================
 #  Cloud Run Service (Dev)
 # =============================
-resource "google_cloud_run_service" "backend" {
+resource "google_cloud_run_v2_service" "backend" {
   name     = "flightsearch-backend-dev"
   location = "southamerica-west1"
 
   template {
-    spec {
-      containers {
-        image = docker_image.backend.name
-      }
+    containers {
+      image = docker_image.backend.name
     }
   }
 
   lifecycle {
     ignore_changes = [
-      template[0].spec[0].containers[0].env
+      template[0].containers[0].env
     ]
   }
 
@@ -54,10 +52,10 @@ resource "google_cloud_run_service" "backend" {
 #  IAM Binding – Public Access (Dev)
 # ===================================
 resource "google_cloud_run_service_iam_binding" "backend_public" {
-  location = google_cloud_run_service.backend.location
-  service  = google_cloud_run_service.backend.name
+  location = google_cloud_run_v2_service.backend.location
+  service  = google_cloud_run_v2_service.backend.name
   role     = "roles/run.invoker"
   members  = ["allUsers"]
 
-  depends_on = [google_cloud_run_service.backend]
+  depends_on = [google_cloud_run_v2_service.backend]
 }
