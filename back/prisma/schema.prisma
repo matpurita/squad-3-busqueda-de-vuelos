@@ -90,3 +90,11 @@ model EventLog {
   timestamp DateTime @default(now())
   fixed     Boolean?
 }
+
+model User {
+  id                  String   @id @default(cuid())
+  name                String
+  email               String   @unique
+  nationalityOrOrigin String
+  createdAt           DateTime @default(now())
+}
