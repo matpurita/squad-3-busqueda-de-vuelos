@@ -40,7 +40,7 @@ jobs:
         run: |
           cd infra/dev
           terraform init
-          terraform apply -auto-approve -target="docker_image.backend" -target="null_resource.push_backend_image" -target="google_cloud_run_service.backend"
+          terraform apply -auto-approve -target="docker_image.backend" -target="null_resource.push_backend_image" -target="google_cloud_run_v2_service.backend"
 
 
       - name: Initialize and Run Terraform (Prod)
@@ -48,4 +48,4 @@ jobs:
         run: |
           cd infra/prod
           terraform init
-          terraform apply -auto-approve -target="docker_image.backend" -target="null_resource.push_backend_image" -target="google_cloud_run_service.backend"
+          terraform apply -auto-approve -target="docker_image.backend" -target="null_resource.push_backend_image" -target="google_cloud_run_v2_service.backend"
