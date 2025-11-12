@@ -61,7 +61,7 @@ async function register(req: Request, res: Response, next: NextFunction) {
       nationalityOrOrigin: req.body.nationalityOrOrigin
     })
 
-     postEvent('users.user.created', {
+    await postEvent('users.user.created', {
       ...registerPayload,
       nombre_completo: name,
       roles: ['usuario'],

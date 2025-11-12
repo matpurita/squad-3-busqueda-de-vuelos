@@ -41,8 +41,6 @@ const connectConsumer = async () => {
         payload: payloadString || null
       }
 
-      console.log(data)
-
       try {
         switch (data.eventType) {
           case EVENTS.FLIGHT_CREATED: {
@@ -95,7 +93,7 @@ const connectConsumer = async () => {
           }
           case EVENTS.RESERVATION_CREATED: {
             const content: ReservationCreatedEvent = payload
-console.log(content)
+
             await prisma.booking.create({
               data: {
                 id: content.reservationId,
