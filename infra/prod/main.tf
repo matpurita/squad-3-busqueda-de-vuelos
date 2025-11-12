@@ -21,7 +21,8 @@ provider "google" {
 }
 
 provider "docker" {
-  host = "unix:///var/run/docker.sock"
+  host = "unix:///var/run/docker.sock" //linux
+  // host = "npipe:////./pipe/docker_engine" //windows
 }
 
 resource "google_compute_network" "vpc_network" {

@@ -10,14 +10,9 @@ import {
 } from "@mui/material";
 import { useState } from "react";
 import { Link as RouterLink } from "react-router-dom";
-import { useAuth } from "../contexts/AuthContext";
-import { useFlights } from "../contexts/FlightsContext";
-import { utilidades } from "../services";
 import LoginIcon from '@mui/icons-material/Login';
 
-export default function FlightDetail({ flight }) {
-  const { user } = useAuth();
-  const { reservarVuelo } = useFlights();
+export default function FlightDetail({ flight, user, reservarVuelo }) {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
   const [success, setSuccess] = useState(false);
@@ -54,8 +49,8 @@ export default function FlightDetail({ flight }) {
               borderColor: 'grey.300'
             }}
           >
-            <Typography variant="body1" fontWeight="medium">
-              {utilidades.formatearFecha(ida?.fechaSalida)}
+            <Typography variant="body1" fontWeight="medium" data-testid="fecha-salida">
+              {formatearFecha(ida?.fechaSalida)}
             </Typography>
             <Typography variant="caption" color="text.secondary">
               Fecha de Salida
@@ -65,7 +60,7 @@ export default function FlightDetail({ flight }) {
           <Stack spacing={2} alignItems="center">
             <Box textAlign={"center"}>
               <Typography variant="h6">{ida?.airline}</Typography>
-              <Typography variant="caption" color="text.secondary">
+              <Typography variant="caption" color="text.secondary" data-testid="numero-vuelo">
                 {ida?.numeroVuelo}
               </Typography>
             </Box>
@@ -122,7 +117,7 @@ export default function FlightDetail({ flight }) {
             }}
           >
             <Typography variant="body1" fontWeight="medium">
-              {utilidades.formatearFecha(vuelta?.fechaSalida)}
+              {formatearFecha(vuelta?.fechaSalida)}
             </Typography>
             <Typography variant="caption" color="text.secondary">
               Fecha de Regreso
@@ -235,4 +230,8 @@ export default function FlightDetail({ flight }) {
     </Stack>
   
   );
+}
+
+const formatearFecha = (fecha) => {
+  return new Date(fecha).toLocaleDateString("es-AR");
 }

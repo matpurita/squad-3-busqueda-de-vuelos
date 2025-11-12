@@ -24,20 +24,23 @@ jobs:
         with:
           credentials_json: ${{ secrets.GCP_SA_KEY }}
 
+      - name: Configure Docker for Artifact Registry
+        run: gcloud auth configure-docker southamerica-west1-docker.pkg.dev
+
       - name: Start Docker
         uses: docker/setup-buildx-action@v3
 
       - name: Setup Terraform
         uses: hashicorp/setup-terraform@v3
         with:
-          terraform_version: 1.9.6
+          terraform_version: 1.13.5
 
       - name: Initialize and Run Terraform (Dev)
         if: github.ref == 'refs/heads/main'
         run: |
           cd infra/dev
           terraform init
-          terraform apply -auto-approve -target="google_cloud_run_service.frontend"
+          terraform apply -auto-approve -target="docker_image.frontend" -target="null_resource.push_frontend_image" -target="google_cloud_run_v2_service.frontend"
 
 
       - name: Initialize and Run Terraform (Prod)
@@ -45,4 +48,4 @@ jobs:
         run: |
           cd infra/prod
           terraform init
-          terraform apply -auto-approve -target="google_cloud_run_service.frontend"
+          terraform apply -auto-approve -target="docker_image.frontend" -target="null_resource.push_frontend_image" -target="google_cloud_run_v2_service.frontend"
