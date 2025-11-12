@@ -42,11 +42,6 @@ resource "google_cloud_run_v2_service" "frontend" {
   
   }
 
-  traffic {
-    percent         = 100
-    revision = "latest"
-  }
-
   lifecycle {
     ignore_changes = [
       template[0].containers[0].env
