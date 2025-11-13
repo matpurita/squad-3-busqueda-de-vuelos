@@ -10,6 +10,7 @@ import {
   CircularProgress,
   Paper,
   InputAdornment,
+  Alert
 } from "@mui/material";
 import { DatePicker  } from "@mui/x-date-pickers";
 import { PickersDay } from "@mui/x-date-pickers/PickersDay";
@@ -42,10 +43,15 @@ export default function SearchForm({ onResults }) {
     setFlexibleDates,
     getSearchCriteria,
     isSearchValid,
+    error: searchAirportError,
   } = useSearch();
 
-  const { searchFlights, loading: searchLoading } = useFlights();
+  const { searchFlights, loading: searchLoading, error:searchError } = useFlights();
   const loading = aeropuertosLoading || searchLoading;
+
+
+  const aeropuertosDeparture = to ? aeropuertos.filter((a) => a.code !== to.code) : aeropuertos;
+  const aeropuertosArrival = from ? aeropuertos.filter((a) => a.code !== from.code) : aeropuertos;
 
   const today = dayjs();
 
@@ -107,11 +113,30 @@ export default function SearchForm({ onResults }) {
       }}
     >
       <form onSubmit={handleSubmit}>
+        {/* 🚨 Alert de error */}
+        {(searchError || searchAirportError) && (
+          <Alert 
+            severity="error" 
+            sx={{ 
+              mb: 3,
+              borderRadius: 2
+            }}
+            onClose={() => {
+              // Si tienes una función clearError en FlightsContext, úsala aquí
+              // clearSearchError();
+            }}
+          > <strong>Error en la búsqueda:</strong> {searchError || searchAirportError}
+          </Alert>
+        )}
         {/* 🔘 Tipo de viaje */}
         <ToggleButtonGroup
           exclusive
           value={tripType}
-          onChange={(_, v) => v && setTripType(v)}
+          onChange={(_, v) => {
+            
+            v && setTripType(v)
+            v === "oneway" && setReturnDate(null);
+          }}
           sx={{ mb: 3, width: "100%" }}
         >
           <ToggleButton
@@ -123,7 +148,10 @@ export default function SearchForm({ onResults }) {
               "&.Mui-selected": {
                 backgroundColor: config.THEME.PRIMARY_COLOR,
                 color: config.THEME.SURFACE_COLOR,
-                opacity: 0.8
+                opacity: 0.8,
+                 "&:hover": {
+                  backgroundColor: config.THEME.PRIMARY_COLOR,
+                },
               },
             }}
           >
@@ -156,7 +184,7 @@ export default function SearchForm({ onResults }) {
             <Autocomplete
               value={from}
               onChange={(_, v) => setFrom(v)}
-              options={aeropuertos}
+              options={aeropuertosDeparture}
               getOptionLabel={(o) => o.label}
               renderInput={(params) => (
                 <TextField
@@ -182,7 +210,7 @@ export default function SearchForm({ onResults }) {
             <Autocomplete
               value={to}
               onChange={(_, v) => setTo(v)}
-              options={aeropuertos}
+              options={aeropuertosArrival}
               getOptionLabel={(o) => o.label}
               renderInput={(params) => (
                 <TextField
