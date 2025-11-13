@@ -266,6 +266,17 @@ async function sendBookingIntent(req: Request, res: Response, next: NextFunction
       addedAt: req.body.addedAt ? new Date(req.body.addedAt) : undefined
     })
 
+    const existingBooking = await prisma.bookingIntent.findFirst({
+      where: {
+        userId: flightBooking.userId,
+        flightId: flightBooking.flightId
+      }
+    })
+
+    if (existingBooking) {
+      throw new AppError('Ya existe una intención de reserva para este usuario y vuelo', 400)
+    }
+
     await prisma.bookingIntent.create({
       data: flightBooking
     })
