@@ -10,15 +10,9 @@
   ],
   "scripts": {
     "install:all": "npm install --workspaces",
-    "dev": "concurrently \"npm run dev -w front\" \"npm run dev -w back\"",
-    "dev:tsc": "concurrently \"npm run dev -w front\" \"npm run dev:tsc -w back\"",
-    "start": "concurrently \"npm run start -w front\" \"npm run start -w back\"",
-    "infra:init": "cd infra && terraform init",
-    "infra:format": "cd infra && terraform fmt -recursive",
-    "infra:validate": "cd infra && terraform validate",
-    "infra:apply": "cd infra && terraform apply -var=env=dev",
-    "infra:docker-deploy-front": "docker build -t southamerica-west1-docker.pkg.dev/uade-476411/frontend/dev:latest -f front/Dockerfile front && docker push southamerica-west1-docker.pkg.dev/uade-476411/frontend/dev:latest",
-    "infra:docker-deploy-back": "docker build -t southamerica-west1-docker.pkg.dev/uade-476411/backend/dev:latest -f back/Dockerfile back && docker push southamerica-west1-docker.pkg.dev/uade-476411/backend/dev:latest"
+    "dev": "concurrently \"cd front && pnpm run dev\" \"cd back && pnpm run dev\"",
+    "start": "concurrently \"cd front && npm run start\" \"cd back && npm run start\"",
+    "test": "cd front && npm run test:cov & cd ../back && npm run test:cov"
   },
   "keywords": [
     "vuelos",

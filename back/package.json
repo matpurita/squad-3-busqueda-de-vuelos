@@ -14,7 +14,7 @@
     "prisma:format": "prisma format",
     "prisma:mock": "ts-node prisma/mock.ts",
     "test": "jest --silent",
-    "test:cov": "jest --silent --coverage > coverage.txt"
+    "test:cov": "jest --silent --coverage"
   },
   "keywords": [
     "backend",
