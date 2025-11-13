@@ -26,6 +26,10 @@ async function searchFlights(req: Request, res: Response, next: NextFunction) {
       offset: req.query.offset
     })
 
+    if (new Date(searchParams.departureDate) < new Date()) {
+      throw new AppError('La fecha de salida debe ser en el futuro', 400)
+    }
+
     const departureDateStart = startOfDay(
       sub(new Date(searchParams.departureDate), {
         days: searchParams.departureRange
@@ -36,6 +40,25 @@ async function searchFlights(req: Request, res: Response, next: NextFunction) {
         days: searchParams.departureRange
       })
     )
+
+    const returnDateStart = searchParams.returnDate
+      ? startOfDay(
+          sub(new Date(searchParams.returnDate), {
+            days: searchParams.returnRange
+          })
+        )
+      : null
+    const returnDateEnd = searchParams.returnDate
+      ? endOfDay(
+          add(new Date(searchParams.returnDate), {
+            days: searchParams.returnRange
+          })
+        )
+      : null
+
+    if (returnDateStart && (departureDateStart > returnDateStart)) {
+      throw new AppError('La fecha de regreso debe ser después de la fecha de salida', 400)
+    }
 
     // Query seats first
     const departurePromise = prisma.flight.findMany({
@@ -61,21 +84,6 @@ async function searchFlights(req: Request, res: Response, next: NextFunction) {
         }
       }
     })
-
-    const returnDateStart = searchParams.returnDate
-      ? startOfDay(
-          sub(new Date(searchParams.returnDate), {
-            days: searchParams.returnRange
-          })
-        )
-      : null
-    const returnDateEnd = searchParams.returnDate
-      ? endOfDay(
-          add(new Date(searchParams.returnDate), {
-            days: searchParams.returnRange
-          })
-        )
-      : null
 
     const returnPromise = searchParams.returnDate
       ? prisma.flight.findMany({
@@ -117,6 +125,7 @@ async function searchFlights(req: Request, res: Response, next: NextFunction) {
 
     const filterBySeats = (flights: typeof departureFlights) =>
       flights.filter((flight) => {
+        // flight._count.bookings only counts active bookings (not CANCELLED or FAILED)
         const availableSeats = flight.plane?.capacity ?? 50 - flight._count.bookings
         return availableSeats >= searchParams.passengers
       })
