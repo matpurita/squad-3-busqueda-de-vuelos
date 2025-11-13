@@ -1,4 +1,4 @@
-import { vuelos, aeropuertos } from "./mockData";
+import { vuelos,aeropuertos } from "./mockData";
 import { apiService } from "./apiService";
 import { config } from "../config";
 
@@ -92,7 +92,7 @@ export const vuelosService = {
         return response.data || response;
       } catch (error) {
         console.error("Error obteniendo aeropuertos de API:", error);
-        return aeropuertos;
+        throw new Error("No se pudieron cargar los aeropuertos desde la API.");
       }
     }
   },

@@ -97,7 +97,17 @@ async function searchFlights(req: Request, res: Response, next: NextFunction) {
             airline: true,
             plane: true,
             _count: {
-              select: { bookings: true }
+              select: {
+                bookings: {
+                  where: {
+                    status: {
+                      not: {
+                        in: ['CANCELLED', 'FAILED']
+                      }
+                    }
+                  }
+                }
+              }
             }
           }
         })

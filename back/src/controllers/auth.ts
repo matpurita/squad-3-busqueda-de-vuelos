@@ -9,7 +9,7 @@ async function getUserData(req: Request, res: Response, next: NextFunction) {
   }
 
   try {
-    const response = await fetch(`${process.env.AUTH_SERVICE_URL}/me`, {
+    const response = await fetch(`${process.env.AUTH_SERVICE_URL}/auth/me`, {
       method: 'GET',
       headers: {
         'Content-Type': 'application/json',
@@ -61,7 +61,7 @@ async function register(req: Request, res: Response, next: NextFunction) {
       nationalityOrOrigin: req.body.nationalityOrOrigin
     })
 
-     postEvent('users.user.created', {
+    await postEvent('users.user.created', {
       ...registerPayload,
       nombre_completo: name,
       roles: ['usuario'],

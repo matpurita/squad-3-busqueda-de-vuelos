@@ -24,7 +24,7 @@ const kafka = new Kafka({
   brokers: [process.env.KAFKA_BROKER || ''],
   logLevel: logLevel.INFO
 })
-const consumer = kafka.consumer({ groupId: 'search-node-group-aoraetacaaaplccda7f8' })
+const consumer = kafka.consumer({ groupId: 'search-node-group-abcde' })
 
 const connectConsumer = async () => {
   await consumer.connect()
@@ -41,13 +41,13 @@ const connectConsumer = async () => {
         payload: payloadString || null
       }
 
-      console.log(data)
-
-
       try {
         switch (data.eventType) {
           case EVENTS.FLIGHT_CREATED: {
             const content: FlightCreatedEvent = payload
+
+            const code = content.flightNumber.slice(0, 2)
+            const isCodeNumber = !Number.isNaN(parseInt(code))
 
             await prisma.flight.create({
               data: {
@@ -62,9 +62,11 @@ const connectConsumer = async () => {
                 plane: {
                   connect: { model: content.aircraftModel }
                 },
-                airline: {
-                  connect: { code: content.flightNumber.slice(0, 2) }
-                },
+                airline: !isCodeNumber
+                  ? {
+                      connect: { code: content.flightNumber.slice(0, 2) }
+                    }
+                  : undefined,
                 departure: new Date(content.departureAt),
                 arrival: new Date(content.arrivalAt),
                 status: content.status,
