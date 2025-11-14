@@ -215,33 +215,6 @@ paths:
         '500':
           description: Internal server error
 
-  /auth/login/mock:
-    post:
-      summary: Mock login
-      description: Local mock login for development/testing
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/LoginPayload'
-      responses:
-        '200':
-          description: Mock login successful (returns token)
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  success:
-                    type: boolean
-                  token:
-                    type: string
-        '401':
-          description: Invalid credentials
-        '500':
-          description: Internal server error
-
   /auth/user:
     get:
       summary: Get user data
