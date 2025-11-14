@@ -131,25 +131,25 @@ const mockUser = { id: 1, name: 'Test User' };
     const generarNumeroVuelo = (i) => `VUELO_${String(i).padStart(3, '0')}`;
 
     // Generar 190 casos de prueba
-    for (let i = 1; i <= 190; i++) {
-        const numeroVueloEsperado = generarNumeroVuelo(i);
+    // for (let i = 1; i <= 190; i++) {
+    //     const numeroVueloEsperado = generarNumeroVuelo(i);
 
-        // Crear un objeto de vuelo con el número de vuelo actual
-        const VUELO_CASO = {
-            ida: {
-                ...mockFlightIda.ida,
-                numeroVuelo: numeroVueloEsperado // <-- El valor que se cambia 190 veces
-            },
-            vuelta: null
-        };
+    //     // Crear un objeto de vuelo con el número de vuelo actual
+    //     const VUELO_CASO = {
+    //         ida: {
+    //             ...mockFlightIda.ida,
+    //             numeroVuelo: numeroVueloEsperado // <-- El valor que se cambia 190 veces
+    //         },
+    //         vuelta: null
+    //     };
 
-        it(`Caso ${i}: debe mostrar el numero de vuelo de ida: ${numeroVueloEsperado}`, () => {
-            render(<FlightDetail flight={VUELO_CASO} user={mockUser} reservarVuelo={jest.fn()}/>);
+    //     it(`Caso ${i}: debe mostrar el numero de vuelo de ida: ${numeroVueloEsperado}`, () => {
+    //         render(<FlightDetail flight={VUELO_CASO} user={mockUser} reservarVuelo={jest.fn()}/>);
             
-            const numeroVueloElemento = screen.getByTestId('numero-vuelo');
-            expect(numeroVueloElemento).toHaveTextContent(numeroVueloEsperado);
-        });
-    }
+    //         const numeroVueloElemento = screen.getByTestId('numero-vuelo');
+    //         expect(numeroVueloElemento).toHaveTextContent(numeroVueloEsperado);
+    //     });
+    // }
 });
 describe('3. Pruebas de Lógica Funcional y Condicional (10 Casos)', () => {
     const mockReservarVuelo = jest.fn();

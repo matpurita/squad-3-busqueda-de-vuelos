@@ -109,7 +109,7 @@ export default function ResultsList() {
           ✈️ Selecciona tu vuelo
         </Typography>
         <Typography variant="body2" color="text.secondary">
-          {vuelos.results.length} vuelo{vuelos.results.length !== 1 ? 's' : ''} encontrado{vuelos.results.length !== 1 ? 's' : ''}
+          {vuelos.pagination?.total} vuelo{vuelos.pagination?.total !== 1 ? 's' : ''} encontrado{vuelos.pagination?.total !== 1 ? 's' : ''}
         </Typography>
       </Box>
 

@@ -53,7 +53,7 @@ export default function Flight({ flight, resultado }) {
   // Formatear precio con moneda
   const formatPrice = (price, currency = 'USD') => {
     if (!price) return 'N/A';
-    return `$${price.toFixed(2)} ${currency}`;
+    return `$${parseInt(price)} ${currency}`;
   };
 
   // Renderizar información de un vuelo
@@ -146,7 +146,7 @@ export default function Flight({ flight, resultado }) {
                 {formatPrice(flight.totalPrice, flight.currency)}
               </Typography>
               <Typography variant="caption" color="text.secondary">
-                Precio total {tripType === 'roundtrip' ? '(ida y vuelta)' : ''}
+                Precio desde {tripType === 'roundtrip' ? '(ida y vuelta)' : ''}
               </Typography>
               {returnFlight && (
                 <Typography variant="caption" color="text.secondary" display="block">
