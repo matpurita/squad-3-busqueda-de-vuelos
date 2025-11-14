@@ -5,7 +5,9 @@ import {
   FlightUpdatedEvent,
   ReservationCreatedEvent,
   ReservationUpdatedEvent,
-  UserCreateEvent
+  UserCreatedEvent,
+  UserUpdatedEvent,
+  UserDeletedEvent
 } from './events'
 import { SearchMetric } from '../schemas/searchMetric'
 import { BookingIntent } from '../schemas/bookingIntent'
@@ -16,7 +18,10 @@ const EVENTS = {
   FLIGHT_CREATED: 'flights.flight.created',
   FLIGHT_UPDATED: 'flights.flight.updated',
   RESERVATION_CREATED: 'reservations.reservation.created',
-  RESERVATION_UPDATED: 'reservations.reservation.updated'
+  RESERVATION_UPDATED: 'reservations.reservation.updated',
+  USER_CREATED: 'users.user.created',
+  USER_UPDATED: 'users.user.updated',
+  USER_DELETED: 'users.user.deleted'
 } as const
 
 const kafka = new Kafka({
@@ -118,6 +123,42 @@ const connectConsumer = async () => {
 
             break
           }
+          case EVENTS.USER_CREATED: {
+            const content: UserCreatedEvent = payload
+
+            await prisma.user.create({
+              data: {
+                id: content.userId,
+                name: content.nombre_completo,
+                email: content.email,
+                nationalityOrOrigin: content.nationalityOrOrigin,
+                createdAt: new Date(content.createdAt)
+              }
+            })
+
+            break
+          }
+          case EVENTS.USER_UPDATED: {
+            const content: UserUpdatedEvent = payload
+
+            await prisma.user.update({
+              where: { id: content.userId },
+              data: {
+                nationalityOrOrigin: content.nationalityOrOrigin
+              }
+            })
+
+            break
+          }
+          case EVENTS.USER_DELETED: {
+            const content: UserDeletedEvent = payload
+           
+            await prisma.user.delete({
+              where: { id: content.userId }
+            })
+           
+            break
+          }
 
           default:
             console.log(`No handler for event: ${payload.eventType}`)
@@ -146,7 +187,7 @@ type EventType = 'search.search.performed' | 'search.cart.item.added' | 'users.u
 type EventPayload<T extends EventType> = {
   'search.search.performed': SearchMetric
   'search.cart.item.added': BookingIntent
-  'users.user.created': UserCreateEvent
+  'users.user.created': UserCreatedEvent
 }[T]
 
 const postEvent = async <T extends EventType>(type: T, payload: EventPayload<T>) => {

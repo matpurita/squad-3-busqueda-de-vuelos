@@ -67,8 +67,9 @@ async function register(req: Request, res: Response, next: NextFunction) {
       roles: ['usuario'],
       createdAt: new Date().toISOString(),
       userId: '1'
-      
     })
+    
+    // No guardar en la tabla de usuarios, se guardara al recibir el evento users.user.created en el microservicio de auth
 
     return res.status(201).json({ message: 'User registered successfully' })
   }
