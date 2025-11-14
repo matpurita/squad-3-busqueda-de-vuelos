@@ -22,7 +22,6 @@ export default function FlightDetail({ flight, user, reservarVuelo, bookingFligh
   return bookingFlights?.some(b => b?.id === vuelo.id);
 };
 
-
   if (!flight) return null;
   const { ida, vuelta } = flight;
 

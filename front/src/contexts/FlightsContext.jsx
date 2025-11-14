@@ -121,10 +121,10 @@ export const FlightsProvider = ({ children }) => {
 
   const value = {
     // Estado
-    vuelos, loading, error, selectedFlight, searchPerformed,
+    vuelos, loading, error, selectedFlight, searchPerformed, bookingFlights,
 
     // Setters
-    setVuelos, setLoading, setError, setSelectedFlight, setSearchPerformed,
+    setVuelos, setLoading, setError, setSelectedFlight, setSearchPerformed, setBookingFlights,
 
     // Funciones
     searchFlights, selectFlight, loadAllFlights, getFlightById,
