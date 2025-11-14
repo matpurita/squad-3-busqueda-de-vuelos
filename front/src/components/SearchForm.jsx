@@ -22,6 +22,7 @@ import PeopleIcon from "@mui/icons-material/People";
 import { useSearch } from "../contexts/SearchContext";
 import { useFlights } from "../contexts/FlightsContext";
 import { config } from "../config";
+import { useState } from "react";
 
 export default function SearchForm({ onResults }) {
   const {
@@ -45,6 +46,9 @@ export default function SearchForm({ onResults }) {
     isSearchValid,
     error: searchAirportError,
   } = useSearch();
+
+  const [departDateError, setDepartDateError] = useState("");
+  const [returnDateError, setReturnDateError] = useState("");
 
   const { searchFlights, loading: searchLoading, error:searchError } = useFlights();
   const loading = aeropuertosLoading || searchLoading;
@@ -72,23 +76,24 @@ export default function SearchForm({ onResults }) {
   };
 
   const handleDepartChange = (newValue) => {
-    const formatted = newValue ? newValue.format("YYYY-MM-DD") : null;
-    setDepartDate(formatted);
+  // ⛔ No convertir a string todavía
+  // ✔ Guardar directamente el objeto o null
+  setDepartDate(newValue);
 
-    // Si hay regreso previo y queda antes de la salida → ajustarlo
-    if (
-      tripType === "roundtrip" &&
-      returnDate &&
-      newValue &&
-      dayjs(returnDate).isBefore(newValue)
-    ) {
-      setReturnDate(formatted);
-    }
-  };
+  // Si hay regreso previo y queda antes de la salida → ajustarlo
+ // if (
+ //   tripType === "roundtrip" &&
+ //   returnDate &&
+ //   newValue &&
+ //   dayjs(returnDate).isBefore(newValue)
+  //) {
+  //  setReturnDate(newValue);
+  //}
+};
 
   const handleReturnChange = (newValue) => {
-    const formatted = newValue ? newValue.format("YYYY-MM-DD") : null;
-    setReturnDate(formatted);
+    //const formatted = newValue ? newValue.format("YYYY-MM-DD") : null;
+    setReturnDate(newValue);
   };
 
   const handleSubmit = async (e) => {
@@ -234,48 +239,74 @@ export default function SearchForm({ onResults }) {
           {/* 🗓️ Fecha de salida */}
           <Grid item xs={12} sm={6}>
             <DatePicker
-              label="Salida"
-              value={departDate ? dayjs(departDate) : null}
-              minDate={today}
-              onChange={handleDepartChange}
-              format="DD/MM/YYYY"
-              slotProps={{
-                textField: {
-                  fullWidth: true,
-                  required: true,
-                  InputProps: {
-                    startAdornment: (
-                      <InputAdornment position="start">
-                        <EventIcon />
-                      </InputAdornment>
-                    ),
-                  },
-                },
-              }}
-              renderDay={(date, _value, DayComponentProps) => {
-                // Resalta fecha de regreso
-                const props = getDayProps(date, returnDate ? dayjs(returnDate) : null);
-                return <PickersDay {...DayComponentProps} {...props} />;
-              }}
-            />
+  label="Salida"
+  value={departDate ? departDate : null}
+  minDate={today}
+  onChange={handleDepartChange}
+  format="DD/MM/YYYY"
+  onError={(reason) => {
+    if (reason === "minDate") {
+      setDepartDateError("La fecha no puede ser anterior a hoy");
+    } else if (reason) {
+      setDepartDateError("Fecha inválida");
+    } else {
+      setDepartDateError("");
+    }
+  }}
+  slotProps={{
+    textField: {
+      fullWidth: true,
+      required: true,
+      error: Boolean(departDateError),       // 🔥 Estado de error
+      helperText: departDateError || "",     // 🔥 Texto debajo del input
+      InputProps: {
+        startAdornment: (
+          <InputAdornment position="start">
+            <EventIcon />
+          </InputAdornment> 
+        ),
+      },
+    },
+  }}
+  renderDay={(date, _value, DayComponentProps) => {
+    const props = getDayProps(date, returnDate ? dayjs(returnDate) : null);
+    return <PickersDay {...DayComponentProps} {...props} />;
+  }}
+/>
           </Grid>
 
           {/* 🗓️ Fecha de regreso */}
           <Grid item xs={12} sm={6}>
             <DatePicker
               label="Regreso"
-              value={returnDate ? dayjs(returnDate) : null}
+              value={returnDate ? returnDate : null}
               minDate={departDate ? dayjs(departDate) : today}
               onChange={handleReturnChange}
               disabled={tripType === "oneway"}
               format="DD/MM/YYYY"
+              onError={(reason) => {
+                if (tripType === "oneway") {
+                  setReturnDateError("");
+                  return;
+                }
+                if (reason === "minDate") {
+                  setReturnDateError(
+                    "Debe ser igual o posterior a la salida"
+                  );
+                } else if (reason) {
+                  setReturnDateError("Fecha inválida");
+                } else {
+                  setReturnDateError("");
+                }
+              }}
               slotProps={{
                 textField: {
                   fullWidth: true,
                   required: tripType === "roundtrip",
+                  error: tripType === "roundtrip" && Boolean(returnDateError),
                   helperText:
                     tripType === "roundtrip"
-                      ? "Debe ser igual o posterior a la salida"
+                      ? returnDateError
                       : "No aplica para solo ida",
                   InputProps: {
                     startAdornment: (
@@ -285,6 +316,7 @@ export default function SearchForm({ onResults }) {
                     ),
                   },
                 },
+               
               }}
               renderDay={(date, _value, DayComponentProps) => {
                 // Resalta fecha de ida
@@ -332,7 +364,7 @@ export default function SearchForm({ onResults }) {
         <Button
           type="submit"
           variant="contained"
-          disabled={loading || !isSearchValid()}
+          disabled={loading || !isSearchValid() || departDateError || (tripType === "roundtrip" && returnDateError)}
           startIcon={loading ? <CircularProgress size={16} /> : null}
           fullWidth
           sx={{

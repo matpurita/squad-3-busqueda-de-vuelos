@@ -12,13 +12,31 @@ import { useState } from "react";
 import { Link as RouterLink } from "react-router-dom";
 import LoginIcon from '@mui/icons-material/Login';
 
-export default function FlightDetail({ flight, user, reservarVuelo }) {
+export default function FlightDetail({ flight, user, reservarVuelo, bookingFlights }) {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
   const [success, setSuccess] = useState(false);
 
+  const isFlightBooked = (vuelo) => {
+  if (!vuelo) return false;
+  return bookingFlights?.some(b => b?.id === vuelo.id);
+};
+
+
   if (!flight) return null;
   const { ida, vuelta } = flight;
+
+
+  const idaBooked = isFlightBooked(ida);
+const vueltaBooked = isFlightBooked(vuelta);
+
+// si es solo ida
+const soloIda = ida && !vuelta;
+
+// si es ida y vuelta
+const idaYVuelta = ida && vuelta;
+
+
   return (
     
     <Stack spacing={2} padding={8}>
@@ -195,7 +213,13 @@ export default function FlightDetail({ flight, user, reservarVuelo }) {
         </Alert>
       )}
       <Button
-        disabled={!user || loading || success}
+        disabled={
+    loading ||
+    success ||
+    (!user) ||
+    (soloIda && idaBooked) ||
+    (idaYVuelta && idaBooked && vueltaBooked)
+  }
         variant="contained"
         sx={{ minWidth: 120 }}
         onClick={async () => {
