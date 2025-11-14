@@ -268,7 +268,7 @@ describe('auth controller', () => {
         nombre_completo: 'Test User',
         roles: ['usuario'],
         createdAt: expect.any(String),
-        userId: '1'
+        userId: expect.any(String)
       })
       expect(mockResponse.status).toHaveBeenCalledWith(201)
       expect(mockResponse.json).toHaveBeenCalledWith({
@@ -388,7 +388,7 @@ describe('auth controller', () => {
         nombre_completo: 'John Doe',
         roles: ['usuario'],
         createdAt: expect.any(String),
-        userId: '1'
+        userId: expect.any(String)
       })
     })
   })

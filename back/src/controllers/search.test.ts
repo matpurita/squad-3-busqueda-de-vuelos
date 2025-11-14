@@ -15,7 +15,8 @@ jest.mock('../prisma/db', () => ({
       findMany: jest.fn()
     },
     bookingIntent: {
-      create: jest.fn()
+      create: jest.fn(),
+      findFirst: jest.fn()
     }
   }
 }))
@@ -587,6 +588,7 @@ describe('search controller', () => {
         flightId: 'flight-1'
       }
 
+      ;(prisma.bookingIntent.findFirst as jest.Mock).mockResolvedValue(null)
       ;(prisma.bookingIntent.create as jest.Mock).mockResolvedValue({})
 
       await searchController.sendBookingIntent(
@@ -613,6 +615,7 @@ describe('search controller', () => {
         flightId: 'flight-1'
       }
 
+      ;(prisma.bookingIntent.findFirst as jest.Mock).mockResolvedValue(null)
       ;(prisma.bookingIntent.create as jest.Mock).mockResolvedValue({})
 
       await searchController.sendBookingIntent(
@@ -638,6 +641,7 @@ describe('search controller', () => {
         addedAt: customDate
       }
 
+      ;(prisma.bookingIntent.findFirst as jest.Mock).mockResolvedValue(null)
       ;(prisma.bookingIntent.create as jest.Mock).mockResolvedValue({})
 
       await searchController.sendBookingIntent(
@@ -675,6 +679,7 @@ describe('search controller', () => {
       }
 
       const dbError = new Error('Database error')
+      ;(prisma.bookingIntent.findFirst as jest.Mock).mockResolvedValue(null)
       ;(prisma.bookingIntent.create as jest.Mock).mockRejectedValue(dbError)
 
       await searchController.sendBookingIntent(
