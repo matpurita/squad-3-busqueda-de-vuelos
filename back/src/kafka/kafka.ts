@@ -24,7 +24,7 @@ const kafka = new Kafka({
   brokers: [process.env.KAFKA_BROKER || ''],
   logLevel: logLevel.INFO
 })
-const consumer = kafka.consumer({ groupId: 'search-node-group-abcde' })
+const consumer = kafka.consumer({ groupId: 'search-node-group-abcdef' })
 
 const connectConsumer = async () => {
   await consumer.connect()
