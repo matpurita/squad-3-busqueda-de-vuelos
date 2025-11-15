@@ -49,6 +49,7 @@ export default function SearchForm({ onResults }) {
 
   const [departDateError, setDepartDateError] = useState("");
   const [returnDateError, setReturnDateError] = useState("");
+  const [adultsError, setAdultsError] = useState("");
 
   const { searchFlights, loading: searchLoading, error:searchError } = useFlights();
   const loading = aeropuertosLoading || searchLoading;
@@ -106,7 +107,7 @@ export default function SearchForm({ onResults }) {
       alert(error.message);
     }
   };
-
+  console.log("Adults error:", adultsError);
   return (
     <Paper
       elevation={6}
@@ -331,12 +332,25 @@ export default function SearchForm({ onResults }) {
             <TextField
               type="number"
               label="Adultos"
-              value={adults}
-              onChange={(e) =>
-                setAdults(parseInt(e.target.value || "1", 10))
-              }
-              inputProps={{ min: 1 }}
+              inputProps={{ min: 1, max: 9 }}
               fullWidth
+              required
+              defaultValue={adults}
+              helperText={adults < 1 || adults > 9 ? adultsError : "El rango es de 1 a 9 adultos"}
+              error={adults < 1 || adults > 9}
+              onChange={(e) => {
+                const value = Number(e.target.value);
+
+                setAdults(value);
+
+                if (value < 1) {
+                  setAdultsError("La cantidad mínima es 1");
+                } else if (value > 9) {
+                  setAdultsError("La cantidad máxima es 9");
+                } else {
+                  setAdultsError("");
+                }
+              }}
               InputProps={{
                 startAdornment: (
                   <InputAdornment position="start">

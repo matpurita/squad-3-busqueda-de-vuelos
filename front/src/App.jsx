@@ -93,8 +93,6 @@ function Header() {
                     </Box>
                   </MenuItem>
                   <Divider />
-                  <MenuItem onClick={handleMenuClose}>Mi Perfil</MenuItem>
-                  <Divider />
                   <MenuItem onClick={handleLogout}>Cerrar Sesión</MenuItem>
                 </Menu>
               </>
