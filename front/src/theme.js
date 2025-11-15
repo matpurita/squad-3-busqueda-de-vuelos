@@ -33,6 +33,9 @@ const theme = createTheme({
       paper: config.THEME.SURFACE_COLOR,
     },
   },
+  typography: {
+    fontFamily: 'Poppins, Avenir, Helvetica, Arial, sans-serif',
+  }
 });
 
 // Agregar la función alpha al theme para compatibilidad con @mui/x-date-pickers

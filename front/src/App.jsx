@@ -11,13 +11,18 @@ import Register from './components/Register'
 import { SearchProvider } from './contexts/SearchContext'
 import { FlightsProvider } from './contexts/FlightsContext'
 import { AuthProvider, useAuth } from './contexts/AuthContext'
-import '@fontsource/roboto/400.css';
 import Sidebar from './components/Sidebar'
 import AccountCircleIcon from '@mui/icons-material/AccountCircle'
 import LoginIcon from '@mui/icons-material/Login'
 import PersonAddIcon from '@mui/icons-material/PersonAdd'
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
+import '@fontsource/poppins/300.css';
+import '@fontsource/poppins/400.css';
+import '@fontsource/poppins/500.css';
+import '@fontsource/poppins/700.css';
+import '@fontsource/poppins/800.css';
+import '@fontsource/poppins/900.css';
 
 function Header() {
   const [anchorEl, setAnchorEl] = useState(null)
@@ -144,27 +149,6 @@ function Header() {
 function Home() {
   return (
     <>
-      {/* Hero Section - Ocupa toda la pantalla */}
-      <Container
-        sx={{
-          backgroundColor: 'primary.main',
-          color: 'white',
-          py: 4,
-          textAlign: 'center',
-          background: 'url(/banner.jpeg) no-repeat center center',
-          maxWidth: 'lg',
-        }}
-      >
-        <Container maxWidth="md">
-          <Typography variant="h4" component="h1" fontWeight="bold" gutterBottom>
-            Reserva tu próximo vuelo al mejor precio
-          </Typography>
-          <Typography variant="h6" sx={{ opacity: 0.9, maxWidth: 600, mx: 'auto' }}>
-            Compara precios y encuentra las mejores ofertas para tu próximo viaje
-          </Typography>
-        </Container>
-      </Container>
-
       {/* Contenido Principal Centrado - Dentro de Container */}
       <Container
         maxWidth="lg"
