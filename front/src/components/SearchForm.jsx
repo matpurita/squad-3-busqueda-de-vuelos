@@ -149,7 +149,7 @@ export default function SearchForm({ onResults }) {
             color="primary"
             sx={{
               flex: 1,
-              fontWeight: "bold",
+              fontWeight: "500",
               "&.Mui-selected": {
                 backgroundColor: config.THEME.PRIMARY_COLOR,
                 color: config.THEME.SURFACE_COLOR,
@@ -167,7 +167,7 @@ export default function SearchForm({ onResults }) {
             color="primary"
             sx={{
               flex: 1,
-              fontWeight: "bold",
+              fontWeight: "500",
               "&.Mui-selected": {
                 backgroundColor: config.THEME.PRIMARY_COLOR,
                 color: config.THEME.SURFACE_COLOR,
@@ -357,7 +357,7 @@ export default function SearchForm({ onResults }) {
             />
           }
           label="Fechas flexibles"
-          sx={{ mt: 2 }}
+          sx={{ mt: 2, color: "text.secondary" }}
         />
 
         {/* 🚀 Botón buscar */}
