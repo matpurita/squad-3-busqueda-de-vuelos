@@ -46,8 +46,9 @@ export default function Sidebar() {
                         lg: 480,
                     },
                     padding: 2,
-                    backgroundColor: '#ffffff',
-                    borderLeft: '1px solid #e6e6e6',
+                    backgroundColor: 'background.paper',
+                    borderLeft: '1px solid',
+                    borderColor: 'divider',
                 },
             }} 
             open={open} 
@@ -61,14 +62,14 @@ export default function Sidebar() {
                 justifyContent="space-between" 
                 mb={2}
                 pb={2}
-                sx={{ borderBottom: '1px solid #e6e6e6' }}
+                sx={{ borderBottom: '1px solid', borderColor: 'divider' }}
             >
                 <Typography 
                     variant="h6" 
                     sx={{ 
                         fontWeight: 600,
                         letterSpacing: '-0.01em',
-                        color: '#1a1a1a',
+                        color: 'primary.main',
                     }}
                 >
                     Detalle del vuelo
@@ -77,9 +78,9 @@ export default function Sidebar() {
                 <IconButton 
                     onClick={onSidebarClose}
                     sx={{ 
-                        color: '#666666',
+                        color: 'text.secondary',
                         '&:hover': {
-                            backgroundColor: '#f5f5f5',
+                            backgroundColor: 'action.hover',
                         }
                     }}
                 >

@@ -30,10 +30,6 @@ async function searchFlights(req: Request, res: Response, next: NextFunction) {
     const now = TZDate.tz('America/Argentina/Buenos_Aires')
     const departureDate = parseISO(searchParams.departureDate)
 
-    if (departureDate <= now) {
-      throw new AppError('La fecha de salida debe ser en el futuro', 400)
-    }
-
     const departureDateStart = startOfDay(
       sub(departureDate, {
         days: searchParams.departureRange
@@ -44,6 +40,10 @@ async function searchFlights(req: Request, res: Response, next: NextFunction) {
         days: searchParams.departureRange
       })
     )
+
+    if (departureDateEnd <= now) {
+      throw new AppError('La fecha de salida debe ser en el futuro', 400)
+    }
 
     const returnDateStart = searchParams.returnDate
       ? startOfDay(
@@ -73,10 +73,19 @@ async function searchFlights(req: Request, res: Response, next: NextFunction) {
         destination: {
           code: searchParams.destination.toUpperCase()
         },
-        departure: {
-          gte: departureDateStart,
-          lte: departureDateEnd
-        }
+        AND: [
+          {
+            departure: {
+              gte: departureDateStart,
+              lte: departureDateEnd
+            }
+          },
+          {
+            departure: {
+              gt: now
+            }
+          }
+        ]
       },
       include: {
         origin: true,

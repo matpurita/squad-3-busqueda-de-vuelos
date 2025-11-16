@@ -34,6 +34,7 @@ resource "google_cloud_run_v2_service" "backend" {
   location = "southamerica-west1"
 
   template {
+    revision = "flightsearch-backend-dev-${replace(replace(lower(timestamp()), ":", ""), " ", "-")}"
     containers {
       image = docker_image.backend.name
     }

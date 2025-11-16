@@ -210,7 +210,7 @@ export default function Register() {
         display: "flex",
         alignItems: "center",
         justifyContent: "center",
-        backgroundColor: '#fafafa',
+        backgroundColor: 'background.default',
         py: 4,
       }}
     >
@@ -220,8 +220,9 @@ export default function Register() {
           sx={{
             p: 4,
             borderRadius: 1,
-            border: '1px solid #e6e6e6',
-            backgroundColor: '#ffffff',
+            border: '1px solid',
+            borderColor: 'divider',
+            backgroundColor: 'background.paper',
             position: 'relative',
           }}
         >
@@ -240,10 +241,10 @@ export default function Register() {
               size="small"
               disabled={isLoading}
               sx={{
-                backgroundColor: '#f5f5f5',
-                color: '#1a1a1a',
+                backgroundColor: 'action.hover',
+                color: 'primary.main',
                 '&:hover': {
-                  backgroundColor: '#e6e6e6',
+                  backgroundColor: 'action.selected',
                 },
               }}
               title="Volver atrás"
@@ -255,10 +256,10 @@ export default function Register() {
               size="small"
               disabled={isLoading}
               sx={{
-                backgroundColor: '#f5f5f5',
-                color: '#1a1a1a',
+                backgroundColor: 'action.hover',
+                color: 'primary.main',
                 '&:hover': {
-                  backgroundColor: '#e6e6e6',
+                  backgroundColor: 'action.selected',
                 },
               }}
               title="Ir al inicio"
@@ -273,7 +274,7 @@ export default function Register() {
               fontWeight: 600,
               textAlign: 'center',
               letterSpacing: '-0.02em',
-              color: '#1a1a1a',
+              color: 'primary.main',
               mb: 1,
             }}
           >
@@ -282,7 +283,7 @@ export default function Register() {
           <Typography
             variant="body2"
             sx={{ 
-              color: '#666666',
+              color: 'text.secondary',
               textAlign: 'center',
               mb: 3,
               fontWeight: 400,
@@ -299,9 +300,10 @@ export default function Register() {
                 mt: 2, 
                 mb: 2,
                 borderRadius: 1,
-                border: '1px solid #e6e6e6',
-                backgroundColor: '#fafafa',
-                color: '#1a1a1a',
+                border: '1px solid',
+                borderColor: 'divider',
+                backgroundColor: 'background.default',
+                color: 'primary.main',
               }}
             >
               {error}
@@ -316,9 +318,10 @@ export default function Register() {
                 mt: 2, 
                 mb: 2,
                 borderRadius: 1,
-                border: '1px solid #e6e6e6',
-                backgroundColor: '#f5f5f5',
-                color: '#1a1a1a',
+                border: '1px solid',
+                borderColor: 'divider',
+                backgroundColor: 'action.hover',
+                color: 'primary.main',
                 '& .MuiAlert-message': {
                   width: '100%'
                 }
@@ -337,7 +340,7 @@ export default function Register() {
                     cursor: 'pointer',
                     fontWeight: 600,
                     fontSize: '0.875rem',
-                    color: '#1a1a1a',
+                    color: 'primary.main',
                     '&:hover': {
                       opacity: 0.7,
                     }
@@ -369,7 +372,7 @@ export default function Register() {
               InputProps={{
                 startAdornment: (
                   <InputAdornment position="start">
-                    <Person sx={{ color: '#666666' }} />
+                    <Person sx={{ color: 'text.secondary' }} />
                   </InputAdornment>
                 ),
               }}
@@ -394,7 +397,7 @@ export default function Register() {
               InputProps={{
                 startAdornment: (
                   <InputAdornment position="start">
-                    <Email sx={{ color: '#666666' }} />
+                    <Email sx={{ color: 'text.secondary' }} />
                   </InputAdornment>
                 ),
               }}
@@ -418,9 +421,9 @@ export default function Register() {
               <InputLabel 
                 id="nacionalidad-label"
                 sx={{ 
-                  color: '#666666',
+                  color: 'text.secondary',
                   '&.Mui-focused': {
-                    color: '#1a1a1a',
+                    color: 'primary.main',
                   }
                 }}
               >
@@ -433,7 +436,7 @@ export default function Register() {
                 onChange={handleChange('nacionalidad')}
                 startAdornment={
                   <InputAdornment position="start">
-                    <Public sx={{ color: '#666666' }} />
+                    <Public sx={{ color: 'text.secondary' }} />
                   </InputAdornment>
                 }
                 sx={{
@@ -483,7 +486,7 @@ export default function Register() {
                     <IconButton 
                       onClick={handleTogglePassword}
                       disabled={isLoading}
-                      sx={{ color: '#666666' }}
+                      sx={{ color: 'text.secondary' }}
                     >
                       {showPassword ? <VisibilityOff /> : <Visibility />}
                     </IconButton>
@@ -514,7 +517,7 @@ export default function Register() {
                     <IconButton 
                       onClick={handleToggleConfirmPassword}
                       disabled={isLoading}
-                      sx={{ color: '#666666' }}
+                      sx={{ color: 'text.secondary' }}
                     >
                       {showConfirmPassword ? <VisibilityOff /> : <Visibility />}
                     </IconButton>
@@ -530,18 +533,18 @@ export default function Register() {
               disabled={isLoading}
               sx={{ 
                 mt: 3,
-                backgroundColor: '#1a1a1a',
-                color: '#ffffff',
+                backgroundColor: 'primary.main',
+                color: 'primary.contrastText',
                 fontWeight: 600,
                 letterSpacing: '0.02em',
                 borderRadius: 1,
                 py: 1.5,
                 '&:hover': {
-                  backgroundColor: '#404040',
+                  backgroundColor: 'primary.light',
                 },
                 '&:disabled': {
-                  backgroundColor: '#d9d9d9',
-                  color: '#999999',
+                  backgroundColor: 'action.disabledBackground',
+                  color: 'text.disabled',
                 },
                 position: 'relative'
               }}
@@ -551,7 +554,7 @@ export default function Register() {
                   <CircularProgress 
                     size={20} 
                     sx={{ 
-                      color: '#ffffff',
+                      color: 'primary.contrastText',
                       position: 'absolute',
                       left: '50%',
                       marginLeft: '-10px'
@@ -580,11 +583,12 @@ export default function Register() {
                 sx={{ 
                   cursor: isLoading ? 'not-allowed' : 'pointer',
                   opacity: isLoading ? 0.6 : 1,
-                  color: '#1a1a1a',
+                  color: 'primary.main',
                   fontWeight: 500,
                   fontSize: '0.875rem',
                   '&:hover': {
                     opacity: 0.7,
+                    background: 'transparent'
                   }
                 }}
               >

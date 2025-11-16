@@ -50,9 +50,10 @@ function Header() {
       position="static" 
       elevation={0}
       sx={{ 
-        width: '100vw',
-        backgroundColor: '#ffffff',
-        borderBottom: '1px solid #e6e6e6',
+        width: '100%',
+        backgroundColor: 'background.paper',
+        borderBottom: '1px solid',
+        borderColor: 'divider',
       }}
     >
       <Container maxWidth="lg" sx={{ px: { xs: 2, sm: 3 } }}>
@@ -64,7 +65,7 @@ function Header() {
             sx={{ 
               fontWeight: 600,
               letterSpacing: '-0.02em',
-              color: '#1a1a1a',
+              color: 'primary.main',
               cursor: 'pointer',
             }}
             onClick={() => navigate('/')}
@@ -82,7 +83,7 @@ function Header() {
                   sx={{ 
                     mr: 1, 
                     display: { xs: 'none', sm: 'block' },
-                    color: '#666666',
+                    color: 'text.secondary',
                     fontWeight: 500,
                   }}
                 >
@@ -101,7 +102,7 @@ function Header() {
                   <Avatar sx={{ 
                     width: 32, 
                     height: 32, 
-                    bgcolor: '#1a1a1a',
+                    bgcolor: 'primary.main',
                     fontSize: '0.875rem',
                     fontWeight: 600,
                   }}>
@@ -126,7 +127,8 @@ function Header() {
                     sx: {
                       mt: 1,
                       borderRadius: 1,
-                      border: '1px solid #e6e6e6',
+                      border: '1px solid',
+                      borderColor: 'divider',
                     }
                   }}
                 >
@@ -146,7 +148,7 @@ function Header() {
                     sx={{ 
                       py: 1, 
                       px: 2,
-                      color: '#1a1a1a',
+                      color: 'primary.main',
                       fontWeight: 500,
                     }}
                   >
@@ -161,11 +163,11 @@ function Header() {
                   onClick={handleLogin}
                   sx={{ 
                     display: { xs: 'none', sm: 'flex' },
-                    color: '#1a1a1a',
+                    color: 'primary.main',
                     fontWeight: 500,
                     px: 2,
                     '&:hover': {
-                      backgroundColor: '#f5f5f5',
+                      backgroundColor: 'action.hover',
                     }
                   }}
                 >
@@ -177,12 +179,12 @@ function Header() {
                   onClick={handleRegister}
                   sx={{
                     display: { xs: 'none', sm: 'flex' },
-                    backgroundColor: '#1a1a1a',
-                    color: '#ffffff',
+                    backgroundColor: 'primary.main',
+                    color: 'primary.contrastText',
                     fontWeight: 500,
                     px: 3,
                     '&:hover': {
-                      backgroundColor: '#404040',
+                      backgroundColor: 'primary.light',
                     }
                   }}
                 >
@@ -194,7 +196,7 @@ function Header() {
                   onClick={handleLogin}
                   sx={{ 
                     display: { xs: 'flex', sm: 'none' },
-                    color: '#1a1a1a',
+                    color: 'primary.main',
                   }}
                 >
                   <LoginIcon />
@@ -231,7 +233,7 @@ function Home() {
               sx={{ 
                 fontWeight: 600,
                 letterSpacing: '-0.02em',
-                color: '#1a1a1a',
+                color: 'primary.main',
                 mb: 1,
               }}
             >
@@ -240,7 +242,7 @@ function Home() {
             <Typography 
               variant="body2" 
               sx={{ 
-                color: '#666666',
+                color: 'text.secondary',
                 fontWeight: 400,
               }}
             >
@@ -271,7 +273,7 @@ function AppContent() {
   return (
     <Box
       sx={{
-        width: '100vw',
+        width: '100%',
         minHeight: '100vh',
         display: 'flex',
         flexDirection: 'column',
@@ -293,19 +295,20 @@ function AppContent() {
       {!isLoginPage && !isRegisterPage && (
         <Box
           sx={{
-            backgroundColor: '#ffffff',
-            borderTop: '1px solid #e6e6e6',
+            backgroundColor: 'background.paper',
+            borderTop: '1px solid',
+            borderColor: 'divider',
             py: 3,
             textAlign: 'center',
             mt: 'auto',
-            width: '100vw'
+            width: '100%'
           }}
         >
           <Container maxWidth="lg">
             <Typography 
               variant="body2" 
               sx={{ 
-                color: '#666666',
+                color: 'text.secondary',
                 fontWeight: 400,
                 fontSize: '0.875rem',
               }}

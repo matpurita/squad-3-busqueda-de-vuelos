@@ -47,7 +47,7 @@ const idaYVuelta = ida && vuelta;
             sx={{ 
               textAlign: 'center',
               fontWeight: 600,
-              color: '#1a1a1a',
+              color: 'primary.main',
               letterSpacing: '-0.01em',
             }}
           >
@@ -64,29 +64,30 @@ const idaYVuelta = ida && vuelta;
           <Box 
             sx={{ 
               textAlign: 'center',
-              backgroundColor: '#f5f5f5',
-              color: '#1a1a1a',
+              backgroundColor: 'action.hover',
+              color: 'primary.main',
               borderRadius: 1,
               py: 1.5,
               px: 2,
               mb: 2,
-              border: '1px solid #e6e6e6',
+              border: '1px solid',
+              borderColor: 'divider',
             }}
           >
             <Typography variant="body1" sx={{ fontWeight: 600 }} data-testid="fecha-salida">
               {formatearFecha(ida?.fechaSalida)}
             </Typography>
-            <Typography variant="caption" sx={{ color: '#666666', fontSize: '0.75rem' }}>
+            <Typography variant="caption" sx={{ color: 'text.secondary', fontSize: '0.75rem' }}>
               Fecha de Salida
             </Typography>
           </Box>
 
           <Stack spacing={2} alignItems="center">
             <Box textAlign={"center"}>
-              <Typography variant="subtitle1" sx={{ fontWeight: 600, color: '#1a1a1a' }}>
+              <Typography variant="subtitle1" sx={{ fontWeight: 600, color: 'primary.main' }}>
                 {ida?.airline}
               </Typography>
-              <Typography variant="caption" sx={{ color: '#999999', fontSize: '0.75rem' }} data-testid="numero-vuelo">
+              <Typography variant="caption" sx={{ color: 'text.disabled', fontSize: '0.75rem' }} data-testid="numero-vuelo">
                 {ida?.numeroVuelo}
               </Typography>
             </Box>
@@ -95,8 +96,8 @@ const idaYVuelta = ida && vuelta;
                 size="small" 
                 label="Directo" 
                 sx={{ 
-                  backgroundColor: '#f5f5f5',
-                  color: '#1a1a1a',
+                  backgroundColor: 'action.hover',
+                  color: 'primary.main',
                   fontWeight: 500,
                 }}
               />
@@ -106,8 +107,8 @@ const idaYVuelta = ida && vuelta;
                 size="small" 
                 label="Con escalas" 
                 sx={{ 
-                  backgroundColor: '#f5f5f5',
-                  color: '#666666',
+                  backgroundColor: 'action.hover',
+                  color: 'text.secondary',
                   fontWeight: 500,
                 }}
               />
@@ -116,13 +117,13 @@ const idaYVuelta = ida && vuelta;
 
           <Stack direction="column" spacing={2} alignItems="center">
             <Box textAlign={"center"}>
-              <Typography variant="body1" sx={{ fontWeight: 600, color: '#1a1a1a' }}>
+              <Typography variant="body1" sx={{ fontWeight: 600, color: 'primary.main' }}>
                 {ida?.from} → {ida?.to}
               </Typography>
-              <Typography variant="body2" sx={{ color: '#666666' }}>
+              <Typography variant="body2" sx={{ color: 'text.secondary' }}>
                 {ida?.departTime} - {ida?.arriveTime}
               </Typography>
-              <Typography variant="caption" sx={{ color: '#999999', fontSize: '0.75rem' }}>
+              <Typography variant="caption" sx={{ color: 'text.disabled', fontSize: '0.75rem' }}>
                 Duración: {ida?.duracion}
               </Typography>
             </Box>
@@ -130,7 +131,7 @@ const idaYVuelta = ida && vuelta;
 
           <Stack direction="column" spacing={2} alignItems="center">
             <Box textAlign="center">
-              <Typography variant="subtitle1" sx={{ fontWeight: 600, color: '#1a1a1a' }}>
+              <Typography variant="subtitle1" sx={{ fontWeight: 600, color: 'primary.main' }}>
                 {ida?.clase}
               </Typography>
             </Box>
@@ -147,7 +148,7 @@ const idaYVuelta = ida && vuelta;
             sx={{ 
               textAlign: 'center',
               fontWeight: 600,
-              color: '#1a1a1a',
+              color: 'primary.main',
               letterSpacing: '-0.01em',
               mt: 2,
             }}
@@ -159,29 +160,30 @@ const idaYVuelta = ida && vuelta;
           <Box 
             sx={{ 
               textAlign: 'center',
-              backgroundColor: '#f5f5f5',
-              color: '#1a1a1a',
+              backgroundColor: 'action.hover',
+              color: 'primary.main',
               borderRadius: 1,
               py: 1.5,
               px: 2,
               mb: 2,
-              border: '1px solid #e6e6e6',
+              border: '1px solid',
+              borderColor: 'divider',
             }}
           >
             <Typography variant="body1" sx={{ fontWeight: 600 }}>
               {formatearFecha(vuelta?.fechaSalida)}
             </Typography>
-            <Typography variant="caption" sx={{ color: '#666666', fontSize: '0.75rem' }}>
+            <Typography variant="caption" sx={{ color: 'text.secondary', fontSize: '0.75rem' }}>
               Fecha de Regreso
             </Typography>
           </Box>
           
           <Stack spacing={2} alignItems="center">
             <Box textAlign={"center"}>
-              <Typography variant="subtitle1" sx={{ fontWeight: 600, color: '#1a1a1a' }}>
+              <Typography variant="subtitle1" sx={{ fontWeight: 600, color: 'primary.main' }}>
                 {vuelta?.airline}
               </Typography>
-              <Typography variant="caption" sx={{ color: '#999999', fontSize: '0.75rem' }}>
+              <Typography variant="caption" sx={{ color: 'text.disabled', fontSize: '0.75rem' }}>
                 {vuelta?.numeroVuelo}
               </Typography>
             </Box>
@@ -190,8 +192,8 @@ const idaYVuelta = ida && vuelta;
                 size="small" 
                 label="Directo" 
                 sx={{ 
-                  backgroundColor: '#f5f5f5',
-                  color: '#1a1a1a',
+                  backgroundColor: 'action.hover',
+                  color: 'primary.main',
                   fontWeight: 500,
                 }}
               />
@@ -201,8 +203,8 @@ const idaYVuelta = ida && vuelta;
                 size="small" 
                 label="Con escalas" 
                 sx={{ 
-                  backgroundColor: '#f5f5f5',
-                  color: '#666666',
+                  backgroundColor: 'action.hover',
+                  color: 'text.secondary',
                   fontWeight: 500,
                 }}
               />
@@ -211,13 +213,13 @@ const idaYVuelta = ida && vuelta;
 
           <Stack direction="column" spacing={2} alignItems="center">
             <Box textAlign={"center"}>
-              <Typography variant="body1" sx={{ fontWeight: 600, color: '#1a1a1a' }}>
+              <Typography variant="body1" sx={{ fontWeight: 600, color: 'primary.main' }}>
                 {vuelta?.from} → {vuelta?.to}
               </Typography>
-              <Typography variant="body2" sx={{ color: '#666666' }}>
+              <Typography variant="body2" sx={{ color: 'text.secondary' }}>
                 {vuelta?.departTime} - {vuelta?.arriveTime}
               </Typography>
-              <Typography variant="caption" sx={{ color: '#999999', fontSize: '0.75rem' }}>
+              <Typography variant="caption" sx={{ color: 'text.disabled', fontSize: '0.75rem' }}>
                 Duración: {vuelta?.duracion}
               </Typography>
             </Box>
@@ -225,7 +227,7 @@ const idaYVuelta = ida && vuelta;
           
           <Stack direction="column" spacing={2} alignItems="center">
             <Box textAlign="center">
-              <Typography variant="subtitle1" sx={{ fontWeight: 600, color: '#1a1a1a' }}>
+              <Typography variant="subtitle1" sx={{ fontWeight: 600, color: 'primary.main' }}>
                 {vuelta?.clase}
               </Typography>
             </Box>
@@ -240,11 +242,12 @@ const idaYVuelta = ida && vuelta;
           sx={{ 
             textAlign: "center",
             borderRadius: 1,
-            border: '1px solid #e6e6e6',
-            backgroundColor: '#f5f5f5',
-            color: '#1a1a1a',
+            border: '1px solid',
+            borderColor: 'divider',
+            backgroundColor: 'action.hover',
+            color: 'primary.main',
             '& .MuiAlert-icon': {
-              color: '#1a1a1a',
+              color: 'primary.main',
             },
             '& .MuiAlert-message': {
               width: '100%'
@@ -263,7 +266,7 @@ const idaYVuelta = ida && vuelta;
               gap: 0.5,
               textDecoration: 'none',
               fontWeight: 600,
-              color: '#1a1a1a',
+              color: 'primary.main',
               '&:hover': {
                 opacity: 0.7,
               }
@@ -285,18 +288,18 @@ const idaYVuelta = ida && vuelta;
         variant="contained"
         sx={{ 
           minWidth: 120,
-          backgroundColor: '#1a1a1a',
-          color: '#ffffff',
+          backgroundColor: 'primary.main',
+          color: 'primary.contrastText',
           fontWeight: 600,
           letterSpacing: '0.02em',
           borderRadius: 1,
           py: 1.5,
           '&:hover': {
-            backgroundColor: '#404040',
+            backgroundColor: 'primary.light',
           },
           '&:disabled': {
-            backgroundColor: '#d9d9d9',
-            color: '#999999',
+            backgroundColor: 'action.disabledBackground',
+            color: 'text.disabled',
           },
         }}
         onClick={async () => {
@@ -314,16 +317,17 @@ const idaYVuelta = ida && vuelta;
         }}
       >
         {vuelta ? "Agendar Vuelos" : "Agendar Vuelo"}
-        {loading && <CircularProgress size={20} sx={{ ml: 1, color: '#ffffff' }} />}
+        {loading && <CircularProgress size={20} sx={{ ml: 1, color: 'primary.contrastText' }} />}
       </Button>
       { success && (
         <Alert 
           severity="success"
           sx={{ 
             borderRadius: 1,
-            border: '1px solid #e6e6e6',
-            backgroundColor: '#f5f5f5',
-            color: '#1a1a1a',
+            border: '1px solid',
+            borderColor: 'divider',
+            backgroundColor: 'action.hover',
+            color: 'primary.main',
           }}
         >
           Vuelo{vuelta ? 's' : ''} agendado{vuelta ? 's' : ''} con éxito.
@@ -334,9 +338,10 @@ const idaYVuelta = ida && vuelta;
           severity="error"
           sx={{ 
             borderRadius: 1,
-            border: '1px solid #e6e6e6',
-            backgroundColor: '#fafafa',
-            color: '#1a1a1a',
+            border: '1px solid',
+            borderColor: 'divider',
+            backgroundColor: 'background.default',
+            color: 'primary.main',
           }}
         >
           {error}

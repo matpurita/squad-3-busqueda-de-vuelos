@@ -1,47 +1,47 @@
 import { createTheme, alpha } from '@mui/material/styles';
 
-// Modern Monochromatic Minimalist Theme
+// Dark Blue Modern Theme
 const theme = createTheme({
   palette: {
     mode: 'light',
     primary: {
-      main: '#1a1a1a',      // Deep black for primary elements
-      light: '#404040',     // Lighter gray for hover states
-      dark: '#000000',      // Pure black for emphasis
+      main: '#1e3a5f',      // Deep dark blue for primary elements
+      light: '#2c5282',     // Lighter blue for hover states
+      dark: '#0f2740',      // Darker blue for emphasis
       contrastText: '#ffffff',
     },
     secondary: {
-      main: '#666666',      // Medium gray for secondary elements
-      light: '#8c8c8c',     // Lighter gray
-      dark: '#404040',      // Darker gray
+      main: '#3b5c7f',      // Medium blue for secondary elements
+      light: '#5a7fa3',     // Lighter blue
+      dark: '#2d4a66',      // Darker blue
       contrastText: '#ffffff',
     },
     error: {
-      main: '#333333',      // Dark gray instead of red
+      main: '#2a4159',      // Dark blue-gray instead of red
       contrastText: '#ffffff',
     },
     warning: {
-      main: '#595959',      // Medium-dark gray
+      main: '#3d5570',      // Medium-dark blue
       contrastText: '#ffffff',
     },
     info: {
-      main: '#4d4d4d',      // Medium gray
+      main: '#2b4a6e',      // Medium blue
       contrastText: '#ffffff',
     },
     success: {
-      main: '#262626',      // Near-black for success
+      main: '#1a3a52',      // Dark blue for success
       contrastText: '#ffffff',
     },
     background: {
-      default: '#fafafa',   // Very light gray background
+      default: '#f5f8fa',   // Very light blue-gray background
       paper: '#ffffff',     // Pure white for cards
     },
     text: {
-      primary: '#1a1a1a',   // Dark text for high contrast
-      secondary: '#666666', // Medium gray for secondary text
-      disabled: '#b3b3b3',  // Light gray for disabled text
+      primary: '#1e3a5f',   // Dark blue text for high contrast
+      secondary: '#4a6b8a', // Medium blue for secondary text
+      disabled: '#a1b5c9',  // Light blue for disabled text
     },
-    divider: '#e6e6e6',     // Very light gray for dividers
+    divider: '#d6e3ed',     // Very light blue for dividers
   },
   typography: {
     fontFamily: '"Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", "Roboto", sans-serif',
@@ -122,14 +122,14 @@ const theme = createTheme({
         },
         contained: {
           '&:hover': {
-            backgroundColor: '#404040',
+            backgroundColor: '#2c5282',
           },
         },
         outlined: {
           borderWidth: '1.5px',
           '&:hover': {
             borderWidth: '1.5px',
-            backgroundColor: 'rgba(26, 26, 26, 0.04)',
+            backgroundColor: 'rgba(30, 58, 95, 0.04)',
           },
         },
       },
@@ -149,13 +149,13 @@ const theme = createTheme({
         root: {
           '& .MuiOutlinedInput-root': {
             '& fieldset': {
-              borderColor: '#e6e6e6',
+              borderColor: '#d6e3ed',
             },
             '&:hover fieldset': {
-              borderColor: '#b3b3b3',
+              borderColor: '#a1b5c9',
             },
             '&.Mui-focused fieldset': {
-              borderColor: '#1a1a1a',
+              borderColor: '#1e3a5f',
               borderWidth: '1.5px',
             },
           },
@@ -169,8 +169,8 @@ const theme = createTheme({
           fontWeight: 500,
         },
         filled: {
-          backgroundColor: '#f5f5f5',
-          color: '#1a1a1a',
+          backgroundColor: '#e8f1f8',
+          color: '#1e3a5f',
         },
       },
     },
