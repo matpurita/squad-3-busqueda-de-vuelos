@@ -36,22 +36,53 @@ export default function Sidebar() {
     };
 
     return (
-        <Drawer sx={{
-    '& .MuiDrawer-paper': {
-      width: {
-        xs: 240,   // móviles
-        sm: 280,
-        md: 365,   // desktop
-        lg: 450,
-      },
-      padding: 1,
-    },
-  }} open={open} onClose={onSidebarClose} anchor='right'>
-     {/* 🧭 Header con botón para cerrar */}
-            <Box display="flex" alignItems="center" justifyContent="space-between" mb={2}>
-                <Typography variant="h6">Detalle del vuelo</Typography>
+        <Drawer 
+            sx={{
+                '& .MuiDrawer-paper': {
+                    width: {
+                        xs: 280,
+                        sm: 320,
+                        md: 400,
+                        lg: 480,
+                    },
+                    padding: 2,
+                    backgroundColor: '#ffffff',
+                    borderLeft: '1px solid #e6e6e6',
+                },
+            }} 
+            open={open} 
+            onClose={onSidebarClose} 
+            anchor='right'
+        >
+            {/* 🧭 Header con botón para cerrar */}
+            <Box 
+                display="flex" 
+                alignItems="center" 
+                justifyContent="space-between" 
+                mb={2}
+                pb={2}
+                sx={{ borderBottom: '1px solid #e6e6e6' }}
+            >
+                <Typography 
+                    variant="h6" 
+                    sx={{ 
+                        fontWeight: 600,
+                        letterSpacing: '-0.01em',
+                        color: '#1a1a1a',
+                    }}
+                >
+                    Detalle del vuelo
+                </Typography>
 
-                <IconButton onClick={onSidebarClose}>
+                <IconButton 
+                    onClick={onSidebarClose}
+                    sx={{ 
+                        color: '#666666',
+                        '&:hover': {
+                            backgroundColor: '#f5f5f5',
+                        }
+                    }}
+                >
                     <CloseIcon />
                 </IconButton>
             </Box>

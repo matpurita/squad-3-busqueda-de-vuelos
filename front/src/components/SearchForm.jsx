@@ -110,12 +110,14 @@ export default function SearchForm({ onResults }) {
   console.log("Adults error:", adultsError);
   return (
     <Paper
-      elevation={6}
+      elevation={0}
       sx={{
         maxWidth: 1200,
-        margin: "40px auto",
-        padding: 4,
-        borderRadius: 5,
+        margin: "0 auto",
+        padding: { xs: 3, md: 4 },
+        borderRadius: 1,
+        border: '1px solid #e6e6e6',
+        backgroundColor: '#ffffff',
       }}
     >
       <form onSubmit={handleSubmit}>
@@ -125,60 +127,65 @@ export default function SearchForm({ onResults }) {
             severity="error" 
             sx={{ 
               mb: 3,
-              borderRadius: 2
+              borderRadius: 1,
+              border: '1px solid #e6e6e6',
+              backgroundColor: '#fafafa',
+              color: '#1a1a1a',
+              '& .MuiAlert-icon': {
+                color: '#1a1a1a',
+              }
             }}
             onClose={() => {
               // Si tienes una función clearError en FlightsContext, úsala aquí
               // clearSearchError();
             }}
-          > <strong>Error en la búsqueda:</strong> {searchError || searchAirportError}
+          > 
+            <strong>Error en la búsqueda:</strong> {searchError || searchAirportError}
           </Alert>
         )}
+        
         {/* 🔘 Tipo de viaje */}
         <ToggleButtonGroup
           exclusive
           value={tripType}
           onChange={(_, v) => {
-            
             v && setTripType(v)
             v === "oneway" && setReturnDate(null);
           }}
-          sx={{ mb: 3, width: "100%" }}
+          sx={{ 
+            mb: 3, 
+            width: "100%",
+            '& .MuiToggleButton-root': {
+              border: '1.5px solid #e6e6e6',
+              color: '#666666',
+              fontWeight: 500,
+              letterSpacing: '0.02em',
+              py: 1.5,
+              '&:hover': {
+                backgroundColor: '#f5f5f5',
+                borderColor: '#b3b3b3',
+              },
+              '&.Mui-selected': {
+                backgroundColor: '#1a1a1a',
+                color: '#ffffff',
+                borderColor: '#1a1a1a',
+                '&:hover': {
+                  backgroundColor: '#404040',
+                  borderColor: '#404040',
+                },
+              },
+            }
+          }}
         >
           <ToggleButton
             value="oneway"
-            color="primary"
-            sx={{
-              flex: 1,
-              fontWeight: "500",
-              "&.Mui-selected": {
-                backgroundColor: config.THEME.PRIMARY_COLOR,
-                color: config.THEME.SURFACE_COLOR,
-                opacity: 0.8,
-                 "&:hover": {
-                  backgroundColor: config.THEME.PRIMARY_COLOR,
-                },
-              },
-            }}
+            sx={{ flex: 1 }}
           >
             SOLO IDA
           </ToggleButton>
           <ToggleButton
             value="roundtrip"
-            color="primary"
-            sx={{
-              flex: 1,
-              fontWeight: "500",
-              "&.Mui-selected": {
-                backgroundColor: config.THEME.PRIMARY_COLOR,
-                color: config.THEME.SURFACE_COLOR,
-                opacity: 0.8,
-                "&:hover": {
-                  backgroundColor: config.THEME.PRIMARY_COLOR,
-                },
-              },
-             
-            }}
+            sx={{ flex: 1 }}
           >
             IDA Y VUELTA
           </ToggleButton>
@@ -202,9 +209,23 @@ export default function SearchForm({ onResults }) {
                     ...params.InputProps,
                     startAdornment: (
                       <InputAdornment position="start">
-                        <FlightTakeoffIcon />
+                        <FlightTakeoffIcon sx={{ color: '#666666' }} />
                       </InputAdornment>
                     ),
+                  }}
+                  sx={{
+                    '& .MuiOutlinedInput-root': {
+                      '& fieldset': {
+                        borderColor: '#e6e6e6',
+                      },
+                      '&:hover fieldset': {
+                        borderColor: '#b3b3b3',
+                      },
+                      '&.Mui-focused fieldset': {
+                        borderColor: '#1a1a1a',
+                        borderWidth: '1.5px',
+                      },
+                    },
                   }}
                 />
               )}
@@ -228,9 +249,23 @@ export default function SearchForm({ onResults }) {
                     ...params.InputProps,
                     startAdornment: (
                       <InputAdornment position="start">
-                        <FlightLandIcon />
+                        <FlightLandIcon sx={{ color: '#666666' }} />
                       </InputAdornment>
                     ),
+                  }}
+                  sx={{
+                    '& .MuiOutlinedInput-root': {
+                      '& fieldset': {
+                        borderColor: '#e6e6e6',
+                      },
+                      '&:hover fieldset': {
+                        borderColor: '#b3b3b3',
+                      },
+                      '&.Mui-focused fieldset': {
+                        borderColor: '#1a1a1a',
+                        borderWidth: '1.5px',
+                      },
+                    },
                   }}
                 />
               )}
@@ -336,7 +371,7 @@ export default function SearchForm({ onResults }) {
               fullWidth
               required
               defaultValue={adults}
-              helperText={adults < 1 || adults > 9 ? adultsError : "El rango es de 1 a 9 adultos"}
+              helperText={adults < 1 || adults > 9 ? adultsError : "Maximo 9 pasajeros"}
               error={adults < 1 || adults > 9}
               onChange={(e) => {
                 const value = Number(e.target.value);
@@ -368,10 +403,24 @@ export default function SearchForm({ onResults }) {
             <Switch
               checked={flexibleDates}
               onChange={(e) => setFlexibleDates(e.target.checked)}
+              sx={{
+                '& .MuiSwitch-switchBase.Mui-checked': {
+                  color: '#1a1a1a',
+                },
+                '& .MuiSwitch-switchBase.Mui-checked + .MuiSwitch-track': {
+                  backgroundColor: '#1a1a1a',
+                },
+              }}
             />
           }
           label="Fechas flexibles"
-          sx={{ mt: 2, color: "text.secondary" }}
+          sx={{ 
+            mt: 2, 
+            color: '#666666',
+            '& .MuiFormControlLabel-label': {
+              fontWeight: 500,
+            }
+          }}
         />
 
         {/* 🚀 Botón buscar */}
@@ -379,27 +428,27 @@ export default function SearchForm({ onResults }) {
           type="submit"
           variant="contained"
           disabled={loading || !isSearchValid() || departDateError || (tripType === "roundtrip" && returnDateError)}
-          startIcon={loading ? <CircularProgress size={16} /> : null}
+          startIcon={loading ? <CircularProgress size={16} sx={{ color: '#ffffff' }} /> : null}
           fullWidth
           sx={{
             mt: 3,
-            background: `linear-gradient(135deg, ${config.THEME.PRIMARY_COLOR} 0%, ${config.THEME.INFO_COLOR} 100%)`,
-            fontWeight: "bold",
-            fontSize: "16px",
-            color: config.THEME.SURFACE_COLOR,
-            borderRadius: "10px",
-            padding: "12px",
-            "&:hover": {
-              background: `linear-gradient(135deg, ${config.THEME.INFO_COLOR} 0%, ${config.THEME.PRIMARY_COLOR} 100%)`,
+            backgroundColor: '#1a1a1a',
+            color: '#ffffff',
+            fontWeight: 600,
+            fontSize: '1rem',
+            letterSpacing: '0.02em',
+            borderRadius: 1,
+            padding: '14px',
+            '&:hover': {
+              backgroundColor: '#404040',
             },
-            "&:disabled": {
-              background: `linear-gradient(135deg, ${config.THEME.DISABLED_COLOR} 0%, ${config.THEME.DISABLED_COLOR} 100%)`,
-              opacity: 0.8,
-              color: "#ffffff",
+            '&:disabled': {
+              backgroundColor: '#d9d9d9',
+              color: '#999999',
             },
           }}
         >
-          {loading ? "Buscando..." : "Buscar vuelo"}
+          {loading ? "Buscando..." : "Buscar Vuelo"}
         </Button>
       </form>
     </Paper>
