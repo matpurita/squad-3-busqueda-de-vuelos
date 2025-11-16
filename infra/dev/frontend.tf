@@ -33,7 +33,7 @@ resource "google_cloud_run_v2_service" "frontend" {
   location = "southamerica-west1"
 
   template {
-    revision = "flightsearch-frontend-dev-${replace(timestamp(), "[: ]", "-")}"
+    revision = "flightsearch-frontend-dev-${replace(replace(lower(timestamp()), ":", ""), " ", "-")}"
     containers {
       image = docker_image.frontend.name
       ports {
