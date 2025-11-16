@@ -25,6 +25,7 @@
   "author": "Squad 3",
   "license": "MIT",
   "dependencies": {
+    "@date-fns/tz": "^1.4.1",
     "@prisma/client": "^6.16.0",
     "cors": "^2.8.5",
     "date-fns": "^4.1.0",
