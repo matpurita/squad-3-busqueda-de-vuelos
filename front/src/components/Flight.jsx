@@ -63,7 +63,7 @@ export default function Flight({ flight, resultado }) {
         <Typography 
           variant="caption" 
           sx={{ 
-            color: '#666666',
+            color: 'text.secondary',
             fontWeight: 600,
             letterSpacing: '0.05em',
             textTransform: 'uppercase',
@@ -76,38 +76,38 @@ export default function Flight({ flight, resultado }) {
       
       <Stack direction="row" spacing={2} alignItems="center" justifyContent="space-between">
         <Box sx={{ minWidth: 120 }}>
-          <Typography variant="subtitle1" sx={{ fontWeight: 600, color: '#1a1a1a' }}>
+          <Typography variant="subtitle1" sx={{ fontWeight: 600, color: 'primary.main' }}>
             {vuelo.airline}
           </Typography>
-          <Typography variant="caption" sx={{ color: '#999999', fontSize: '0.75rem' }}>
+          <Typography variant="caption" sx={{ color: 'text.disabled', fontSize: '0.75rem' }}>
             {vuelo.numeroVuelo}
           </Typography>
         </Box>
 
         <Box flex={1} textAlign="center">
-          <Typography variant="body1" sx={{ fontWeight: 600, color: '#1a1a1a', mb: 0.5 }}>
+          <Typography variant="body1" sx={{ fontWeight: 600, color: 'primary.main', mb: 0.5 }}>
             {vuelo.from} → {vuelo.to}
           </Typography>
-          <Typography variant="body2" sx={{ color: '#666666', mb: 0.5 }}>
+          <Typography variant="body2" sx={{ color: 'text.secondary', mb: 0.5 }}>
             {vuelo.departTime} - {vuelo.arriveTime}
           </Typography>
           {vuelo.fechaSalida && (
-            <Typography variant="caption" sx={{ color: '#999999', display: 'block', fontSize: '0.75rem' }}>
+            <Typography variant="caption" sx={{ color: 'text.disabled', display: 'block', fontSize: '0.75rem' }}>
               {utilidades.formatearFecha(vuelo.fechaSalida)}
             </Typography>
           )}
-          <Typography variant="caption" sx={{ color: '#999999', fontSize: '0.75rem' }}>
+          <Typography variant="caption" sx={{ color: 'text.disabled', fontSize: '0.75rem' }}>
             Duración: {formatDuration(vuelo.duracion)}
           </Typography>
           {vuelo.fromCode && vuelo.toCode && (
-            <Typography variant="caption" sx={{ color: '#b3b3b3', display: 'block', fontSize: '0.7rem' }}>
+            <Typography variant="caption" sx={{ color: 'text.disabled', display: 'block', fontSize: '0.7rem' }}>
               {vuelo.fromCode} → {vuelo.toCode}
             </Typography>
           )}
         </Box>
 
         <Box textAlign="right" sx={{ minWidth: 100 }}>
-          <Typography variant="h6" sx={{ fontWeight: 600, color: '#1a1a1a' }}>
+          <Typography variant="h6" sx={{ fontWeight: 600, color: 'primary.main' }}>
             {formatPrice(vuelo.price, vuelo.currency)}
           </Typography>
           <Stack direction="row" spacing={0.5} justifyContent="flex-end" mt={0.5}>
@@ -116,8 +116,8 @@ export default function Flight({ flight, resultado }) {
                 size="small" 
                 label="Directo" 
                 sx={{ 
-                  backgroundColor: '#f5f5f5',
-                  color: '#1a1a1a',
+                  backgroundColor: 'action.hover',
+                  color: 'primary.main',
                   fontWeight: 500,
                   fontSize: '0.7rem',
                   height: 20,
@@ -128,8 +128,8 @@ export default function Flight({ flight, resultado }) {
                 size="small" 
                 label="Escalas" 
                 sx={{ 
-                  backgroundColor: '#f5f5f5',
-                  color: '#666666',
+                  backgroundColor: 'action.hover',
+                  color: 'text.secondary',
                   fontWeight: 500,
                   fontSize: '0.7rem',
                   height: 20,
@@ -146,12 +146,13 @@ export default function Flight({ flight, resultado }) {
     <Card 
       variant="outlined"
       sx={{
-        backgroundColor: isSelected ? '#f5f5f5' : '#ffffff',
-        border: isSelected ? '1.5px solid #1a1a1a' : '1px solid #e6e6e6',
+        backgroundColor: isSelected ? 'action.hover' : 'background.paper',
+        border: isSelected ? '1.5px solid' : '1px solid',
+        borderColor: isSelected ? 'primary.main' : 'divider',
         borderRadius: 1,
         transition: 'all 0.2s ease',
         '&:hover': {
-          borderColor: isSelected ? '#1a1a1a' : '#b3b3b3',
+          borderColor: isSelected ? 'primary.main' : 'text.disabled',
           boxShadow: '0 2px 4px 0 rgba(0, 0, 0, 0.08)',
         }
       }}
@@ -164,30 +165,30 @@ export default function Flight({ flight, resultado }) {
           {/* Vuelo de Vuelta (si existe) */}
           {returnFlight && (
             <>
-              <Divider sx={{ borderColor: '#e6e6e6' }} />
+              <Divider sx={{ borderColor: 'divider' }} />
               {renderFlightInfo(returnFlight, 'Vuelo de Vuelta', '✈')}
             </>
           )}
           
           {/* Precio Total y Botón */}
-          <Divider sx={{ borderColor: '#e6e6e6' }} />
+          <Divider sx={{ borderColor: 'divider' }} />
           <Stack direction="row" justifyContent="space-between" alignItems="center">
             <Box>
               <Typography 
                 variant="h5" 
                 sx={{ 
                   fontWeight: 600, 
-                  color: '#1a1a1a',
+                  color: 'primary.main',
                   mb: 0.5,
                 }}
               >
                 {formatPrice(flight.totalPrice, flight.currency)}
               </Typography>
-              <Typography variant="caption" sx={{ color: '#999999', fontSize: '0.75rem' }}>
+              <Typography variant="caption" sx={{ color: 'text.disabled', fontSize: '0.75rem' }}>
                 Precio total {tripType === 'roundtrip' ? '(ida y vuelta)' : ''}
               </Typography>
               {returnFlight && (
-                <Typography variant="caption" sx={{ color: '#b3b3b3', display: 'block', fontSize: '0.7rem' }}>
+                <Typography variant="caption" sx={{ color: 'text.disabled', display: 'block', fontSize: '0.7rem' }}>
                   Ida: {formatPrice(departure.price, departure.currency)} + 
                   Vuelta: {formatPrice(returnFlight.price, returnFlight.currency)}
                 </Typography>
@@ -206,18 +207,18 @@ export default function Flight({ flight, resultado }) {
                 borderRadius: 1,
                 borderWidth: '1.5px',
                 ...(isSelected ? {
-                  backgroundColor: '#1a1a1a',
-                  color: '#ffffff',
+                  backgroundColor: 'primary.main',
+                  color: 'primary.contrastText',
                   '&:hover': {
-                    backgroundColor: '#404040',
+                    backgroundColor: 'primary.light',
                   }
                 } : {
-                  borderColor: '#1a1a1a',
-                  color: '#1a1a1a',
+                  borderColor: 'primary.main',
+                  color: 'primary.main',
                   '&:hover': {
                     borderWidth: '1.5px',
-                    backgroundColor: '#f5f5f5',
-                    borderColor: '#1a1a1a',
+                    backgroundColor: 'action.hover',
+                    borderColor: 'primary.main',
                   }
                 })
               }}

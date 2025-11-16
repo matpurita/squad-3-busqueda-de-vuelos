@@ -78,7 +78,7 @@ const handleGoHome = () => {
         display: "flex",
         alignItems: "center",
         justifyContent: "center",
-        backgroundColor: '#fafafa',
+        backgroundColor: 'background.default',
       }}
     >
       <Box maxWidth={450} sx={{ width: '100%', px: 2 }}>
@@ -87,8 +87,9 @@ const handleGoHome = () => {
           sx={{
             p: 4,
             borderRadius: 1,
-            border: '1px solid #e6e6e6',
-            backgroundColor: '#ffffff',
+            border: '1px solid',
+            borderColor: 'divider',
+            backgroundColor: 'background.paper',
             position: "relative",
           }}
         >
@@ -107,10 +108,10 @@ const handleGoHome = () => {
               size="small"
               disabled={isLoading}
               sx={{
-                backgroundColor: '#f5f5f5',
-                color: '#1a1a1a',
+                backgroundColor: 'action.hover',
+                color: 'primary.main',
                 '&:hover': {
-                  backgroundColor: '#e6e6e6',
+                  backgroundColor: 'action.selected',
                 },
               }}
               title="Volver atrás"
@@ -122,10 +123,10 @@ const handleGoHome = () => {
               size="small"
               disabled={isLoading}
               sx={{
-                backgroundColor: '#f5f5f5',
-                color: '#1a1a1a',
+                backgroundColor: 'action.hover',
+                color: 'primary.main',
                 '&:hover': {
-                  backgroundColor: '#e6e6e6',
+                  backgroundColor: 'action.selected',
                 },
               }}
               title="Ir al inicio"
@@ -140,7 +141,7 @@ const handleGoHome = () => {
               fontWeight: 600,
               textAlign: 'center',
               letterSpacing: '-0.02em',
-              color: '#1a1a1a',
+              color: 'primary.main',
               mb: 1,
             }}
           >
@@ -149,7 +150,7 @@ const handleGoHome = () => {
           <Typography
             variant="body2"
             sx={{ 
-              color: '#666666',
+              color: 'text.secondary',
               textAlign: 'center',
               mb: 3,
               fontWeight: 400,
@@ -166,9 +167,10 @@ const handleGoHome = () => {
                 mt: 2, 
                 mb: 2,
                 borderRadius: 1,
-                border: '1px solid #e6e6e6',
-                backgroundColor: '#fafafa',
-                color: '#1a1a1a',
+                border: '1px solid',
+                borderColor: 'divider',
+                backgroundColor: 'background.default',
+                color: 'primary.main',
               }}
             >
               {error}
@@ -213,7 +215,7 @@ const handleGoHome = () => {
                     <IconButton 
                       onClick={handleTogglePassword}
                       disabled={isLoading}
-                      sx={{ color: '#666666' }}
+                      sx={{ color: 'text.secondary' }}
                     >
                       {showPassword ? <VisibilityOff /> : <Visibility />}
                     </IconButton>
@@ -229,18 +231,18 @@ const handleGoHome = () => {
               disabled={isLoading}
               sx={{ 
                 mt: 3,
-                backgroundColor: '#1a1a1a',
-                color: '#ffffff',
+                backgroundColor: 'primary.main',
+                color: 'primary.contrastText',
                 fontWeight: 600,
                 letterSpacing: '0.02em',
                 borderRadius: 1,
                 py: 1.5,
                 '&:hover': {
-                  backgroundColor: '#404040',
+                  backgroundColor: 'primary.light',
                 },
                 '&:disabled': {
-                  backgroundColor: '#d9d9d9',
-                  color: '#999999',
+                  backgroundColor: 'action.disabledBackground',
+                  color: 'text.disabled',
                 },
                 position: 'relative'
               }}
@@ -250,7 +252,7 @@ const handleGoHome = () => {
                   <CircularProgress 
                     size={20} 
                     sx={{ 
-                      color: '#ffffff',
+                      color: 'primary.contrastText',
                       position: 'absolute',
                       left: '50%',
                       marginLeft: '-10px'
@@ -279,11 +281,12 @@ const handleGoHome = () => {
                 sx={{ 
                   cursor: isLoading ? 'not-allowed' : 'pointer',
                   opacity: isLoading ? 0.6 : 1,
-                  color: '#1a1a1a',
+                  color: 'primary.main',
                   fontWeight: 500,
                   fontSize: '0.875rem',
                   '&:hover': {
                     opacity: 0.7,
+                    background: 'transparent'
                   }
                 }}
               >

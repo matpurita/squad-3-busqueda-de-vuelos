@@ -116,8 +116,9 @@ export default function SearchForm({ onResults }) {
         margin: "0 auto",
         padding: { xs: 3, md: 4 },
         borderRadius: 1,
-        border: '1px solid #e6e6e6',
-        backgroundColor: '#ffffff',
+        border: '1px solid',
+        borderColor: 'divider',
+        backgroundColor: 'background.paper',
       }}
     >
       <form onSubmit={handleSubmit}>
@@ -128,11 +129,12 @@ export default function SearchForm({ onResults }) {
             sx={{ 
               mb: 3,
               borderRadius: 1,
-              border: '1px solid #e6e6e6',
-              backgroundColor: '#fafafa',
-              color: '#1a1a1a',
+              border: '1px solid',
+              borderColor: 'divider',
+              backgroundColor: 'background.default',
+              color: 'primary.main',
               '& .MuiAlert-icon': {
-                color: '#1a1a1a',
+                color: 'primary.main',
               }
             }}
             onClose={() => {
@@ -156,22 +158,23 @@ export default function SearchForm({ onResults }) {
             mb: 3, 
             width: "100%",
             '& .MuiToggleButton-root': {
-              border: '1.5px solid #e6e6e6',
-              color: '#666666',
+              border: '1.5px solid',
+              borderColor: 'divider',
+              color: 'text.secondary',
               fontWeight: 500,
               letterSpacing: '0.02em',
               py: 1.5,
               '&:hover': {
-                backgroundColor: '#f5f5f5',
-                borderColor: '#b3b3b3',
+                backgroundColor: 'action.hover',
+                borderColor: 'text.disabled',
               },
               '&.Mui-selected': {
-                backgroundColor: '#1a1a1a',
-                color: '#ffffff',
-                borderColor: '#1a1a1a',
+                backgroundColor: 'primary.main',
+                color: 'primary.contrastText',
+                borderColor: 'primary.main',
                 '&:hover': {
-                  backgroundColor: '#404040',
-                  borderColor: '#404040',
+                  backgroundColor: 'primary.light',
+                  borderColor: 'primary.light',
                 },
               },
             }
@@ -209,20 +212,20 @@ export default function SearchForm({ onResults }) {
                     ...params.InputProps,
                     startAdornment: (
                       <InputAdornment position="start">
-                        <FlightTakeoffIcon sx={{ color: '#666666' }} />
+                        <FlightTakeoffIcon sx={{ color: 'primary.main' }} />
                       </InputAdornment>
                     ),
                   }}
                   sx={{
                     '& .MuiOutlinedInput-root': {
                       '& fieldset': {
-                        borderColor: '#e6e6e6',
+                        borderColor: 'divider',
                       },
                       '&:hover fieldset': {
-                        borderColor: '#b3b3b3',
+                        borderColor: 'text.disabled',
                       },
                       '&.Mui-focused fieldset': {
-                        borderColor: '#1a1a1a',
+                        borderColor: 'primary.main',
                         borderWidth: '1.5px',
                       },
                     },
@@ -249,20 +252,20 @@ export default function SearchForm({ onResults }) {
                     ...params.InputProps,
                     startAdornment: (
                       <InputAdornment position="start">
-                        <FlightLandIcon sx={{ color: '#666666' }} />
+                        <FlightLandIcon sx={{ color: 'primary.main' }} />
                       </InputAdornment>
                     ),
                   }}
                   sx={{
                     '& .MuiOutlinedInput-root': {
                       '& fieldset': {
-                        borderColor: '#e6e6e6',
+                        borderColor: 'divider',
                       },
                       '&:hover fieldset': {
-                        borderColor: '#b3b3b3',
+                        borderColor: 'text.disabled',
                       },
                       '&.Mui-focused fieldset': {
-                        borderColor: '#1a1a1a',
+                        borderColor: 'primary.main',
                         borderWidth: '1.5px',
                       },
                     },
@@ -298,7 +301,7 @@ export default function SearchForm({ onResults }) {
       InputProps: {
         startAdornment: (
           <InputAdornment position="start">
-            <EventIcon />
+            <EventIcon sx={{ color: 'primary.main' }} />
           </InputAdornment> 
         ),
       },
@@ -347,7 +350,7 @@ export default function SearchForm({ onResults }) {
                   InputProps: {
                     startAdornment: (
                       <InputAdornment position="start">
-                        <EventIcon />
+                        <EventIcon sx={{ color: 'primary.main' }} />
                       </InputAdornment>
                     ),
                   },
@@ -389,7 +392,7 @@ export default function SearchForm({ onResults }) {
               InputProps={{
                 startAdornment: (
                   <InputAdornment position="start">
-                    <PeopleIcon />
+                    <PeopleIcon sx={{ color: 'primary.main' }} />
                   </InputAdornment>
                 ),
               }}
@@ -405,10 +408,10 @@ export default function SearchForm({ onResults }) {
               onChange={(e) => setFlexibleDates(e.target.checked)}
               sx={{
                 '& .MuiSwitch-switchBase.Mui-checked': {
-                  color: '#1a1a1a',
+                  color: 'primary.main',
                 },
                 '& .MuiSwitch-switchBase.Mui-checked + .MuiSwitch-track': {
-                  backgroundColor: '#1a1a1a',
+                  backgroundColor: 'primary.main',
                 },
               }}
             />
@@ -416,7 +419,7 @@ export default function SearchForm({ onResults }) {
           label="Fechas flexibles"
           sx={{ 
             mt: 2, 
-            color: '#666666',
+            color: 'text.secondary',
             '& .MuiFormControlLabel-label': {
               fontWeight: 500,
             }
@@ -428,23 +431,23 @@ export default function SearchForm({ onResults }) {
           type="submit"
           variant="contained"
           disabled={loading || !isSearchValid() || departDateError || (tripType === "roundtrip" && returnDateError)}
-          startIcon={loading ? <CircularProgress size={16} sx={{ color: '#ffffff' }} /> : null}
+          startIcon={loading ? <CircularProgress size={16} sx={{ color: 'primary.contrastText' }} /> : null}
           fullWidth
           sx={{
             mt: 3,
-            backgroundColor: '#1a1a1a',
-            color: '#ffffff',
+            backgroundColor: 'primary.main',
+            color: 'primary.contrastText',
             fontWeight: 600,
             fontSize: '1rem',
             letterSpacing: '0.02em',
             borderRadius: 1,
             padding: '14px',
             '&:hover': {
-              backgroundColor: '#404040',
+              backgroundColor: 'primary.light',
             },
             '&:disabled': {
-              backgroundColor: '#d9d9d9',
-              color: '#999999',
+              backgroundColor: 'action.disabledBackground',
+              color: 'text.disabled',
             },
           }}
         >

@@ -77,8 +77,8 @@ export default function ResultsList() {
   if (loading) {
     return (
       <Stack alignItems="center" spacing={2} sx={{ py: 4 }}>
-        <CircularProgress sx={{ color: '#1a1a1a' }} />
-        <Typography variant="body2" sx={{ color: '#666666', fontWeight: 500 }}>
+        <CircularProgress sx={{ color: 'primary.main' }} />
+        <Typography variant="body2" sx={{ color: 'text.secondary', fontWeight: 500 }}>
           Buscando vuelos...
         </Typography>
       </Stack>
@@ -93,9 +93,10 @@ export default function ResultsList() {
         sx={{ 
           mb: 2,
           borderRadius: 1,
-          border: '1px solid #e6e6e6',
-          backgroundColor: '#fafafa',
-          color: '#1a1a1a',
+          border: '1px solid',
+          borderColor: 'divider',
+          backgroundColor: 'background.default',
+          color: 'primary.main',
         }}
       >
         {error}
@@ -109,7 +110,7 @@ export default function ResultsList() {
       <Typography 
         variant="body2" 
         sx={{ 
-          color: '#999999',
+          color: 'text.disabled',
           textAlign: 'center',
           py: 4,
           fontWeight: 400,
@@ -126,7 +127,7 @@ export default function ResultsList() {
       <Typography 
         variant="body2" 
         sx={{ 
-          color: '#999999',
+          color: 'text.disabled',
           textAlign: 'center',
           py: 4,
           fontWeight: 400,
@@ -146,7 +147,7 @@ export default function ResultsList() {
           sx={{ 
             fontWeight: 600,
             letterSpacing: '-0.01em',
-            color: '#1a1a1a',
+            color: 'primary.main',
             mb: 0.5,
           }}
         >
@@ -155,7 +156,7 @@ export default function ResultsList() {
         <Typography 
           variant="body2" 
           sx={{ 
-            color: '#666666',
+            color: 'text.secondary',
             fontWeight: 400,
           }}
         >
@@ -168,9 +169,9 @@ export default function ResultsList() {
         <InputLabel 
           id="sort-select-label"
           sx={{ 
-            color: '#666666',
+            color: 'text.secondary',
             '&.Mui-focused': {
-              color: '#1a1a1a',
+              color: 'primary.main',
             }
           }}
         >
@@ -185,13 +186,13 @@ export default function ResultsList() {
           sx={{
             borderRadius: 1,
             '& .MuiOutlinedInput-notchedOutline': {
-              borderColor: '#e6e6e6',
+              borderColor: 'divider',
             },
             '&:hover .MuiOutlinedInput-notchedOutline': {
-              borderColor: '#b3b3b3',
+              borderColor: 'text.disabled',
             },
             '&.Mui-focused .MuiOutlinedInput-notchedOutline': {
-              borderColor: '#1a1a1a',
+              borderColor: 'primary.main',
               borderWidth: '1.5px',
             },
           }}
@@ -220,6 +221,7 @@ export default function ResultsList() {
         count={vuelos.pagination?.total || 0}
         page={vuelos.pagination?.offset || 0}
         rowsPerPage={rowsPerPage}
+        labelRowsPerPage="Vuelos por página:"
         onPageChange={handleChangePage}
         onRowsPerPageChange={handleChangeRowsPerPage}
         sx={{
@@ -228,7 +230,7 @@ export default function ResultsList() {
             borderRadius: 1,
           },
           '& .MuiTablePagination-selectLabel, & .MuiTablePagination-displayedRows': {
-            color: '#666666',
+            color: 'primary.main',
             fontWeight: 500,
           },
         }}
