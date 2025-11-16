@@ -14,6 +14,7 @@ export const FlightsProvider = ({ children }) => {
   const [error, setError] = useState(null);
   const [selectedFlight, setSelectedFlight] = useState(null);
   const [searchPerformed, setSearchPerformed] = useState(false);
+  const [bookingFlights, setBookingFlights] = useState([]);
 
   // Función para buscar vuelos
   const searchFlights = async (criteria) => {
@@ -106,6 +107,7 @@ export const FlightsProvider = ({ children }) => {
             flightId: idVuelta
           });
         }
+        setBookingFlights(prev => [...prev, ida, vuelta].filter(Boolean));
         console.log(`Reserva realizada para el vuelo ${idIda} por el usuario ${user.id}`);
       } catch (error) {
         console.error('Error al crear reserva:', error);
@@ -119,10 +121,10 @@ export const FlightsProvider = ({ children }) => {
 
   const value = {
     // Estado
-    vuelos, loading, error, selectedFlight, searchPerformed,
+    vuelos, loading, error, selectedFlight, searchPerformed, bookingFlights,
 
     // Setters
-    setVuelos, setLoading, setError, setSelectedFlight, setSearchPerformed,
+    setVuelos, setLoading, setError, setSelectedFlight, setSearchPerformed, setBookingFlights,
 
     // Funciones
     searchFlights, selectFlight, loadAllFlights, getFlightById,

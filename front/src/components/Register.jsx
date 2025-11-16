@@ -210,18 +210,19 @@ export default function Register() {
         display: "flex",
         alignItems: "center",
         justifyContent: "center",
-        background: "linear-gradient(to bottom right, #f8fafc, #e2e8f0)",
+        backgroundColor: '#fafafa',
         py: 4,
       }}
     >
-      <Box maxWidth={500}>
+      <Box maxWidth={500} sx={{ width: '100%', px: 2 }}>
         <Paper
-          elevation={6}
+          elevation={0}
           sx={{
             p: 4,
-            borderRadius: 4,
-            backdropFilter: "blur(12px)",
-            bgcolor: "rgba(255,255,255,0.8)",
+            borderRadius: 1,
+            border: '1px solid #e6e6e6',
+            backgroundColor: '#ffffff',
+            position: 'relative',
           }}
         >
                {/* Botones de navegación en la esquina superior */}
@@ -239,9 +240,10 @@ export default function Register() {
               size="small"
               disabled={isLoading}
               sx={{
-                backgroundColor: "rgba(255,255,255,0.8)",
-                "&:hover": {
-                  backgroundColor: "rgba(255,255,255,0.9)",
+                backgroundColor: '#f5f5f5',
+                color: '#1a1a1a',
+                '&:hover': {
+                  backgroundColor: '#e6e6e6',
                 },
               }}
               title="Volver atrás"
@@ -253,9 +255,10 @@ export default function Register() {
               size="small"
               disabled={isLoading}
               sx={{
-                backgroundColor: "rgba(255,255,255,0.8)",
-                "&:hover": {
-                  backgroundColor: "rgba(255,255,255,0.9)",
+                backgroundColor: '#f5f5f5',
+                color: '#1a1a1a',
+                '&:hover': {
+                  backgroundColor: '#e6e6e6',
                 },
               }}
               title="Ir al inicio"
@@ -263,21 +266,44 @@ export default function Register() {
               <HomeIcon fontSize="small" />
             </IconButton>
           </Box>
-          <Typography variant="h4" fontWeight="bold" textAlign="center" gutterBottom>
-            SkyTrack
+          
+          <Typography 
+            variant="h4" 
+            sx={{ 
+              fontWeight: 600,
+              textAlign: 'center',
+              letterSpacing: '-0.02em',
+              color: '#1a1a1a',
+              mb: 1,
+            }}
+          >
+            SKYTRACK
           </Typography>
           <Typography
-            variant="body1"
-            color="text.secondary"
-            textAlign="center"
-            gutterBottom
+            variant="body2"
+            sx={{ 
+              color: '#666666',
+              textAlign: 'center',
+              mb: 3,
+              fontWeight: 400,
+            }}
           >
-            Crea tu cuenta para acceder a las mejores ofertas
+            Crea tu cuenta para acceder
           </Typography>
 
           {/* Mostrar error */}
           {error && (
-            <Alert severity="error" sx={{ mt: 2, mb: 2 }}>
+            <Alert 
+              severity="error" 
+              sx={{ 
+                mt: 2, 
+                mb: 2,
+                borderRadius: 1,
+                border: '1px solid #e6e6e6',
+                backgroundColor: '#fafafa',
+                color: '#1a1a1a',
+              }}
+            >
               {error}
             </Alert>
           )}
@@ -289,12 +315,16 @@ export default function Register() {
               sx={{ 
                 mt: 2, 
                 mb: 2,
+                borderRadius: 1,
+                border: '1px solid #e6e6e6',
+                backgroundColor: '#f5f5f5',
+                color: '#1a1a1a',
                 '& .MuiAlert-message': {
                   width: '100%'
                 }
               }}
             >
-              <Typography variant="body2" gutterBottom>
+              <Typography variant="body2" gutterBottom sx={{ fontWeight: 500 }}>
                 ¡Registro exitoso! Tu cuenta ha sido creada correctamente.
               </Typography>
               <Box sx={{ mt: 1 }}>
@@ -305,8 +335,12 @@ export default function Register() {
                   onClick={handleLoginClick}
                   sx={{ 
                     cursor: 'pointer',
-                    fontWeight: 'medium',
-                    fontSize: '0.95rem'
+                    fontWeight: 600,
+                    fontSize: '0.875rem',
+                    color: '#1a1a1a',
+                    '&:hover': {
+                      opacity: 0.7,
+                    }
                   }}
                 >
                   → Ir a iniciar sesión
@@ -327,10 +361,15 @@ export default function Register() {
               required
               disabled={isLoading}
               autoComplete="name"
+              sx={{
+                '& .MuiOutlinedInput-root': {
+                  borderRadius: 1,
+                },
+              }}
               InputProps={{
                 startAdornment: (
                   <InputAdornment position="start">
-                    <Person />
+                    <Person sx={{ color: '#666666' }} />
                   </InputAdornment>
                 ),
               }}
@@ -347,10 +386,15 @@ export default function Register() {
               required
               disabled={isLoading}
               autoComplete="email"
+              sx={{
+                '& .MuiOutlinedInput-root': {
+                  borderRadius: 1,
+                },
+              }}
               InputProps={{
                 startAdornment: (
                   <InputAdornment position="start">
-                    <Email />
+                    <Email sx={{ color: '#666666' }} />
                   </InputAdornment>
                 ),
               }}
@@ -364,9 +408,24 @@ export default function Register() {
               margin="normal" 
               required 
               disabled={isLoading}
-              sx={{ mt: 2 }}
+              sx={{ 
+                mt: 2,
+                '& .MuiOutlinedInput-root': {
+                  borderRadius: 1,
+                },
+              }}
             >
-              <InputLabel id="nacionalidad-label">Nacionalidad</InputLabel>
+              <InputLabel 
+                id="nacionalidad-label"
+                sx={{ 
+                  color: '#666666',
+                  '&.Mui-focused': {
+                    color: '#1a1a1a',
+                  }
+                }}
+              >
+                Nacionalidad
+              </InputLabel>
               <Select
                 labelId="nacionalidad-label"
                 label="Nacionalidad"
@@ -374,7 +433,7 @@ export default function Register() {
                 onChange={handleChange('nacionalidad')}
                 startAdornment={
                   <InputAdornment position="start">
-                    <Public />
+                    <Public sx={{ color: '#666666' }} />
                   </InputAdornment>
                 }
                 sx={{
@@ -413,12 +472,18 @@ export default function Register() {
               disabled={isLoading}
               autoComplete="new-password"
               helperText="Mínimo 8 caracteres"
+              sx={{
+                '& .MuiOutlinedInput-root': {
+                  borderRadius: 1,
+                },
+              }}
               InputProps={{
                 endAdornment: (
                   <InputAdornment position="end">
                     <IconButton 
                       onClick={handleTogglePassword}
                       disabled={isLoading}
+                      sx={{ color: '#666666' }}
                     >
                       {showPassword ? <VisibilityOff /> : <Visibility />}
                     </IconButton>
@@ -438,12 +503,18 @@ export default function Register() {
               required
               disabled={isLoading}
               autoComplete="new-password"
+              sx={{
+                '& .MuiOutlinedInput-root': {
+                  borderRadius: 1,
+                },
+              }}
               InputProps={{
                 endAdornment: (
                   <InputAdornment position="end">
                     <IconButton 
                       onClick={handleToggleConfirmPassword}
                       disabled={isLoading}
+                      sx={{ color: '#666666' }}
                     >
                       {showConfirmPassword ? <VisibilityOff /> : <Visibility />}
                     </IconButton>
@@ -458,9 +529,20 @@ export default function Register() {
               type="submit"
               disabled={isLoading}
               sx={{ 
-                mt: 3, 
-                borderRadius: 3, 
-                py: 1.2,
+                mt: 3,
+                backgroundColor: '#1a1a1a',
+                color: '#ffffff',
+                fontWeight: 600,
+                letterSpacing: '0.02em',
+                borderRadius: 1,
+                py: 1.5,
+                '&:hover': {
+                  backgroundColor: '#404040',
+                },
+                '&:disabled': {
+                  backgroundColor: '#d9d9d9',
+                  color: '#999999',
+                },
                 position: 'relative'
               }}
             >
@@ -469,7 +551,7 @@ export default function Register() {
                   <CircularProgress 
                     size={20} 
                     sx={{ 
-                      color: 'white',
+                      color: '#ffffff',
                       position: 'absolute',
                       left: '50%',
                       marginLeft: '-10px'
@@ -486,13 +568,9 @@ export default function Register() {
               sx={{
                 display: "flex",
                 justifyContent: "center",
-                mt: 2,
-                fontSize: 14,
+                mt: 2.5,
               }}
             >
-              <Typography variant="body2" color="text.secondary" sx={{ mr: 1 }}>
-                ¿Ya tienes cuenta?
-              </Typography>
               <Link 
                 component="button"
                 type="button"
@@ -501,10 +579,16 @@ export default function Register() {
                 disabled={isLoading}
                 sx={{ 
                   cursor: isLoading ? 'not-allowed' : 'pointer',
-                  opacity: isLoading ? 0.6 : 1
+                  opacity: isLoading ? 0.6 : 1,
+                  color: '#1a1a1a',
+                  fontWeight: 500,
+                  fontSize: '0.875rem',
+                  '&:hover': {
+                    opacity: 0.7,
+                  }
                 }}
               >
-                Iniciar sesión
+                ¿Ya tienes cuenta? Iniciar sesión
               </Link>
             </Box>
           </Box>

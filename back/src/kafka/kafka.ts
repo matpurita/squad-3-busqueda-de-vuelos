@@ -5,7 +5,9 @@ import {
   FlightUpdatedEvent,
   ReservationCreatedEvent,
   ReservationUpdatedEvent,
-  UserCreateEvent
+  UserCreatedEvent,
+  UserUpdatedEvent,
+  UserDeletedEvent
 } from './events'
 import { SearchMetric } from '../schemas/searchMetric'
 import { BookingIntent } from '../schemas/bookingIntent'
@@ -16,7 +18,10 @@ const EVENTS = {
   FLIGHT_CREATED: 'flights.flight.created',
   FLIGHT_UPDATED: 'flights.flight.updated',
   RESERVATION_CREATED: 'reservations.reservation.created',
-  RESERVATION_UPDATED: 'reservations.reservation.updated'
+  RESERVATION_UPDATED: 'reservations.reservation.updated',
+  USER_CREATED: 'users.user.created',
+  USER_UPDATED: 'users.user.updated',
+  USER_DELETED: 'users.user.deleted'
 } as const
 
 const kafka = new Kafka({
@@ -24,7 +29,7 @@ const kafka = new Kafka({
   brokers: [process.env.KAFKA_BROKER || ''],
   logLevel: logLevel.INFO
 })
-const consumer = kafka.consumer({ groupId: 'search-node-group-abcde' })
+const consumer = kafka.consumer({ groupId: 'search-node-group-abcdefg' })
 
 const connectConsumer = async () => {
   await consumer.connect()
@@ -40,8 +45,6 @@ const connectConsumer = async () => {
         message: JSON.stringify(data),
         payload: payloadString || null
       }
-
-      console.log(data)
 
       try {
         switch (data.eventType) {
@@ -95,7 +98,7 @@ const connectConsumer = async () => {
           }
           case EVENTS.RESERVATION_CREATED: {
             const content: ReservationCreatedEvent = payload
-console.log(content)
+
             await prisma.booking.create({
               data: {
                 id: content.reservationId,
@@ -118,6 +121,42 @@ console.log(content)
               }
             })
 
+            break
+          }
+          case EVENTS.USER_CREATED: {
+            const content: UserCreatedEvent = payload
+
+            await prisma.user.create({
+              data: {
+                id: content.userId,
+                name: content.nombre_completo,
+                email: content.email,
+                nationalityOrOrigin: content.nationalityOrOrigin,
+                createdAt: new Date(content.createdAt)
+              }
+            })
+
+            break
+          }
+          case EVENTS.USER_UPDATED: {
+            const content: UserUpdatedEvent = payload
+
+            await prisma.user.update({
+              where: { id: content.userId },
+              data: {
+                nationalityOrOrigin: content.nationalityOrOrigin
+              }
+            })
+
+            break
+          }
+          case EVENTS.USER_DELETED: {
+            const content: UserDeletedEvent = payload
+           
+            await prisma.user.delete({
+              where: { id: content.userId }
+            })
+           
             break
           }
 
@@ -148,7 +187,7 @@ type EventType = 'search.search.performed' | 'search.cart.item.added' | 'users.u
 type EventPayload<T extends EventType> = {
   'search.search.performed': SearchMetric
   'search.cart.item.added': BookingIntent
-  'users.user.created': UserCreateEvent
+  'users.user.created': UserCreatedEvent
 }[T]
 
 const postEvent = async <T extends EventType>(type: T, payload: EventPayload<T>) => {

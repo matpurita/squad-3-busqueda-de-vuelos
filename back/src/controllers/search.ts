@@ -3,12 +3,13 @@ import { searchParamsSchema } from '../schemas/searchParams'
 import { ZodError } from 'zod'
 import { AppError } from '../middlewares/error'
 import { prisma } from '../prisma/db'
-import { add, startOfDay, endOfDay, sub } from 'date-fns'
+import { add, startOfDay, endOfDay, sub, parseISO } from 'date-fns'
 import { Pagination } from '../schemas/pagination'
 import { pairSearchResults, sortSearchResults } from '../utils/search'
 import { bookingIntentSchema } from '../schemas/bookingIntent'
 import { searchMetricSchema } from '../schemas/searchMetric'
 import { postEvent } from '../kafka/kafka'
+import { TZDate } from '@date-fns/tz'
 
 async function searchFlights(req: Request, res: Response, next: NextFunction) {
   try {
@@ -26,16 +27,42 @@ async function searchFlights(req: Request, res: Response, next: NextFunction) {
       offset: req.query.offset
     })
 
+    const now = TZDate.tz('America/Argentina/Buenos_Aires')
+    const departureDate = parseISO(searchParams.departureDate)
+
+    if (departureDate <= now) {
+      throw new AppError('La fecha de salida debe ser en el futuro', 400)
+    }
+
     const departureDateStart = startOfDay(
-      sub(new Date(searchParams.departureDate), {
+      sub(departureDate, {
         days: searchParams.departureRange
       })
     )
     const departureDateEnd = endOfDay(
-      add(new Date(searchParams.departureDate), {
+      add(departureDate, {
         days: searchParams.departureRange
       })
     )
+
+    const returnDateStart = searchParams.returnDate
+      ? startOfDay(
+          sub(parseISO(searchParams.returnDate), {
+            days: searchParams.returnRange
+          })
+        )
+      : null
+    const returnDateEnd = searchParams.returnDate
+      ? endOfDay(
+          add(parseISO(searchParams.returnDate), {
+            days: searchParams.returnRange
+          })
+        )
+      : null
+
+    if (returnDateStart && (departureDateStart > returnDateStart)) {
+      throw new AppError('La fecha de regreso debe ser después de la fecha de salida', 400)
+    }
 
     // Query seats first
     const departurePromise = prisma.flight.findMany({
@@ -62,21 +89,6 @@ async function searchFlights(req: Request, res: Response, next: NextFunction) {
       }
     })
 
-    const returnDateStart = searchParams.returnDate
-      ? startOfDay(
-          sub(new Date(searchParams.returnDate), {
-            days: searchParams.returnRange
-          })
-        )
-      : null
-    const returnDateEnd = searchParams.returnDate
-      ? endOfDay(
-          add(new Date(searchParams.returnDate), {
-            days: searchParams.returnRange
-          })
-        )
-      : null
-
     const returnPromise = searchParams.returnDate
       ? prisma.flight.findMany({
           where: {
@@ -97,7 +109,17 @@ async function searchFlights(req: Request, res: Response, next: NextFunction) {
             airline: true,
             plane: true,
             _count: {
-              select: { bookings: true }
+              select: {
+                bookings: {
+                  where: {
+                    status: {
+                      not: {
+                        in: ['CANCELLED', 'FAILED']
+                      }
+                    }
+                  }
+                }
+              }
             }
           }
         })
@@ -107,6 +129,7 @@ async function searchFlights(req: Request, res: Response, next: NextFunction) {
 
     const filterBySeats = (flights: typeof departureFlights) =>
       flights.filter((flight) => {
+        // flight._count.bookings only counts active bookings (not CANCELLED or FAILED)
         const availableSeats = flight.plane?.capacity ?? 50 - flight._count.bookings
         return availableSeats >= searchParams.passengers
       })
@@ -125,7 +148,7 @@ async function searchFlights(req: Request, res: Response, next: NextFunction) {
       departureDate: searchParams.departureDate,
       returnDate: searchParams.returnDate,
       resultsCount: sortedResults.length,
-      timestamp: new Date()
+      timestamp: now
     })
 
     prisma.searchMetrics.create({ data: searchMetric })
@@ -246,6 +269,17 @@ async function sendBookingIntent(req: Request, res: Response, next: NextFunction
       flightId: req.body.flightId,
       addedAt: req.body.addedAt ? new Date(req.body.addedAt) : undefined
     })
+
+    const existingBooking = await prisma.bookingIntent.findFirst({
+      where: {
+        userId: flightBooking.userId,
+        flightId: flightBooking.flightId
+      }
+    })
+
+    if (existingBooking) {
+      throw new AppError('Ya existe una intención de reserva para este usuario y vuelo', 400)
+    }
 
     await prisma.bookingIntent.create({
       data: flightBooking

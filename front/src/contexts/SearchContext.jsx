@@ -1,5 +1,6 @@
 import { createContext, useContext, useState, useEffect } from 'react';
 import { vuelosService } from '../services';
+import dayjs from 'dayjs';
 
 // Crear el contexto
 const SearchContext = createContext();
@@ -49,7 +50,7 @@ export const SearchProvider = ({ children }) => {
     const criteria = {
       origin: from?.code,
       destination: to?.code,
-      departureDate: departDate,
+      departureDate: departDate ? dayjs(departDate).format('YYYY-MM-DD') : null,
       departureRange: flexibleDates ? 1 : 0, // Si es flexible, buscar ±3 días
       passengers: adults,
       currency: 'USD', // Por defecto USD, podrías hacerlo configurable
@@ -57,7 +58,7 @@ export const SearchProvider = ({ children }) => {
 
     // Solo agregar returnDate y returnRange si es viaje de ida y vuelta
     if (tripType === 'roundtrip' && returnDate) {
-      criteria.returnDate = returnDate;
+      criteria.returnDate = returnDate ? dayjs(returnDate).format('YYYY-MM-DD') : null;
       criteria.returnRange = flexibleDates ? 1 : 0; // Si es flexible, buscar ±1 día
     }
 

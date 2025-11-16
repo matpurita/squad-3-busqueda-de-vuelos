@@ -39,7 +39,7 @@ export interface ReservationUpdatedEvent {
 }
 
 // User Created Event
-export interface UserCreateEvent {
+export interface UserCreatedEvent {
   userId: string;
   nombre_completo: string;
   email: string;
@@ -47,4 +47,26 @@ export interface UserCreateEvent {
   nationalityOrOrigin: string;
   roles: string[];
   createdAt: string; // ISO 8601 date-time format
+}
+
+// User Updated Event
+export interface UserUpdatedEvent {
+  userId: string;
+  nationalityOrOrigin: string;
+  roles: string[];
+  updatedAt: string; // ISO 8601 date-time format
+  previousData: {
+    nationalityOrOrigin: string;
+    roles: string[];
+  };
+}
+
+// User Deleted Event
+export interface UserDeletedEvent {
+  userId: string;
+  nationalityOrOrigin: string;
+  roles: string[];
+  createdAt: string; // ISO 8601 date-time format
+  deletedAt: string; // ISO 8601 date-time format
+  deletionReason: 'user_request' | 'admin_action' | 'inactivity' | 'policy_violation' | 'other';
 }

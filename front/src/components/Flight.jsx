@@ -53,57 +53,88 @@ export default function Flight({ flight, resultado }) {
   // Formatear precio con moneda
   const formatPrice = (price, currency = 'USD') => {
     if (!price) return 'N/A';
-    return `$${price.toFixed(2)} ${currency}`;
+    return `$${parseInt(price)} ${currency}`;
   };
 
   // Renderizar información de un vuelo
   const renderFlightInfo = (vuelo, label, icon) => (
     <Box>
-      <Stack direction="row" spacing={1} alignItems="center" sx={{ mb: 1 }}>
-        <Typography variant="caption" color="primary" fontWeight="bold">
+      <Stack direction="row" spacing={1} alignItems="center" sx={{ mb: 1.5 }}>
+        <Typography 
+          variant="caption" 
+          sx={{ 
+            color: '#666666',
+            fontWeight: 600,
+            letterSpacing: '0.05em',
+            textTransform: 'uppercase',
+            fontSize: '0.7rem',
+          }}
+        >
           {icon} {label}
         </Typography>
       </Stack>
       
       <Stack direction="row" spacing={2} alignItems="center" justifyContent="space-between">
-        <Box>
-          <Typography variant="h6">{vuelo.airline}</Typography>
-          <Typography variant="caption" color="text.secondary">
+        <Box sx={{ minWidth: 120 }}>
+          <Typography variant="subtitle1" sx={{ fontWeight: 600, color: '#1a1a1a' }}>
+            {vuelo.airline}
+          </Typography>
+          <Typography variant="caption" sx={{ color: '#999999', fontSize: '0.75rem' }}>
             {vuelo.numeroVuelo}
           </Typography>
         </Box>
 
         <Box flex={1} textAlign="center">
-          <Typography variant="body1" fontWeight="medium">
+          <Typography variant="body1" sx={{ fontWeight: 600, color: '#1a1a1a', mb: 0.5 }}>
             {vuelo.from} → {vuelo.to}
           </Typography>
-          <Typography variant="body2" color="text.secondary">
+          <Typography variant="body2" sx={{ color: '#666666', mb: 0.5 }}>
             {vuelo.departTime} - {vuelo.arriveTime}
           </Typography>
           {vuelo.fechaSalida && (
-            <Typography variant="caption" color="text.secondary" display="block">
-              📅 {utilidades.formatearFecha(vuelo.fechaSalida)}
+            <Typography variant="caption" sx={{ color: '#999999', display: 'block', fontSize: '0.75rem' }}>
+              {utilidades.formatearFecha(vuelo.fechaSalida)}
             </Typography>
           )}
-          <Typography variant="caption" color="text.secondary">
+          <Typography variant="caption" sx={{ color: '#999999', fontSize: '0.75rem' }}>
             Duración: {formatDuration(vuelo.duracion)}
           </Typography>
           {vuelo.fromCode && vuelo.toCode && (
-            <Typography variant="caption" color="text.secondary" display="block">
+            <Typography variant="caption" sx={{ color: '#b3b3b3', display: 'block', fontSize: '0.7rem' }}>
               {vuelo.fromCode} → {vuelo.toCode}
             </Typography>
           )}
         </Box>
 
-        <Box textAlign="right">
-          <Typography variant="h6" color="primary">
+        <Box textAlign="right" sx={{ minWidth: 100 }}>
+          <Typography variant="h6" sx={{ fontWeight: 600, color: '#1a1a1a' }}>
             {formatPrice(vuelo.price, vuelo.currency)}
           </Typography>
-          <Stack direction="row" spacing={1}>
+          <Stack direction="row" spacing={0.5} justifyContent="flex-end" mt={0.5}>
             {vuelo.direct ? (
-              <Chip size="small" color="success" label="Directo" />
+              <Chip 
+                size="small" 
+                label="Directo" 
+                sx={{ 
+                  backgroundColor: '#f5f5f5',
+                  color: '#1a1a1a',
+                  fontWeight: 500,
+                  fontSize: '0.7rem',
+                  height: 20,
+                }}
+              />
             ) : (
-              <Chip size="small" color="warning" label="Con escalas" />
+              <Chip 
+                size="small" 
+                label="Escalas" 
+                sx={{ 
+                  backgroundColor: '#f5f5f5',
+                  color: '#666666',
+                  fontWeight: 500,
+                  fontSize: '0.7rem',
+                  height: 20,
+                }}
+              />
             )}
           </Stack>
         </Box>
@@ -114,42 +145,49 @@ export default function Flight({ flight, resultado }) {
   return (
     <Card 
       variant="outlined"
-      sx={(theme) => ({
-        backgroundColor: isSelected ? theme.alpha(theme.palette.primary.main, 0.05) : 'transparent',
-        border: isSelected ? 2 : 1,
-        borderColor: isSelected ? 'primary.main' : 'divider',
+      sx={{
+        backgroundColor: isSelected ? '#f5f5f5' : '#ffffff',
+        border: isSelected ? '1.5px solid #1a1a1a' : '1px solid #e6e6e6',
+        borderRadius: 1,
         transition: 'all 0.2s ease',
         '&:hover': {
-          boxShadow: 2,
-          borderColor: 'primary.light'
+          borderColor: isSelected ? '#1a1a1a' : '#b3b3b3',
+          boxShadow: '0 2px 4px 0 rgba(0, 0, 0, 0.08)',
         }
-      })}
+      }}
     >
-      <CardContent>
-        <Stack spacing={2}>
+      <CardContent sx={{ p: { xs: 2, md: 3 } }}>
+        <Stack spacing={2.5}>
           {/* Vuelo de Ida */}
-          {renderFlightInfo(departure, 'Vuelo de Ida', '🛫')}
+          {renderFlightInfo(departure, 'Vuelo de Ida', '✈')}
           
           {/* Vuelo de Vuelta (si existe) */}
           {returnFlight && (
             <>
-              <Divider sx={{ my: 2 }} />
-              {renderFlightInfo(returnFlight, 'Vuelo de Vuelta', '🛬')}
+              <Divider sx={{ borderColor: '#e6e6e6' }} />
+              {renderFlightInfo(returnFlight, 'Vuelo de Vuelta', '✈')}
             </>
           )}
           
           {/* Precio Total y Botón */}
-          <Divider sx={{ my: 2 }} />
+          <Divider sx={{ borderColor: '#e6e6e6' }} />
           <Stack direction="row" justifyContent="space-between" alignItems="center">
             <Box>
-              <Typography variant="h5" color="primary" fontWeight="bold">
+              <Typography 
+                variant="h5" 
+                sx={{ 
+                  fontWeight: 600, 
+                  color: '#1a1a1a',
+                  mb: 0.5,
+                }}
+              >
                 {formatPrice(flight.totalPrice, flight.currency)}
               </Typography>
-              <Typography variant="caption" color="text.secondary">
+              <Typography variant="caption" sx={{ color: '#999999', fontSize: '0.75rem' }}>
                 Precio total {tripType === 'roundtrip' ? '(ida y vuelta)' : ''}
               </Typography>
               {returnFlight && (
-                <Typography variant="caption" color="text.secondary" display="block">
+                <Typography variant="caption" sx={{ color: '#b3b3b3', display: 'block', fontSize: '0.7rem' }}>
                   Ida: {formatPrice(departure.price, departure.currency)} + 
                   Vuelta: {formatPrice(returnFlight.price, returnFlight.currency)}
                 </Typography>
@@ -157,13 +195,31 @@ export default function Flight({ flight, resultado }) {
             </Box>
             
             <Button
-              variant={isSelected ? "outlined" : "contained"}
-              color={isSelected ? "success" : "primary"}
+              variant={isSelected ? "contained" : "outlined"}
               onClick={onSelectFlight}
               sx={{ 
                 minWidth: 140,
-                height: 48,
-                fontSize: '1rem'
+                height: 44,
+                fontSize: '0.9rem',
+                fontWeight: 600,
+                letterSpacing: '0.02em',
+                borderRadius: 1,
+                borderWidth: '1.5px',
+                ...(isSelected ? {
+                  backgroundColor: '#1a1a1a',
+                  color: '#ffffff',
+                  '&:hover': {
+                    backgroundColor: '#404040',
+                  }
+                } : {
+                  borderColor: '#1a1a1a',
+                  color: '#1a1a1a',
+                  '&:hover': {
+                    borderWidth: '1.5px',
+                    backgroundColor: '#f5f5f5',
+                    borderColor: '#1a1a1a',
+                  }
+                })
               }}
             >
               {isSelected ? "✓ Seleccionado" : "Seleccionar"}

@@ -61,14 +61,15 @@ async function register(req: Request, res: Response, next: NextFunction) {
       nationalityOrOrigin: req.body.nationalityOrOrigin
     })
 
-     postEvent('users.user.created', {
+    await postEvent('users.user.created', {
       ...registerPayload,
       nombre_completo: name,
       roles: ['usuario'],
       createdAt: new Date().toISOString(),
-      userId: '1'
-      
+      userId: crypto.randomUUID()
     })
+    
+    // No guardar en la tabla de usuarios, se guardara al recibir el evento users.user.created en el microservicio de auth
 
     return res.status(201).json({ message: 'User registered successfully' })
   }

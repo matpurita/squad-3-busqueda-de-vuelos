@@ -78,17 +78,17 @@ const handleGoHome = () => {
         display: "flex",
         alignItems: "center",
         justifyContent: "center",
-        background: "linear-gradient(to bottom right, #f8fafc, #e2e8f0)",
+        backgroundColor: '#fafafa',
       }}
     >
-      <Box maxWidth={450}>
+      <Box maxWidth={450} sx={{ width: '100%', px: 2 }}>
         <Paper
-          elevation={6}
+          elevation={0}
           sx={{
             p: 4,
-            borderRadius: 4,
-            backdropFilter: "blur(12px)",
-            bgcolor: "rgba(255,255,255,0.8)",
+            borderRadius: 1,
+            border: '1px solid #e6e6e6',
+            backgroundColor: '#ffffff',
             position: "relative",
           }}
         >
@@ -107,9 +107,10 @@ const handleGoHome = () => {
               size="small"
               disabled={isLoading}
               sx={{
-                backgroundColor: "rgba(255,255,255,0.8)",
-                "&:hover": {
-                  backgroundColor: "rgba(255,255,255,0.9)",
+                backgroundColor: '#f5f5f5',
+                color: '#1a1a1a',
+                '&:hover': {
+                  backgroundColor: '#e6e6e6',
                 },
               }}
               title="Volver atrás"
@@ -121,9 +122,10 @@ const handleGoHome = () => {
               size="small"
               disabled={isLoading}
               sx={{
-                backgroundColor: "rgba(255,255,255,0.8)",
-                "&:hover": {
-                  backgroundColor: "rgba(255,255,255,0.9)",
+                backgroundColor: '#f5f5f5',
+                color: '#1a1a1a',
+                '&:hover': {
+                  backgroundColor: '#e6e6e6',
                 },
               }}
               title="Ir al inicio"
@@ -131,21 +133,44 @@ const handleGoHome = () => {
               <HomeIcon fontSize="small" />
             </IconButton>
           </Box>
-          <Typography variant="h4" fontWeight="bold" textAlign="center" gutterBottom>
-            SkyTrack
+          
+          <Typography 
+            variant="h4" 
+            sx={{ 
+              fontWeight: 600,
+              textAlign: 'center',
+              letterSpacing: '-0.02em',
+              color: '#1a1a1a',
+              mb: 1,
+            }}
+          >
+            SKYTRACK
           </Typography>
           <Typography
-            variant="body1"
-            color="text.secondary"
-            textAlign="center"
-            gutterBottom
+            variant="body2"
+            sx={{ 
+              color: '#666666',
+              textAlign: 'center',
+              mb: 3,
+              fontWeight: 400,
+            }}
           >
             Ingresa tus credenciales para acceder
           </Typography>
 
           {/* Mostrar error si existe */}
           {error && (
-            <Alert severity="error" sx={{ mt: 2, mb: 2 }}>
+            <Alert 
+              severity="error" 
+              sx={{ 
+                mt: 2, 
+                mb: 2,
+                borderRadius: 1,
+                border: '1px solid #e6e6e6',
+                backgroundColor: '#fafafa',
+                color: '#1a1a1a',
+              }}
+            >
               {error}
             </Alert>
           )}
@@ -161,6 +186,11 @@ const handleGoHome = () => {
               required
               disabled={isLoading}
               autoComplete="email"
+              sx={{
+                '& .MuiOutlinedInput-root': {
+                  borderRadius: 1,
+                },
+              }}
             />
             <TextField
               fullWidth
@@ -172,12 +202,18 @@ const handleGoHome = () => {
               required
               disabled={isLoading}
               autoComplete="current-password"
+              sx={{
+                '& .MuiOutlinedInput-root': {
+                  borderRadius: 1,
+                },
+              }}
               InputProps={{
                 endAdornment: (
                   <InputAdornment position="end">
                     <IconButton 
                       onClick={handleTogglePassword}
                       disabled={isLoading}
+                      sx={{ color: '#666666' }}
                     >
                       {showPassword ? <VisibilityOff /> : <Visibility />}
                     </IconButton>
@@ -192,9 +228,20 @@ const handleGoHome = () => {
               type="submit"
               disabled={isLoading}
               sx={{ 
-                mt: 2, 
-                borderRadius: 3, 
-                py: 1.2,
+                mt: 3,
+                backgroundColor: '#1a1a1a',
+                color: '#ffffff',
+                fontWeight: 600,
+                letterSpacing: '0.02em',
+                borderRadius: 1,
+                py: 1.5,
+                '&:hover': {
+                  backgroundColor: '#404040',
+                },
+                '&:disabled': {
+                  backgroundColor: '#d9d9d9',
+                  color: '#999999',
+                },
                 position: 'relative'
               }}
             >
@@ -203,7 +250,7 @@ const handleGoHome = () => {
                   <CircularProgress 
                     size={20} 
                     sx={{ 
-                      color: 'white',
+                      color: '#ffffff',
                       position: 'absolute',
                       left: '50%',
                       marginLeft: '-10px'
@@ -212,33 +259,17 @@ const handleGoHome = () => {
                   <span style={{ opacity: 0 }}>Iniciar sesión</span>
                 </>
               ) : (
-                "Iniciar sesión"
+                "Iniciar Sesión"
               )}
             </Button>
 
             <Box
               sx={{
                 display: "flex",
-                justifyContent: "space-between",
-                mt: 2,
-                fontSize: 14,
+                justifyContent: "center",
+                mt: 2.5,
               }}
             >
-              { /* comentario de olvido de contraseña
-              <Link 
-                component="button"
-                type="button"
-                underline="hover"
-                onClick={handleForgotPassword}
-                disabled={isLoading}
-                sx={{ 
-                  cursor: isLoading ? 'not-allowed' : 'pointer',
-                  opacity: isLoading ? 0.6 : 1
-                }}
-              >
-                ¿Olvidaste tu contraseña?
-              </Link>
-              */}
               <Link 
                 component="button"
                 type="button"
@@ -247,10 +278,16 @@ const handleGoHome = () => {
                 disabled={isLoading}
                 sx={{ 
                   cursor: isLoading ? 'not-allowed' : 'pointer',
-                  opacity: isLoading ? 0.6 : 1
+                  opacity: isLoading ? 0.6 : 1,
+                  color: '#1a1a1a',
+                  fontWeight: 500,
+                  fontSize: '0.875rem',
+                  '&:hover': {
+                    opacity: 0.7,
+                  }
                 }}
               >
-                Registrarse
+                ¿No tienes cuenta? Registrarse
               </Link>
             </Box>
           </Box>

@@ -11,7 +11,6 @@ import Register from './components/Register'
 import { SearchProvider } from './contexts/SearchContext'
 import { FlightsProvider } from './contexts/FlightsContext'
 import { AuthProvider, useAuth } from './contexts/AuthContext'
-import '@fontsource/roboto/400.css';
 import Sidebar from './components/Sidebar'
 import AccountCircleIcon from '@mui/icons-material/AccountCircle'
 import LoginIcon from '@mui/icons-material/Login'
@@ -47,29 +46,66 @@ function Header() {
   }
 
   return (
-    <AppBar position="static" elevation={2} sx={{ width: '100vw' }}>
+    <AppBar 
+      position="static" 
+      elevation={0}
+      sx={{ 
+        width: '100vw',
+        backgroundColor: '#ffffff',
+        borderBottom: '1px solid #e6e6e6',
+      }}
+    >
       <Container maxWidth="lg" sx={{ px: { xs: 2, sm: 3 } }}>
-        <Toolbar sx={{ justifyContent: 'space-between', px: 0 }}>
-          {/* Logo/Título */}
-          <Typography variant="h5" component="div" fontWeight="bold">
-            SkyTrack
+        <Toolbar sx={{ justifyContent: 'space-between', px: 0, py: 2 }}>
+          {/* Logo/Título Minimalista */}
+          <Typography 
+            variant="h6" 
+            component="div" 
+            sx={{ 
+              fontWeight: 600,
+              letterSpacing: '-0.02em',
+              color: '#1a1a1a',
+              cursor: 'pointer',
+            }}
+            onClick={() => navigate('/')}
+          >
+            SKYTRACK
           </Typography>
 
           {/* Navegación y Auth */}
-          <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
+          <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5 }}>
             {user ? (
               <>
                 {/* Usuario logueado */}
-                <Typography variant="body2" sx={{ mr: 1, display: { xs: 'none', sm: 'block' } }}>
-                  Hola, {user?.nombre_completo}
+                <Typography 
+                  variant="body2" 
+                  sx={{ 
+                    mr: 1, 
+                    display: { xs: 'none', sm: 'block' },
+                    color: '#666666',
+                    fontWeight: 500,
+                  }}
+                >
+                  {user?.nombre_completo}
                 </Typography>
 
                 <IconButton
                   onClick={handleMenuOpen}
-                  sx={{ color: 'white' }}
+                  sx={{ 
+                    p: 0.5,
+                    '&:hover': {
+                      backgroundColor: '#f5f5f5',
+                    }
+                  }}
                 >
-                  <Avatar sx={{ width: 32, height: 32, bgcolor: 'primary.dark' }}>
-                    {user?.name?.[0] || <AccountCircleIcon />}
+                  <Avatar sx={{ 
+                    width: 32, 
+                    height: 32, 
+                    bgcolor: '#1a1a1a',
+                    fontSize: '0.875rem',
+                    fontWeight: 600,
+                  }}>
+                    {user?.nombre_completo?.[0] || <AccountCircleIcon />}
                   </Avatar>
                 </IconButton>
 
@@ -85,52 +121,81 @@ function Header() {
                     vertical: 'top',
                     horizontal: 'right',
                   }}
+                  PaperProps={{
+                    elevation: 2,
+                    sx: {
+                      mt: 1,
+                      borderRadius: 1,
+                      border: '1px solid #e6e6e6',
+                    }
+                  }}
                 >
-                  <MenuItem onClick={handleMenuClose}>
+                  <MenuItem onClick={handleMenuClose} sx={{ py: 1.5, px: 2 }}>
                     <Box>
-                      <Typography variant="subtitle2">{user?.nombre_completo}</Typography>
-                      <Typography variant="caption" color="text.secondary">{user?.email}</Typography>
+                      <Typography variant="subtitle2" sx={{ fontWeight: 600 }}>
+                        {user?.nombre_completo}
+                      </Typography>
+                      <Typography variant="caption" color="text.secondary">
+                        {user?.email}
+                      </Typography>
                     </Box>
                   </MenuItem>
-                  <Divider />
-                  <MenuItem onClick={handleMenuClose}>Mi Perfil</MenuItem>
-                  <Divider />
-                  <MenuItem onClick={handleLogout}>Cerrar Sesión</MenuItem>
+                  <Divider sx={{ my: 0.5 }} />
+                  <MenuItem 
+                    onClick={handleLogout}
+                    sx={{ 
+                      py: 1, 
+                      px: 2,
+                      color: '#1a1a1a',
+                      fontWeight: 500,
+                    }}
+                  >
+                    Cerrar Sesión
+                  </MenuItem>
                 </Menu>
               </>
             ) : (
               <>
                 {/* Usuario no logueado */}
                 <Button
-                  color="inherit"
-                  startIcon={<LoginIcon />}
                   onClick={handleLogin}
-                  sx={{ display: { xs: 'none', sm: 'flex' } }}
+                  sx={{ 
+                    display: { xs: 'none', sm: 'flex' },
+                    color: '#1a1a1a',
+                    fontWeight: 500,
+                    px: 2,
+                    '&:hover': {
+                      backgroundColor: '#f5f5f5',
+                    }
+                  }}
                 >
                   Iniciar Sesión
                 </Button>
 
                 <Button
-                  variant="outlined"
+                  variant="contained"
+                  onClick={handleRegister}
                   sx={{
-                    color: 'white',
-                    borderColor: 'white',
+                    display: { xs: 'none', sm: 'flex' },
+                    backgroundColor: '#1a1a1a',
+                    color: '#ffffff',
+                    fontWeight: 500,
+                    px: 3,
                     '&:hover': {
-                      borderColor: 'white',
-                      backgroundColor: 'rgba(255,255,255,0.1)'
+                      backgroundColor: '#404040',
                     }
                   }}
-                  startIcon={<PersonAddIcon />}
-                  onClick={handleRegister}
                 >
                   Registrarse
                 </Button>
 
                 {/* Botón compacto para móviles */}
                 <IconButton
-                  color="inherit"
                   onClick={handleLogin}
-                  sx={{ display: { xs: 'flex', sm: 'none' } }}
+                  sx={{ 
+                    display: { xs: 'flex', sm: 'none' },
+                    color: '#1a1a1a',
+                  }}
                 >
                   <LoginIcon />
                 </IconButton>
@@ -146,44 +211,42 @@ function Header() {
 function Home() {
   return (
     <>
-      {/* Hero Section - Ocupa toda la pantalla */}
-      <Container
-        sx={{
-          backgroundColor: 'primary.main',
-          color: 'white',
-          py: 4,
-          textAlign: 'center',
-          background: 'url(/banner.jpeg) no-repeat center center',
-          maxWidth: 'lg',
-        }}
-      >
-        <Container maxWidth="md">
-          <Typography variant="h4" component="h1" fontWeight="bold" gutterBottom>
-            Reserva tu próximo vuelo al mejor precio
-          </Typography>
-          <Typography variant="h6" sx={{ opacity: 0.9, maxWidth: 600, mx: 'auto' }}>
-            Compara precios y encuentra las mejores ofertas para tu próximo viaje
-          </Typography>
-        </Container>
-      </Container>
-
       {/* Contenido Principal Centrado - Dentro de Container */}
       <Container
         maxWidth="lg"
         sx={{
           flex: 1,
-          py: 4,
+          py: { xs: 3, md: 6 },
           display: 'flex',
           flexDirection: 'column',
           alignItems: 'center',
-          gap: 4
+          gap: { xs: 3, md: 5 }
         }}
       >
         {/* Formulario de Búsqueda Centrado */}
         <Box sx={{ width: '100%' }}>
-          <Typography variant="h5" gutterBottom textAlign="center" color="primary.main" fontWeight="bold">
-            Buscar Vuelos
-          </Typography>
+          <Box sx={{ mb: { xs: 2, md: 3 }, textAlign: 'center' }}>
+            <Typography 
+              variant="h4" 
+              sx={{ 
+                fontWeight: 600,
+                letterSpacing: '-0.02em',
+                color: '#1a1a1a',
+                mb: 1,
+              }}
+            >
+              Buscar Vuelos
+            </Typography>
+            <Typography 
+              variant="body2" 
+              sx={{ 
+                color: '#666666',
+                fontWeight: 400,
+              }}
+            >
+              Encuentra las mejores opciones para tu próximo viaje
+            </Typography>
+          </Box>
           <LocalizationProvider dateAdapter={AdapterDayjs}>
             <SearchForm />
           </LocalizationProvider>
@@ -230,7 +293,8 @@ function AppContent() {
       {!isLoginPage && !isRegisterPage && (
         <Box
           sx={{
-            backgroundColor: 'grey.100',
+            backgroundColor: '#ffffff',
+            borderTop: '1px solid #e6e6e6',
             py: 3,
             textAlign: 'center',
             mt: 'auto',
@@ -238,8 +302,15 @@ function AppContent() {
           }}
         >
           <Container maxWidth="lg">
-            <Typography variant="body2" color="text.secondary">
-              © 2025 SkyTrack - Squad 3 | Encuentra los mejores vuelos
+            <Typography 
+              variant="body2" 
+              sx={{ 
+                color: '#666666',
+                fontWeight: 400,
+                fontSize: '0.875rem',
+              }}
+            >
+              © 2025 SKYTRACK — Squad 3
             </Typography>
           </Container>
         </Box>

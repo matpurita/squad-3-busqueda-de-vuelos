@@ -5,7 +5,7 @@ info:
   version: 1.0.0
 
 servers:
-  - url: https://squad-3-busqueda-de-vuelos-back-prod.vercel.app
+  - url: https://flightsearch-frontend-prod-778211537053.southamerica-west1.run.app
     description: Development server
 
 paths:
@@ -212,33 +212,6 @@ paths:
                 type: object
         '400':
           description: Registration failed
-        '500':
-          description: Internal server error
-
-  /auth/login/mock:
-    post:
-      summary: Mock login
-      description: Local mock login for development/testing
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/LoginPayload'
-      responses:
-        '200':
-          description: Mock login successful (returns token)
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  success:
-                    type: boolean
-                  token:
-                    type: string
-        '401':
-          description: Invalid credentials
         '500':
           description: Internal server error
 
