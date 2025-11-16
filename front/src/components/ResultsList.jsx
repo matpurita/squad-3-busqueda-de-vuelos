@@ -21,8 +21,19 @@ export default function ResultsList() {
   const { vuelos, loading, error, searchPerformed, searchFlights, selectedFlight, selectFlight } =
     useFlights();
   const [rowsPerPage, setRowsPerPage] = React.useState(10);
+  const resultsRef = React.useRef(null);
   
   console.log("VUELOS:", vuelos);
+
+  // Scroll to results when they appear
+  React.useEffect(() => {
+    if (vuelos.results && vuelos.results.length > 0 && resultsRef.current) {
+      resultsRef.current.scrollIntoView({ 
+        behavior: 'smooth', 
+        block: 'start',
+      });
+    }
+  }, [vuelos.results]);
 
   const onSort = async (event) => {
   const sortOrder = event.target.value;
@@ -127,7 +138,7 @@ export default function ResultsList() {
   }
 
   return (
-    <Stack spacing={3} sx={{ width: '100%' }}>
+    <Stack spacing={3} sx={{ width: '100%' }} ref={resultsRef}>
       {/* Título */}
       <Box sx={{ textAlign: 'center', py: 1 }}>
         <Typography 
