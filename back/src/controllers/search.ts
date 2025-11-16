@@ -73,10 +73,19 @@ async function searchFlights(req: Request, res: Response, next: NextFunction) {
         destination: {
           code: searchParams.destination.toUpperCase()
         },
-        departure: {
-          gte: departureDateStart,
-          lte: departureDateEnd
-        }
+        AND: [
+          {
+            departure: {
+              gte: departureDateStart,
+              lte: departureDateEnd
+            }
+          },
+          {
+            departure: {
+              gt: now
+            }
+          }
+        ]
       },
       include: {
         origin: true,
