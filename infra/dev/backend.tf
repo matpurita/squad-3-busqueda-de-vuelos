@@ -37,6 +37,10 @@ resource "google_cloud_run_v2_service" "backend" {
     containers {
       image = docker_image.backend.name
     }
+    
+    annotations = {
+      "image-digest" = docker_image.backend.repo_digest
+    }
   }
 
   lifecycle {

@@ -40,6 +40,9 @@ resource "google_cloud_run_v2_service" "frontend" {
       }
     }
   
+    annotations = {
+      "image-digest" = docker_image.frontend.repo_digest
+    }
   }
 
   lifecycle {

@@ -40,7 +40,7 @@ jobs:
         run: |
           cd infra/dev
           terraform init
-          terraform apply -auto-approve -target="docker_image.frontend" -target="null_resource.push_frontend_image" -target="google_cloud_run_v2_service.frontend"
+          terraform apply -auto-approve -target="docker_image.frontend" -target="null_resource.push_frontend_image" -target="google_cloud_run_v2_service.frontend" -target="google_cloud_run_service_iam_binding.frontend_public"
 
 
       - name: Initialize and Run Terraform (Prod)
@@ -48,4 +48,4 @@ jobs:
         run: |
           cd infra/prod
           terraform init
-          terraform apply -auto-approve -target="docker_image.frontend" -target="null_resource.push_frontend_image" -target="google_cloud_run_v2_service.frontend"
+          terraform apply -auto-approve -target="docker_image.frontend" -target="null_resource.push_frontend_image" -target="google_cloud_run_v2_service.frontend" -target="google_cloud_run_service_iam_binding.frontend_public"
