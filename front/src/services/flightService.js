@@ -237,7 +237,7 @@ const searchFlights = async (criteria) => {
     const response = await apiService.buscarVuelos(criteria);
     return response
   } catch (error) {
-    console.error("Error buscando vuelos con filtros en API:", error);
+    console.error("Error buscando vuelos con filtros en API:", error.message);
     throw error;
   }
 };

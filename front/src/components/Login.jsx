@@ -209,6 +209,9 @@ const handleGoHome = () => {
                   borderRadius: 1,
                 },
               }}
+              inputProps={{
+                minLength: 8,   // 👈 mínimo de caracteres
+              }}
               InputProps={{
                 endAdornment: (
                   <InputAdornment position="end">

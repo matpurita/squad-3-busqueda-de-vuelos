@@ -17,7 +17,7 @@ const theme = createTheme({
       contrastText: '#ffffff',
     },
     error: {
-      main: '#2a4159',      // Dark blue-gray instead of red
+      main: '#b42040ff',      // Dark blue-gray instead of red
       contrastText: '#ffffff',
     },
     warning: {
