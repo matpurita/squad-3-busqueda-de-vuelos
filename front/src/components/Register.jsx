@@ -328,7 +328,7 @@ export default function Register() {
               }}
             >
               <Typography variant="body2" gutterBottom sx={{ fontWeight: 500 }}>
-                ¡Registro exitoso! Tu cuenta ha sido creada correctamente.
+                ¡Solicitud de registro exitoso! Su solicitud ha sido enviada correctamente.
               </Typography>
               <Box sx={{ mt: 1 }}>
                 <Link 
@@ -480,6 +480,9 @@ export default function Register() {
                   borderRadius: 1,
                 },
               }}
+              inputProps={{
+                minLength: 8,   // 👈 mínimo de caracteres
+              }}
               InputProps={{
                 endAdornment: (
                   <InputAdornment position="end">
@@ -510,6 +513,9 @@ export default function Register() {
                 '& .MuiOutlinedInput-root': {
                   borderRadius: 1,
                 },
+              }}
+              inputProps={{
+                minLength: 8,   // 👈 mínimo de caracteres
               }}
               InputProps={{
                 endAdornment: (

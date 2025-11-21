@@ -43,7 +43,7 @@ async function login(req: Request, res: Response, next: NextFunction) {
 
     if (!response.success) {
       console.error('Login failed:', response)
-      return res.status(401).json({ message: 'Invalid credentials' })
+      return res.status(401).json({ message: response.message || 'Invalid credentials' })
     }
 
     return res.json(response.data)

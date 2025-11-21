@@ -75,10 +75,34 @@ export default function Flight({ flight, resultado }) {
       </Stack>
       
       <Stack direction="row" spacing={2} alignItems="center" justifyContent="space-between">
-        <Box sx={{ minWidth: 120 }}>
-          <Typography variant="subtitle1" sx={{ fontWeight: 600, color: 'primary.main' }}>
-            {vuelo.airline}
-          </Typography>
+        <Box sx={{ minWidth: 120, display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+          <Box 
+    sx={{ 
+      display: 'flex',
+      flexDirection: 'row',
+      alignItems: 'center',
+      mb: 0.2 
+    }}
+  >
+    <Box
+      component="img"
+      src={`/images/${vuelo.airlineCode}.png`}
+      alt={vuelo.airline}
+      sx={{ 
+        borderRadius: 1, 
+        width: 55,
+        mr: 0
+      }}
+    />
+    
+    <Typography 
+      variant="subtitle1" 
+      sx={{ fontWeight: 600, color: 'primary.main' }}
+    >
+      {vuelo.airline}
+    </Typography>
+  </Box>
+
           <Typography variant="caption" sx={{ color: 'text.disabled', fontSize: '0.75rem' }}>
             {vuelo.numeroVuelo}
           </Typography>

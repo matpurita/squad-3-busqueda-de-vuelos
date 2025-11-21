@@ -84,9 +84,32 @@ const idaYVuelta = ida && vuelta;
 
           <Stack spacing={2} alignItems="center">
             <Box textAlign={"center"}>
-              <Typography variant="subtitle1" sx={{ fontWeight: 600, color: 'primary.main' }}>
-                {ida?.airline}
-              </Typography>
+              <Box 
+    sx={{ 
+      display: 'flex',
+      flexDirection: 'row',
+      alignItems: 'center',
+      mb: 0.2 
+    }}
+  >
+    <Box
+      component="img"
+      src={`/images/${ida.airlineCode}.png`}
+      alt={ida.airline}
+      sx={{ 
+        borderRadius: 1, 
+        width: 55,
+        mr: 0
+      }}
+    />
+    
+    <Typography 
+      variant="subtitle1" 
+      sx={{ fontWeight: 600, color: 'primary.main' }}
+    >
+      {ida.airline}
+    </Typography>
+  </Box>
               <Typography variant="caption" sx={{ color: 'text.disabled', fontSize: '0.75rem' }} data-testid="numero-vuelo">
                 {ida?.numeroVuelo}
               </Typography>
