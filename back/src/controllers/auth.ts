@@ -2,6 +2,7 @@ import { NextFunction, Request, Response } from 'express'
 import { loginPayloadSchema } from '../schemas/loginPayload'
 import { registerPayloadSchema } from '../schemas/registerPayload'
 import { postEvent } from '../kafka/kafka'
+import { encryptPasswordAES128 } from '../utils/auth'
 
 async function getUserData(req: Request, res: Response, next: NextFunction) {
   if (!req.user) {
@@ -54,7 +55,7 @@ async function login(req: Request, res: Response, next: NextFunction) {
 
 async function register(req: Request, res: Response, next: NextFunction) {
   try {
-    const { name, ...registerPayload } = registerPayloadSchema.parse({
+    const { name, password, ...registerPayload } = registerPayloadSchema.parse({
       name: req.body.name,
       email: req.body.email,
       password: req.body.password,
@@ -64,6 +65,7 @@ async function register(req: Request, res: Response, next: NextFunction) {
     await postEvent('users.user.created', {
       ...registerPayload,
       nombre_completo: name,
+      password: encryptPasswordAES128(password),
       roles: ['usuario'],
       createdAt: new Date().toISOString(),
       userId: crypto.randomUUID()
