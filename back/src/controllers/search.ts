@@ -73,6 +73,9 @@ async function searchFlights(req: Request, res: Response, next: NextFunction) {
         destination: {
           code: searchParams.destination.toUpperCase()
         },
+        status: {
+          not: 'CANCELLED'
+        },
         AND: [
           {
             departure: {
@@ -110,6 +113,9 @@ async function searchFlights(req: Request, res: Response, next: NextFunction) {
             departure: {
               gte: returnDateStart!,
               lte: returnDateEnd!
+            },
+            status: {
+              not: 'CANCELLED'
             }
           },
           include: {
