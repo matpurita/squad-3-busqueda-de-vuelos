@@ -4,13 +4,14 @@ import {
   Button,
   ToggleButton,
   ToggleButtonGroup,
-  FormControlLabel,
-  Switch,
   Autocomplete,
   CircularProgress,
   Paper,
   InputAdornment,
-  Alert
+  Alert,
+  Slider,
+  Typography,
+  Box
 } from "@mui/material";
 import { DatePicker  } from "@mui/x-date-pickers";
 import { PickersDay } from "@mui/x-date-pickers/PickersDay";
@@ -19,6 +20,7 @@ import FlightTakeoffIcon from "@mui/icons-material/FlightTakeoff";
 import FlightLandIcon from "@mui/icons-material/FlightLand";
 import EventIcon from "@mui/icons-material/Event";
 import PeopleIcon from "@mui/icons-material/People";
+import FlightIcon from "@mui/icons-material/Flight";
 import { useSearch } from "../contexts/SearchContext";
 import { useFlights } from "../contexts/FlightsContext";
 import { config } from "../config";
@@ -32,7 +34,8 @@ export default function SearchForm({ onResults }) {
     departDate,
     returnDate,
     adults,
-    flexibleDates,
+    departureRange,
+    returnRange,
     aeropuertos,
     loading: aeropuertosLoading,
     setTripType,
@@ -41,7 +44,8 @@ export default function SearchForm({ onResults }) {
     setDepartDate,
     setReturnDate,
     setAdults,
-    setFlexibleDates,
+    setDepartureRange,
+    setReturnRange,
     getSearchCriteria,
     isSearchValid,
     error: searchAirportError,
@@ -51,7 +55,7 @@ export default function SearchForm({ onResults }) {
   const [returnDateError, setReturnDateError] = useState("");
   const [adultsError, setAdultsError] = useState("");
 
-  const { searchFlights, loading: searchLoading, error:searchError } = useFlights();
+  const { searchFlights, loading: searchLoading, error:searchError, clearResults } = useFlights();
   const loading = aeropuertosLoading || searchLoading;
 
 
@@ -100,6 +104,7 @@ export default function SearchForm({ onResults }) {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
+      clearResults();
       const criteria = getSearchCriteria();
       await searchFlights(criteria);
     } catch (error) {
@@ -296,8 +301,8 @@ export default function SearchForm({ onResults }) {
     textField: {
       fullWidth: true,
       required: true,
-      error: Boolean(departDateError),       // 🔥 Estado de error
-      helperText: departDateError || "",     // 🔥 Texto debajo del input
+      error: Boolean(departDateError),
+      helperText: departDateError || "",
       InputProps: {
         startAdornment: (
           <InputAdornment position="start">
@@ -365,6 +370,120 @@ export default function SearchForm({ onResults }) {
             />
           </Grid>
 
+          {/* 📅 Rango de flexibilidad - Salida */}
+          <Grid item xs={12} sm={6}>
+            <Box 
+              sx={{ 
+                px: 2, 
+                py: 2,
+                borderRadius: 1,
+                border: '1px solid',
+                borderColor: 'divider',
+                backgroundColor: 'background.default',
+              }}
+            >
+              <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 1.5 }}>
+                <FlightIcon sx={{ color: 'primary.main', fontSize: '1.2rem' }} />
+                <Typography variant="body2" color="text.primary" fontWeight={500}>
+                  Flexibilidad de salida: ±{departureRange} {departureRange === 1 ? 'día' : 'días'}
+                </Typography>
+              </Box>
+              <Slider
+                value={departureRange}
+                onChange={(_, value) => setDepartureRange(value)}
+                min={0}
+                max={7}
+                marks={[
+                  { value: 0, label: '0' },
+                  { value: 3, label: '3' },
+                  { value: 7, label: '7' }
+                ]}
+                valueLabelDisplay="auto"
+                sx={{
+                  color: 'primary.main',
+                  height: 8,
+                  '& .MuiSlider-track': {
+                    height: 8,
+                  },
+                  '& .MuiSlider-rail': {
+                    height: 8,
+                    opacity: 0.3,
+                  },
+                  '& .MuiSlider-thumb': {
+                    height: 20,
+                    width: 20,
+                    '&:hover, &.Mui-focusVisible': {
+                      boxShadow: '0px 0px 0px 8px rgba(25, 118, 210, 0.16)',
+                    },
+                  },
+                  '& .MuiSlider-mark': {
+                    height: 8,
+                  },
+                }}
+              />
+            </Box>
+          </Grid>
+
+          {/* 📅 Rango de flexibilidad - Regreso */}
+          <Grid item xs={12} sm={6}>
+            <Box 
+              sx={{ 
+                px: 2, 
+                py: 2,
+                borderRadius: 1,
+                border: '1px solid',
+                borderColor: tripType === "oneway" ? 'action.disabledBackground' : 'divider',
+                backgroundColor: tripType === "oneway" ? 'action.hover' : 'background.default',
+                opacity: tripType === "oneway" ? 0.6 : 1,
+              }}
+            >
+              <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 1.5 }}>
+                <FlightIcon sx={{ color: tripType === "oneway" ? 'text.disabled' : 'primary.main', fontSize: '1.2rem' }} />
+                <Typography 
+                  variant="body2" 
+                  color={tripType === "oneway" ? "text.disabled" : "text.primary"} 
+                  fontWeight={500}
+                >
+                  Flexibilidad de regreso: ±{returnRange} {returnRange === 1 ? 'día' : 'días'}
+                </Typography>
+              </Box>
+              <Slider
+                value={returnRange}
+                onChange={(_, value) => setReturnRange(value)}
+                disabled={tripType === "oneway"}
+                min={0}
+                max={7}
+                marks={[
+                  { value: 0, label: '0' },
+                  { value: 3, label: '3' },
+                  { value: 7, label: '7' }
+                ]}
+                valueLabelDisplay="auto"
+                sx={{
+                  color: 'primary.main',
+                  height: 8,
+                  '& .MuiSlider-track': {
+                    height: 8,
+                  },
+                  '& .MuiSlider-rail': {
+                    height: 8,
+                    opacity: 0.3,
+                  },
+                  '& .MuiSlider-thumb': {
+                    height: 20,
+                    width: 20,
+                    '&:hover, &.Mui-focusVisible': {
+                      boxShadow: '0px 0px 0px 8px rgba(25, 118, 210, 0.16)',
+                    },
+                  },
+                  '& .MuiSlider-mark': {
+                    height: 8,
+                  },
+                }}
+              />
+            </Box>
+          </Grid>
+
           {/* 👥 Pasajeros */}
           <Grid item xs={12} sm={6}>
             <TextField
@@ -399,32 +518,6 @@ export default function SearchForm({ onResults }) {
             />
           </Grid>
         </Grid>
-
-        {/* 🔁 Switch fechas flexibles */}
-        <FormControlLabel
-          control={
-            <Switch
-              checked={flexibleDates}
-              onChange={(e) => setFlexibleDates(e.target.checked)}
-              sx={{
-                '& .MuiSwitch-switchBase.Mui-checked': {
-                  color: 'primary.main',
-                },
-                '& .MuiSwitch-switchBase.Mui-checked + .MuiSwitch-track': {
-                  backgroundColor: 'primary.main',
-                },
-              }}
-            />
-          }
-          label="Fechas flexibles"
-          sx={{ 
-            mt: 2, 
-            color: 'text.secondary',
-            '& .MuiFormControlLabel-label': {
-              fontWeight: 500,
-            }
-          }}
-        />
 
         {/* 🚀 Botón buscar */}
         <Button
