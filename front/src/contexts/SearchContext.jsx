@@ -14,7 +14,8 @@ export const SearchProvider = ({ children }) => {
   const [departDate, setDepartDate] = useState('');
   const [returnDate, setReturnDate] = useState('');
   const [adults, setAdults] = useState(1);
-  const [flexibleDates, setFlexibleDates] = useState(false);
+  const [departureRange, setDepartureRange] = useState(0);
+  const [returnRange, setReturnRange] = useState(0);
   const [sort, setSort] = useState('price_asc')
   
   // Estado de aeropuertos y carga
@@ -51,7 +52,7 @@ export const SearchProvider = ({ children }) => {
       origin: from?.code,
       destination: to?.code,
       departureDate: departDate ? dayjs(departDate).format('YYYY-MM-DD') : null,
-      departureRange: flexibleDates ? 1 : 0, // Si es flexible, buscar ±3 días
+      departureRange: departureRange,
       passengers: adults,
       currency: 'USD', // Por defecto USD, podrías hacerlo configurable
     };
@@ -59,7 +60,7 @@ export const SearchProvider = ({ children }) => {
     // Solo agregar returnDate y returnRange si es viaje de ida y vuelta
     if (tripType === 'roundtrip' && returnDate) {
       criteria.returnDate = returnDate ? dayjs(returnDate).format('YYYY-MM-DD') : null;
-      criteria.returnRange = flexibleDates ? 1 : 0; // Si es flexible, buscar ±1 día
+      criteria.returnRange = returnRange;
     }
 
     // Solo agregar sort si está definido
@@ -84,18 +85,19 @@ export const SearchProvider = ({ children }) => {
     setDepartDate('');
     setReturnDate('');
     setAdults(1);
-    setFlexibleDates(false);
+    setDepartureRange(0);
+    setReturnRange(0);
     setError(null);
   };
 
   const value = {
     // Estado
-    tripType, from, to, departDate, returnDate, adults, flexibleDates,
+    tripType, from, to, departDate, returnDate, adults, departureRange, returnRange,
     aeropuertos, loading, error, sort,
     
     // Setters
     setTripType, setFrom, setTo, setDepartDate, setReturnDate,
-    setAdults, setFlexibleDates, setAeropuertos, setLoading, setError, setSort,
+    setAdults, setDepartureRange, setReturnRange, setAeropuertos, setLoading, setError, setSort,
     
     // Utilidades
     getSearchCriteria, isSearchValid, resetFilters

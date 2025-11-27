@@ -4,13 +4,14 @@ import {
   Button,
   ToggleButton,
   ToggleButtonGroup,
-  FormControlLabel,
-  Switch,
   Autocomplete,
   CircularProgress,
   Paper,
   InputAdornment,
-  Alert
+  Alert,
+  Slider,
+  Typography,
+  Box
 } from "@mui/material";
 import { DatePicker  } from "@mui/x-date-pickers";
 import { PickersDay } from "@mui/x-date-pickers/PickersDay";
@@ -32,7 +33,8 @@ export default function SearchForm({ onResults }) {
     departDate,
     returnDate,
     adults,
-    flexibleDates,
+    departureRange,
+    returnRange,
     aeropuertos,
     loading: aeropuertosLoading,
     setTripType,
@@ -41,7 +43,8 @@ export default function SearchForm({ onResults }) {
     setDepartDate,
     setReturnDate,
     setAdults,
-    setFlexibleDates,
+    setDepartureRange,
+    setReturnRange,
     getSearchCriteria,
     isSearchValid,
     error: searchAirportError,
@@ -296,8 +299,8 @@ export default function SearchForm({ onResults }) {
     textField: {
       fullWidth: true,
       required: true,
-      error: Boolean(departDateError),       // 🔥 Estado de error
-      helperText: departDateError || "",     // 🔥 Texto debajo del input
+      error: Boolean(departDateError),
+      helperText: departDateError || "",
       InputProps: {
         startAdornment: (
           <InputAdornment position="start">
@@ -365,6 +368,69 @@ export default function SearchForm({ onResults }) {
             />
           </Grid>
 
+          {/* 📅 Rango de flexibilidad - Salida */}
+          <Grid item xs={12} sm={6}>
+            <Box sx={{ px: 2, pt: 1 }}>
+              <Typography variant="body2" color="text.secondary" gutterBottom>
+                Flexibilidad de salida: ±{departureRange} {departureRange === 1 ? 'día' : 'días'}
+              </Typography>
+              <Slider
+                value={departureRange}
+                onChange={(_, value) => setDepartureRange(value)}
+                min={0}
+                max={7}
+                marks={[
+                  { value: 0, label: '0' },
+                  { value: 3, label: '3' },
+                  { value: 7, label: '7' }
+                ]}
+                valueLabelDisplay="auto"
+                sx={{
+                  color: 'primary.main',
+                  '& .MuiSlider-thumb': {
+                    '&:hover, &.Mui-focusVisible': {
+                      boxShadow: '0px 0px 0px 8px rgba(25, 118, 210, 0.16)',
+                    },
+                  },
+                }}
+              />
+            </Box>
+          </Grid>
+
+          {/* 📅 Rango de flexibilidad - Regreso */}
+          <Grid item xs={12} sm={6}>
+            <Box sx={{ px: 2, pt: 1 }}>
+              <Typography 
+                variant="body2" 
+                color={tripType === "oneway" ? "text.disabled" : "text.secondary"} 
+                gutterBottom
+              >
+                Flexibilidad de regreso: ±{returnRange} {returnRange === 1 ? 'día' : 'días'}
+              </Typography>
+              <Slider
+                value={returnRange}
+                onChange={(_, value) => setReturnRange(value)}
+                disabled={tripType === "oneway"}
+                min={0}
+                max={7}
+                marks={[
+                  { value: 0, label: '0' },
+                  { value: 3, label: '3' },
+                  { value: 7, label: '7' }
+                ]}
+                valueLabelDisplay="auto"
+                sx={{
+                  color: 'primary.main',
+                  '& .MuiSlider-thumb': {
+                    '&:hover, &.Mui-focusVisible': {
+                      boxShadow: '0px 0px 0px 8px rgba(25, 118, 210, 0.16)',
+                    },
+                  },
+                }}
+              />
+            </Box>
+          </Grid>
+
           {/* 👥 Pasajeros */}
           <Grid item xs={12} sm={6}>
             <TextField
@@ -399,32 +465,6 @@ export default function SearchForm({ onResults }) {
             />
           </Grid>
         </Grid>
-
-        {/* 🔁 Switch fechas flexibles */}
-        <FormControlLabel
-          control={
-            <Switch
-              checked={flexibleDates}
-              onChange={(e) => setFlexibleDates(e.target.checked)}
-              sx={{
-                '& .MuiSwitch-switchBase.Mui-checked': {
-                  color: 'primary.main',
-                },
-                '& .MuiSwitch-switchBase.Mui-checked + .MuiSwitch-track': {
-                  backgroundColor: 'primary.main',
-                },
-              }}
-            />
-          }
-          label="Fechas flexibles"
-          sx={{ 
-            mt: 2, 
-            color: 'text.secondary',
-            '& .MuiFormControlLabel-label': {
-              fontWeight: 500,
-            }
-          }}
-        />
 
         {/* 🚀 Botón buscar */}
         <Button
