@@ -25,11 +25,11 @@ FROM nginx:alpine
 # Copiar build generado a la carpeta de Nginx
 COPY --from=builder /app/dist /usr/share/nginx/html
 
-# Copiar configuración personalizada si tenés (opcional)
-# COPY nginx.conf /etc/nginx/conf.d/default.conf
+# Copiar configuración personalizada para SPA routing
+COPY nginx.conf /etc/nginx/conf.d/default.conf
 
 # Exponer puerto
-EXPOSE 5173
+EXPOSE 80
 
 # Start Nginx
 CMD ["nginx", "-g", "daemon off;"]
