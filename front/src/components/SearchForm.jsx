@@ -20,6 +20,7 @@ import FlightTakeoffIcon from "@mui/icons-material/FlightTakeoff";
 import FlightLandIcon from "@mui/icons-material/FlightLand";
 import EventIcon from "@mui/icons-material/Event";
 import PeopleIcon from "@mui/icons-material/People";
+import FlightIcon from "@mui/icons-material/Flight";
 import { useSearch } from "../contexts/SearchContext";
 import { useFlights } from "../contexts/FlightsContext";
 import { config } from "../config";
@@ -370,10 +371,22 @@ export default function SearchForm({ onResults }) {
 
           {/* 📅 Rango de flexibilidad - Salida */}
           <Grid item xs={12} sm={6}>
-            <Box sx={{ px: 2, pt: 1 }}>
-              <Typography variant="body2" color="text.secondary" gutterBottom>
-                Flexibilidad de salida: ±{departureRange} {departureRange === 1 ? 'día' : 'días'}
-              </Typography>
+            <Box 
+              sx={{ 
+                px: 2, 
+                py: 2,
+                borderRadius: 1,
+                border: '1px solid',
+                borderColor: 'divider',
+                backgroundColor: 'background.default',
+              }}
+            >
+              <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 1.5 }}>
+                <FlightIcon sx={{ color: 'primary.main', fontSize: '1.2rem' }} />
+                <Typography variant="body2" color="text.primary" fontWeight={500}>
+                  Flexibilidad de salida: ±{departureRange} {departureRange === 1 ? 'día' : 'días'}
+                </Typography>
+              </Box>
               <Slider
                 value={departureRange}
                 onChange={(_, value) => setDepartureRange(value)}
@@ -387,10 +400,23 @@ export default function SearchForm({ onResults }) {
                 valueLabelDisplay="auto"
                 sx={{
                   color: 'primary.main',
+                  height: 8,
+                  '& .MuiSlider-track': {
+                    height: 8,
+                  },
+                  '& .MuiSlider-rail': {
+                    height: 8,
+                    opacity: 0.3,
+                  },
                   '& .MuiSlider-thumb': {
+                    height: 20,
+                    width: 20,
                     '&:hover, &.Mui-focusVisible': {
                       boxShadow: '0px 0px 0px 8px rgba(25, 118, 210, 0.16)',
                     },
+                  },
+                  '& .MuiSlider-mark': {
+                    height: 8,
                   },
                 }}
               />
@@ -399,14 +425,27 @@ export default function SearchForm({ onResults }) {
 
           {/* 📅 Rango de flexibilidad - Regreso */}
           <Grid item xs={12} sm={6}>
-            <Box sx={{ px: 2, pt: 1 }}>
-              <Typography 
-                variant="body2" 
-                color={tripType === "oneway" ? "text.disabled" : "text.secondary"} 
-                gutterBottom
-              >
-                Flexibilidad de regreso: ±{returnRange} {returnRange === 1 ? 'día' : 'días'}
-              </Typography>
+            <Box 
+              sx={{ 
+                px: 2, 
+                py: 2,
+                borderRadius: 1,
+                border: '1px solid',
+                borderColor: tripType === "oneway" ? 'action.disabledBackground' : 'divider',
+                backgroundColor: tripType === "oneway" ? 'action.hover' : 'background.default',
+                opacity: tripType === "oneway" ? 0.6 : 1,
+              }}
+            >
+              <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 1.5 }}>
+                <FlightIcon sx={{ color: tripType === "oneway" ? 'text.disabled' : 'primary.main', fontSize: '1.2rem' }} />
+                <Typography 
+                  variant="body2" 
+                  color={tripType === "oneway" ? "text.disabled" : "text.primary"} 
+                  fontWeight={500}
+                >
+                  Flexibilidad de regreso: ±{returnRange} {returnRange === 1 ? 'día' : 'días'}
+                </Typography>
+              </Box>
               <Slider
                 value={returnRange}
                 onChange={(_, value) => setReturnRange(value)}
@@ -421,10 +460,23 @@ export default function SearchForm({ onResults }) {
                 valueLabelDisplay="auto"
                 sx={{
                   color: 'primary.main',
+                  height: 8,
+                  '& .MuiSlider-track': {
+                    height: 8,
+                  },
+                  '& .MuiSlider-rail': {
+                    height: 8,
+                    opacity: 0.3,
+                  },
                   '& .MuiSlider-thumb': {
+                    height: 20,
+                    width: 20,
                     '&:hover, &.Mui-focusVisible': {
                       boxShadow: '0px 0px 0px 8px rgba(25, 118, 210, 0.16)',
                     },
+                  },
+                  '& .MuiSlider-mark': {
+                    height: 8,
                   },
                 }}
               />
