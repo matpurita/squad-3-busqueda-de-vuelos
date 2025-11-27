@@ -55,7 +55,7 @@ export default function SearchForm({ onResults }) {
   const [returnDateError, setReturnDateError] = useState("");
   const [adultsError, setAdultsError] = useState("");
 
-  const { searchFlights, loading: searchLoading, error:searchError } = useFlights();
+  const { searchFlights, loading: searchLoading, error:searchError, clearResults } = useFlights();
   const loading = aeropuertosLoading || searchLoading;
 
 
@@ -104,6 +104,7 @@ export default function SearchForm({ onResults }) {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
+      clearResults();
       const criteria = getSearchCriteria();
       await searchFlights(criteria);
     } catch (error) {
